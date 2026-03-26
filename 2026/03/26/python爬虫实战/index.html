@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> python爬虫实战 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>14</div>
+		<div><span>标签</span>1</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=<去掉尖括号后填上你的QQ号>&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/<改成你的B站uid>"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/<你的github id>/"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 10px;">python菜鸟</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">14</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/20260221174028336.webp"
+				data-sizes="auto"
+				alt="python爬虫实战"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>python爬虫实战</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
+			<a><i class="kirafont icon-edit-fill"></i>1.6k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 7 分钟</a>
+		</div>
+		<html><head></head><body><p><strong>GET</strong><br><strong>选好解释器(bs4/BeautifulSoup/html.parser或lxml)(lxml/etree/html或xml/xpath)(pyquery/PyQuery/Pyquery)</strong><br><strong>筛选</strong></p>
+<p>发送 HTTP 请求获取网页内容、解析网页并提取数据，然后存储数据</p>
+<h1><span id="%E8%8E%B7%E5%8F%96%E8%B1%86%E7%93%A3%E7%94%B5%E5%BD%B1top250">获取豆瓣电影top250</span></h1><h2><span id="test1">test1</span></h2><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup<br><br>headers={<br>    <span class="hljs-string">"User-Agent"</span>:<span class="hljs-string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0"</span><br>}<br>response=requests.get(<span class="hljs-string">"https://movie.douban.com/top250"</span>,headers=headers)<br><span class="hljs-built_in">print</span>(response.text)<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="test2">test2</span></h2><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup<br><br>header={<br>    <span class="hljs-string">"User-Agent"</span>:<span class="hljs-string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0"</span><br>}<br><br><span class="hljs-keyword">for</span> start_num <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-number">250</span>,<span class="hljs-number">25</span>):<br>    response=requests.get(<span class="hljs-string">f"https://movie.douban.com/top250?start=<span class="hljs-subst">{start_num}</span>&amp;filter="</span>,headers=header)<br>    html=response.text<br>    soup=BeautifulSoup(html,<span class="hljs-string">"html.parser"</span>)<br>    all_titles = soup.findAll(<span class="hljs-string">"span"</span>, attrs={<span class="hljs-string">"class"</span>: <span class="hljs-string">"title"</span>})  <span class="hljs-comment"># 筛选（依据标签，属性），并返回可迭代对象</span><br>    <span class="hljs-keyword">for</span> title <span class="hljs-keyword">in</span> all_titles:<br>        title_string=title.string<br>        <span class="hljs-keyword">if</span> <span class="hljs-string">"/"</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> title_string:<br>            <span class="hljs-built_in">print</span>(title_string)<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E8%BE%93%E5%87%BA%E7%BB%8Fhtml%E6%95%B4%E7%90%86">输出（经HTML整理）：</span></h2><table border="5" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td>肖申克的救赎</td>
+      <td>霸王别姬</td>
+      <td>泰坦尼克号</td>
+      <td>阿甘正传</td>
+      <td>千与千寻</td>
+      <td>美丽人生</td>
+      <td>星际穿越</td>
+      <td>这个杀手不太冷</td>
+      <td>盗梦空间</td>
+      <td>楚门的世界</td>
+    </tr>
+    <tr>
+      <td>辛德勒的名单</td>
+      <td>忠犬八公的故事</td>
+      <td>海上钢琴师</td>
+      <td>疯狂动物城</td>
+      <td>三傻大闹宝莱坞</td>
+      <td>机器人总动员</td>
+      <td>放牛班的春天</td>
+      <td>无间道</td>
+      <td>控方证人</td>
+      <td>大话西游之大圣娶亲</td>
+    </tr>
+    <tr>
+      <td>熔炉</td>
+      <td>寻梦环游记</td>
+      <td>触不可及</td>
+      <td>教父</td>
+      <td>末代皇帝</td>
+      <td>当幸福来敲门</td>
+      <td>哈利·波特与魔法石</td>
+      <td>龙猫</td>
+      <td>活着</td>
+      <td>怦然心动</td>
+    </tr>
+    <tr>
+      <td>蝙蝠侠：黑暗骑士</td>
+      <td>指环王3：王者无敌</td>
+      <td>我不是药神</td>
+      <td>乱世佳人</td>
+      <td>让子弹飞</td>
+      <td>飞屋环游记</td>
+      <td>哈尔的移动城堡</td>
+      <td>十二怒汉</td>
+      <td>海蒂和爷爷</td>
+      <td>素媛</td>
+    </tr>
+    <tr>
+      <td>猫鼠游戏</td>
+      <td>天空之城</td>
+      <td>鬼子来了</td>
+      <td>摔跤吧！爸爸</td>
+      <td>少年派的奇幻漂流</td>
+      <td>钢琴家</td>
+      <td>指环王2：双塔奇兵</td>
+      <td>死亡诗社</td>
+      <td>大话西游之月光宝盒</td>
+      <td>何以为家</td>
+    </tr>
+    <tr>
+      <td>绿皮书</td>
+      <td>闻香识女人</td>
+      <td>大闹天宫</td>
+      <td>黑客帝国</td>
+      <td>指环王1：护戒使者</td>
+      <td>罗马假日</td>
+      <td>教父2</td>
+      <td>狮子王</td>
+      <td>天堂电影院</td>
+      <td>饮食男女</td>
+    </tr>
+    <tr>
+      <td>辩护人</td>
+      <td>本杰明·巴顿奇事</td>
+      <td>搏击俱乐部</td>
+      <td>美丽心灵</td>
+      <td>穿条纹睡衣的男孩</td>
+      <td>情书</td>
+      <td>哈利·波特与死亡圣器(下)</td>
+      <td>两杆大烟枪</td>
+      <td>窃听风暴</td>
+      <td>音乐之声</td>
+    </tr>
+    <tr>
+      <td>功夫</td>
+      <td>西西里的美丽传说</td>
+      <td>哈利·波特与阿兹卡班的囚徒</td>
+      <td>阿凡达</td>
+      <td>看不见的客人</td>
+      <td>拯救大兵瑞恩</td>
+      <td>沉默的羔羊</td>
+      <td>小鞋子</td>
+      <td>布达佩斯大饭店</td>
+      <td>蝴蝶效应</td>
+    </tr>
+    <tr>
+      <td>飞越疯人院</td>
+      <td>禁闭岛</td>
+      <td>还有明天</td>
+      <td>心灵捕手</td>
+      <td>致命魔术</td>
+      <td>低俗小说</td>
+      <td>超脱</td>
+      <td>哈利·波特与密室</td>
+      <td>指环王2：双塔奇兵</td>
+      <td>喜剧之王</td>
+    </tr>
+    <tr>
+      <td>摩登时代</td>
+      <td>杀人回忆</td>
+      <td>致命ID</td>
+      <td>春光乍泄</td>
+      <td>加勒比海盗</td>
+      <td>海豚湾</td>
+      <td>美国往事</td>
+      <td>红辣椒</td>
+      <td>七宗罪</td>
+      <td>唐伯虎点秋香</td>
+    </tr>
+    <tr>
+      <td>狩猎</td>
+      <td>幽灵公主</td>
+      <td>甜蜜蜜</td>
+      <td>寄生虫</td>
+      <td>蝙蝠侠：黑暗骑士崛起</td>
+      <td>天书奇谭</td>
+      <td>7号房的礼物</td>
+      <td>超能陆战队</td>
+      <td>第六感</td>
+      <td>爱在黎明破晓前</td>
+    </tr>
+    <tr>
+      <td>爱在日落黄昏时</td>
+      <td>茶馆</td>
+      <td>被嫌弃的松子的一生</td>
+      <td>重庆森林</td>
+      <td>哈利·波特与火焰杯</td>
+      <td>未麻的部屋</td>
+      <td>头脑特工队</td>
+      <td>借东西的小人阿莉埃蒂</td>
+      <td>入殓师</td>
+      <td>菊次郎的夏天</td>
+    </tr>
+    <tr>
+      <td>断背山</td>
+      <td>剪刀手爱德华</td>
+      <td>勇敢的心</td>
+      <td>时空恋旅人</td>
+      <td>消失的爱人</td>
+      <td>倩女幽魂</td>
+      <td>无人知晓</td>
+      <td>驯龙高手</td>
+      <td>傲慢与偏见</td>
+      <td>花样年华</td>
+    </tr>
+    <tr>
+      <td>新世界</td>
+      <td>完美的世界</td>
+      <td>玩具总动员3</td>
+      <td>一个叫欧维的男人决定去死</td>
+      <td>阳光灿烂的日子</td>
+      <td>小森林 夏秋篇</td>
+      <td>色，戒</td>
+      <td>天使爱美丽</td>
+      <td>怪兽电力公司</td>
+      <td>教父3</td>
+    </tr>
+    <tr>
+      <td>侧耳倾听</td>
+      <td>哪吒闹海</td>
+      <td>请以你的名字呼唤我</td>
+      <td>九品芝麻官</td>
+      <td>幸福终点站</td>
+      <td>被解救的姜戈</td>
+      <td>釜山行</td>
+      <td>神偷奶爸</td>
+      <td>小森林 冬春篇</td>
+      <td>喜宴</td>
+    </tr>
+    <tr>
+      <td>萤火之森</td>
+      <td>告白</td>
+      <td>玛丽和麦克斯</td>
+      <td>七武士</td>
+      <td>头号玩家</td>
+      <td>模仿游戏</td>
+      <td>大鱼</td>
+      <td>惊魂记</td>
+      <td>射雕英雄传之东成西就</td>
+      <td>血战钢锯岭</td>
+    </tr>
+    <tr>
+      <td>心灵奇旅</td>
+      <td>你的名字。</td>
+      <td>背靠背，脸对脸</td>
+      <td>我是山姆</td>
+      <td>阳光姐妹淘</td>
+      <td>恐怖直播</td>
+      <td>黑客帝国3：矩阵革命</td>
+      <td>机器人之梦</td>
+      <td>小丑</td>
+      <td>三块广告牌</td>
+    </tr>
+    <tr>
+      <td>电锯惊魂</td>
+      <td>谍影重重3</td>
+      <td>达拉斯买家俱乐部</td>
+      <td>无间道2</td>
+      <td>末路狂花</td>
+      <td>高山下的花环</td>
+      <td>疯狂原始人</td>
+      <td>绿里奇迹</td>
+      <td>爱在午夜降临前</td>
+      <td>疯狂的石头</td>
+    </tr>
+    <tr>
+      <td>海街日记</td>
+      <td>雨中曲</td>
+      <td>2001太空漫游</td>
+      <td>风之谷</td>
+      <td>上帝之城</td>
+      <td>心迷宫</td>
+      <td>英雄本色</td>
+      <td>记忆碎片</td>
+      <td>纵横四海</td>
+      <td>无敌破坏王</td>
+    </tr>
+    <tr>
+      <td>卢旺达饭店</td>
+      <td>小偷家族</td>
+      <td>东京教父</td>
+      <td>恐怖游轮</td>
+      <td>牯岭街少年杀人事件</td>
+      <td>冰川时代</td>
+      <td>魔女宅急便</td>
+      <td>芙蓉镇</td>
+      <td>忠犬八公物语</td>
+      <td>岁月神偷</td>
+    </tr>
+    <tr>
+      <td>荒蛮故事</td>
+      <td>遗愿清单</td>
+      <td>大佛普拉斯</td>
+      <td>源代码</td>
+      <td>花束般的恋爱</td>
+      <td>疯狂的麦克斯4：狂暴之路</td>
+      <td>你看起来好像很好吃</td>
+      <td>贫民窟的百万富翁</td>
+      <td>可可西里</td>
+      <td>白日梦想家</td>
+    </tr>
+    <tr>
+      <td>城市之光</td>
+      <td>波西米亚狂想曲</td>
+      <td>爆裂鼓手</td>
+      <td>东邪西毒</td>
+      <td>青蛇</td>
+      <td>爱乐之城</td>
+      <td>哈利·波特与死亡圣器(上)</td>
+      <td>无耻混蛋</td>
+      <td>终结者2：审判日</td>
+      <td>黑天鹅</td>
+    </tr>
+    <tr>
+      <td>大红灯笼高高挂</td>
+      <td>新龙门客栈</td>
+      <td>初恋这件小事</td>
+      <td>人工智能</td>
+      <td>千钧一发</td>
+      <td>雨人</td>
+      <td>崖上的波妞</td>
+      <td>虎口脱险</td>
+      <td>哈利·波特与凤凰社</td>
+      <td>罗生门</td>
+    </tr>
+    <tr>
+      <td>彗星来的那一夜</td>
+      <td>海边的曼彻斯特</td>
+      <td>恋恋笔记本</td>
+      <td>真爱至上</td>
+      <td>火星救援</td>
+      <td>黑客帝国2：重装上阵</td>
+      <td>步履不停</td>
+      <td>奇迹男孩</td>
+      <td>千年女优</td>
+      <td>冰雪奇缘</td>
+    </tr>
+    <tr>
+      <td>战争之王</td>
+      <td>谍影重重2</td>
+      <td>蜘蛛侠：平行宇宙</td>
+      <td>攻壳机动队</td>
+      <td>血钻</td>
+      <td>魂断蓝桥</td>
+      <td>隐藏人物</td>
+      <td>小姐</td>
+      <td>房间</td>
+      <td>血观音</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1><span id="%E6%90%9C%E7%8B%97%E6%90%9C%E7%B4%A2%E7%BD%91%E9%A1%B5%E9%87%87%E9%9B%86%E5%99%A8">搜狗搜索网页采集器</span></h1><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-comment"># 指定关键字爬取与保存</span><br>url=<span class="hljs-string">'https://www.sogou.com/web'</span><br>kw=<span class="hljs-built_in">input</span>(<span class="hljs-string">"Enter a word:"</span>)<br>param = {<br>    <span class="hljs-string">'query'</span>:kw<br>}<br>header={<br>    <span class="hljs-string">"User-Agent"</span>:<span class="hljs-string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0"</span><br>}<br>response=requests.get(url=url,params=param,headers=header)<br>html=response.text<br>fileName=kw+<span class="hljs-string">'.html'</span><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(fileName,<span class="hljs-string">"w"</span>,encoding=<span class="hljs-string">'utf-8'</span>) <span class="hljs-keyword">as</span> file:<br>    file.write(html)<br><span class="hljs-built_in">print</span>(fileName,<span class="hljs-string">"保存成功"</span>)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>电影天堂：下载电影（链接）<br>北京新发地市场：市场价钱（表格）<br>优美图库：壁纸高清图（图片）<br>猪八戒网：价钱，标题，公司地址</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext"># shift+alt+F<br># 当F12与ctrl+u看到的代码不一致时，可以F12找到选中目标div块右键选择复制为Xpath<br># pip list查看所有已安装的第三方库<br></code></pre></td></tr></tbody></table></figure></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/26/python%E7%88%AC%E8%99%AB%E5%AE%9E%E6%88%98/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;python爬虫实战&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;python爬虫实战&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/python%E8%8F%9C%E9%B8%9F/" rel="tag">python菜鸟</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> 我的朋友 -  爆米花苞の小窝</title>
+		<title> 字符串内建函数 -  爆米花苞の小窝</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -139,7 +139,7 @@
 		</a>
 		
 		<a
-			class="kira-list-item mdui-ripple true"
+			class="kira-list-item mdui-ripple false"
 			href="/friends.html"
 			title="我的朋友"
 		>
@@ -270,19 +270,118 @@
 			<div class="kira-content">
 				<div id="kira-top-header"></div>
 				<div class="kira-main-content">
-					<div class="kira-post">
-	<article class="kira-friend">
-		<html><head></head><body><h2><span id="%E6%88%91%E7%9A%84%E6%9C%8B%E5%8F%8B">我的朋友</span></h2></body></html>
-        
+					
+<link rel="stylesheet" href="/css/kira-image.css">
 
-	</article>
-	
-        <div class="kira-post-footer">
-            
 
-            
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
         </div>
-    
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/20260304152736635.webp"
+				data-sizes="auto"
+				alt="字符串内建函数"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>字符串内建函数</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
+			<a><i class="kirafont icon-edit-fill"></i>108 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="split">split()</span></h1><p>语法：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">str.split(str="", num=string.count(str))<br></code></pre></td></tr></tbody></table></figure>
+<p>举例：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">str = "this is string example....wow!!!"<br>print (str.split())        # 默认以空格为分隔符<br>print (str.split('i',1))   # 以 i 为分隔符<br>print (str.split('w'))     # 以 w 为分隔符<br></code></pre></td></tr></tbody></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">['this', 'is', 'string', 'example....wow!!!']<br>['th', 's is string example....wow!!!']<br>['this is string example....', 'o', '!!!']<br></code></pre></td></tr></tbody></table></figure>
+<p>==接收<strong>字符串</strong>，返回<strong>列表</strong>==</p>
+<h1><span id="isalpha%E7%AD%89">isalpha()等</span></h1><p>判断字符组成：<br><img src="/images/python菜鸟/png/Pasted image 20260201100859.png"></p>
+<h1><span id="format">format()</span></h1><p>详见[[python语法（下）#Python3 输入和输出#输出格式美化]]</p>
+</body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/26/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;字符串内建函数&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;字符串内建函数&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/python%E8%8F%9C%E9%B8%9F/" rel="tag">python菜鸟</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
 </div>
 
 				</div>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> python语法（上） -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>14</div>
+		<div><span>标签</span>1</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=<去掉尖括号后填上你的QQ号>&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/<改成你的B站uid>"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/<你的github id>/"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 10px;">python菜鸟</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">14</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/20260221174049437.webp"
+				data-sizes="auto"
+				alt="python语法（上）"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>python语法（上）</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
+			<a><i class="kirafont icon-edit-fill"></i>3.6k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 16 分钟</a>
+		</div>
+		<!--有示例代码001-xxx在practicepy--><html><head></head><body><h1><span id="python3-%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B">Python3 基本数据类型</span></h1><h2><span id="%E5%9F%BA%E7%A1%80%E5%86%85%E5%AE%B9">基础内容</span></h2><p>Python3 的六个标准数据类型中：</p>
+<p>不可变数据（3 个）: Number（数字）、String（字符串）、Tuple（元组）；<br>可变数据（3 个）: List（列表）、Dictionary（字典）、Set（集合）。</p>
+<ul>
+<li>等号（=）用来给变量赋值</li>
+<li>Python允许你同时为多个变量赋值</li>
+<li>type() 函数查看变量的类型</li>
+</ul>
+<h2><span id="number%E6%95%B0%E5%AD%97">Number（数字）</span></h2><p>Python3 支持 int、float、bool、complex（复数）。</p>
+<ol>
+<li>Python可以同时为多个变量赋值，如a, b = 1, 2。</li>
+<li>一个变量可以通过赋值指向不同类型的对象。</li>
+<li>数值的除法包含两个运算符：/ 返回一个浮点数，// 返回一个整数。</li>
+<li>乘方为<code>**</code>，取余为 <code>%</code></li>
+<li>在混合计算时，Python会把整型转换成为浮点数。</li>
+<li>Python3 中，bool 是 int 的子类，True 和 False 可以和数字相加</li>
+</ol>
+<h2><span id="string%E5%AD%97%E7%AC%A6%E4%B8%B2">String（字符串）</span></h2><p>字符串不能被改变</p>
+<p>索引及查找：<code>变量[头下标:尾下标]</code><br><img src="/images/python菜鸟/png/Pasted image 20260109175351.png"></p>
+<ol>
+<li>反斜杠可以用来转义，使用r可以让反斜杠不发生转义。</li>
+<li>字符串可以用+运算符连接在一起，用运算符重复。</li>
+<li>Python中的字符串有两种索引方式，从左往右以0开始，从右往左以-1开始。</li>
+</ol>
+<h2><span id="bool%E5%B8%83%E5%B0%94%E7%B1%BB%E5%9E%8B">bool（布尔类型）</span></h2><ul>
+<li>bool 是 int 的子类，因此布尔值可以被看作整数来使用，和其他数据类型进行比较，和逻辑运算符一起使用，被转换成其他数据类型，其中 True 等价于 1。</li>
+<li>可以使用&nbsp;<code>bool()</code>&nbsp;函数将其他类型的值转换为布尔值。以下值在转换为布尔值时为&nbsp;<code>False</code>：<code>None</code>、<code>False</code>、零 (<code>0</code>、<code>0.0</code>、<code>0j</code>)、空序列（如&nbsp;<code>''</code>、<code>()</code>、<code>[]</code>）和空映射（如&nbsp;<code>{}</code>）。其他所有值转换为布尔值时均为&nbsp;<code>True</code>。</li>
+</ul>
+<h2><span id="list%E5%88%97%E8%A1%A8">List（列表）</span></h2><p>与Python字符串不一样的是，列表中的元素是可以改变的</p>
+<p>索引：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">变量[头下标:尾下标:步长]<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="tuple%E5%85%83%E7%BB%84">Tuple（元组）</span></h2><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">tup1 = ()    # 空元组<br>tup2 = (20,) # 一个元素，需要在元素后添加逗号<br></code></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li>与字符串一样，元组的元素不能修改。</li>
+<li>元组也可以被索引和切片，方法一样。</li>
+<li>注意构造包含 0 或 1 个元素的元组的特殊语法规则。</li>
+<li>元组也可以使用&nbsp;+&nbsp;操作符进行拼接。</li>
+</ol>
+<h2><span id="set%E9%9B%86%E5%90%88">Set（集合）</span></h2><ul>
+<li>集合中的元素不会重复，并且可以进行交集、并集、差集等常见的集合操作。</li>
+<li>创建一个空集合必须用&nbsp;set()&nbsp;而不是&nbsp;{ }，因为&nbsp;{ }&nbsp;是用来创建一个空字典。</li>
+</ul>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">print(a - b)&nbsp;&nbsp; &nbsp;&nbsp;# a 和 b 的差集  <br>  <br>print(a | b)&nbsp;&nbsp; &nbsp;&nbsp;# a 和 b 的并集  <br>  <br>print(a &amp; b)&nbsp;&nbsp; &nbsp;&nbsp;# a 和 b 的交集  <br>  <br>print(a ^ b)&nbsp;&nbsp; &nbsp;&nbsp;# a 和 b 中不同时存在的元素<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="dictionary%E5%AD%97%E5%85%B8">Dictionary（字典）</span></h2><ol>
+<li>字典是一种映射类型，它是一个无序的&nbsp;<strong>键(key) : 值(value)</strong>&nbsp;的集合。</li>
+<li>字典的关键字必须为不可变类型，且不能重复。</li>
+<li>创建空字典使用 { }。</li>
+</ol>
+<p>构造函数 dict() 可以直接从键值对序列中构建字典</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">dict</span>([(<span class="hljs-string">'Runoob'</span>, <span class="hljs-number">1</span>), (<span class="hljs-string">'Google'</span>, <span class="hljs-number">2</span>), (<span class="hljs-string">'Taobao'</span>, <span class="hljs-number">3</span>)])<br>{<span class="hljs-string">'Runoob'</span>: <span class="hljs-number">1</span>, <span class="hljs-string">'Google'</span>: <span class="hljs-number">2</span>, <span class="hljs-string">'Taobao'</span>: <span class="hljs-number">3</span>}<br><span class="hljs-meta">&gt;&gt;&gt; </span>{x: x**<span class="hljs-number">2</span> <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> (<span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>)}<br>{<span class="hljs-number">2</span>: <span class="hljs-number">4</span>, <span class="hljs-number">4</span>: <span class="hljs-number">16</span>, <span class="hljs-number">6</span>: <span class="hljs-number">36</span>}<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">dict</span>(Runoob=<span class="hljs-number">1</span>, Google=<span class="hljs-number">2</span>, Taobao=<span class="hljs-number">3</span>)<br>{<span class="hljs-string">'Runoob'</span>: <span class="hljs-number">1</span>, <span class="hljs-string">'Google'</span>: <span class="hljs-number">2</span>, <span class="hljs-string">'Taobao'</span>: <span class="hljs-number">3</span>}<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="bytes-%E7%B1%BB%E5%9E%8B">bytes 类型</span></h2><p>bytes 类型通常用于处理二进制数据，创建 bytes 对象的方式有多种，最常见的方式是使用 b 前缀</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">x&nbsp;=&nbsp;b"hello"<br></code></pre></td></tr></tbody></table></figure>
+<p>此外，也可以使用 bytes() 函数将其他类型的对象转换为 bytes 类型。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">x = bytes("hello", encoding="utf-8")<br></code></pre></td></tr></tbody></table></figure>
+
+<p>bytes 类型中的元素是整数值，因此在进行比较操作时需要使用相应的整数值。</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python">x = <span class="hljs-string">b"hello"</span><br><span class="hljs-keyword">if</span> x[<span class="hljs-number">0</span>] == <span class="hljs-built_in">ord</span>(<span class="hljs-string">"h"</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">"The first element is 'h'"</span>)  <span class="hljs-comment"># 其中 ord() 函数用于将字符转换为相应的整数值。</span><br></code></pre></td></tr></tbody></table></figure>
+
+<h1><span id="%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2">数据类型转换</span></h1><h2><span id="%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2">隐式类型转换</span></h2><p>较低数据类型（整数）自动转换为较高数据类型（浮点数）</p>
+<h2><span id="%E6%98%BE%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2">显式类型转换</span></h2><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-int.html">int(x [,base])</a></td>
+<td>将x转换为一个整数</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-float.html">float(x)</a></td>
+<td>将x转换到一个浮点数</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-complex.html">complex(real [,imag])</a></td>
+<td>创建一个复数</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-str.html">str(x)</a></td>
+<td>将对象 x 转换为字符串</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python3-func-tuple.html">tuple(s)</a></td>
+<td>将序列 s 转换为一个元组</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python3-att-list-list.html">list(s)</a></td>
+<td>将序列 s 转换为一个列表</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-dict.html">dict(d)</a></td>
+<td>创建一个字典。d 必须是一个 (key, value)元组序列。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-set.html">set(s)</a></td>
+<td>转换为可变集合</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-repr.html">repr(x)</a></td>
+<td>将对象 x 转换为表达式字符串</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-eval.html">eval(str)</a></td>
+<td>用来计算在字符串中的有效Python表达式,并返回一个对象</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-frozenset.html">frozenset(s)</a></td>
+<td>转换为不可变集合</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-chr.html">chr(x)</a></td>
+<td>将一个整数转换为一个字符</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-ord.html">ord(x)</a></td>
+<td>将一个字符转换为它的整数值</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-hex.html">hex(x)</a></td>
+<td>将一个整数转换为一个十六进制字符串</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python-func-oct.html">oct(x)</a></td>
+<td>将一个整数转换为一个八进制字符串</td>
+</tr>
+</tbody></table>
+<h1><span id="%E8%BF%90%E7%AE%97%E7%AC%A6">运算符</span></h1><h2><span id="%E6%B5%B7%E8%B1%A1%E8%BF%90%E7%AE%97%E7%AC%A6%E5%90%8C%E6%97%B6%E8%BF%9B%E8%A1%8C%E8%B5%8B%E5%80%BC%E5%92%8C%E8%BF%94%E5%9B%9E%E8%B5%8B%E5%80%BC%E7%9A%84%E5%80%BC">海象运算符：同时进行赋值和返回赋值的值</span></h2><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs plaintext"># 传统写法  <br>n&nbsp;=&nbsp;10  <br>if&nbsp;n&nbsp;&gt;&nbsp;5:  <br>&nbsp; &nbsp;&nbsp;print(n)  <br>  <br># 使用海象运算符  <br>if&nbsp;(n :=&nbsp;10)&nbsp;&gt;&nbsp;5:  <br>&nbsp; &nbsp;&nbsp;print(n)<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6">位运算符</span></h2><p>a = 0011 1100（60）<br>b = 0000 1101（13）</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>实例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&amp;</td>
+<td>按位与运算符：参与运算的两个值,如果两个相应位都为1,则该位的结果为1,否则为0</td>
+<td>(a &amp; b) 输出结果 12 ，二进制解释： 0000 1100</td>
+</tr>
+<tr>
+<td>|</td>
+<td>按位或运算符：只要对应的二个二进位有一个为1时，结果位就为1。</td>
+<td>(a | b) 输出结果 61 ，二进制解释： 0011 1101</td>
+</tr>
+<tr>
+<td>^</td>
+<td>按位异或运算符：当两对应的二进位相异时，结果为1</td>
+<td>(a ^ b) 输出结果 49 ，二进制解释： 0011 0001</td>
+</tr>
+<tr>
+<td>~</td>
+<td>按位取反运算符：对数据的每个二进制位取反,即把1变为0,把0变为1。~x&nbsp;类似于&nbsp;-x-1</td>
+<td>(~a ) 输出结果 -61 ，二进制解释： 1100 0011， 在一个有符号二进制数的补码形式。</td>
+</tr>
+</tbody></table>
+<h2><span id="%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6">逻辑运算符</span></h2><table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>逻辑表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>and</td>
+<td>x and y</td>
+<td>如果 x 为 False， 返回 x 的值</td>
+</tr>
+<tr>
+<td>or</td>
+<td>x or y</td>
+<td>如果 x 是 True，返回 x 的值</td>
+</tr>
+<tr>
+<td>not</td>
+<td>not x</td>
+<td>如果 x 为 True，返回 False</td>
+</tr>
+</tbody></table>
+<h2><span id="%E6%88%90%E5%91%98%E8%BF%90%E7%AE%97%E7%AC%A6">成员运算符</span></h2><p>in：如果在指定的序列中找到值返回 True，否则返回 False。</p>
+<h2><span id="%E8%BA%AB%E4%BB%BD%E8%BF%90%E7%AE%97%E7%AC%A6">身份运算符</span></h2><p>x is y, 类似&nbsp;id(x) == id(y)&nbsp;, 如果引用的是同一个对象则返回 True<br>%% id() 函数用于获取对象内存地址。%%</p>
+<h1><span id="python3-%E6%95%B0%E5%AD%97number">Python3 数字(Number)</span></h1><p>在交互模式中，最后被输出的表达式结果被赋值给变量&nbsp;<code>_</code></p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>tax = <span class="hljs-number">12.5</span> / <span class="hljs-number">100</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>price = <span class="hljs-number">100.50</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>price * tax<br><span class="hljs-number">12.5625</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>price + _<br><span class="hljs-number">113.0625</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>随机数函数，举例：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python3</span><br><span class="hljs-keyword">import</span> random<br><br><span class="hljs-built_in">print</span> (<span class="hljs-string">"从 range(100) 返回一个随机数 : "</span>,random.choice(<span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>)))<br><span class="hljs-built_in">print</span> (<span class="hljs-string">"从列表中 [1, 2, 3, 5, 9]) 返回一个随机元素 : "</span>, random.choice([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">9</span>]))<br><span class="hljs-built_in">print</span> (<span class="hljs-string">"从字符串中 'Runoob' 返回一个随机字符 : "</span>, random.choice(<span class="hljs-string">'Runoob'</span>))<br></code></pre></td></tr></tbody></table></figure>
+<p>还有：<br><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python3-func-number-random.html">random()</a>：随机生成下一个实数，它在<code>[0,1)</code>范围内。</p>
+<p>本篇中还有很多数学函数，三角函数，数学常量如π和e</p>
+<h1><span id="python3%C2%A0%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%9C%89%E5%BA%8F">Python3&nbsp;字符串（不可变，有序）</span></h1><p><a target="_blank" rel="noopener" href="https://www.runoob.com/python3/python3-string.html">Python3 字符串 | 菜鸟教程</a></p>
+<h2><span id="%E8%AE%BF%E9%97%AE%E5%AD%97%E7%AC%A6%E4%B8%B2">访问字符串</span></h2><p>用索引，如<code>str[:]</code>（左闭右开）</p>
+<h2><span id="%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BF%90%E7%AE%97%E7%AC%A6">字符串运算符</span></h2><p>如+</p>
+<h2><span id="%E8%BD%AC%E4%B9%89%E5%AD%97%E7%AC%A6">转义字符</span></h2><p>如<code>\a</code>（交互式编程执行后电脑会有响铃）</p>
+<h2><span id="%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A0%BC%E5%BC%8F%E5%8C%96">字符串格式化</span></h2><p>举例：将一个值插入到一个有字符串格式符 %s 的字符串中</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">#!/usr/bin/python3<br> <br>print ("我叫 %s 今年 %d 岁!" % ('小明', 10))<br></code></pre></td></tr></tbody></table></figure>
+
+<p>包括：格式化符号和格式化操作符辅助指令</p>
+<h2><span id="%E4%B8%89%E5%BC%95%E5%8F%B7">三引号</span></h2><p>三引号允许一个字符串跨多行，且字符串中可以包含各种特殊字符</p>
+<h2><span id="f-string">f-string</span></h2><p>%%比上面字符串格式化更好用，python3.6+%%</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>name = <span class="hljs-string">'Runoob'</span><br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-string">'Hello %s'</span> % name  <span class="hljs-comment"># 还要写%s</span><br><span class="hljs-string">'Hello Runoob'</span><br><br>&gt;&gt;&gt;&nbsp;name&nbsp;=&nbsp;<span class="hljs-string">'Runoob'</span>  <br>&gt;&gt;&gt;&nbsp;<span class="hljs-string">f'Hello <span class="hljs-subst">{name}</span>'</span>&nbsp;&nbsp;<span class="hljs-comment"># 直接替换变量  </span><br><span class="hljs-string">'Hello Runoob'</span><br></code></pre></td></tr></tbody></table></figure>
+<p>Python 3.8 的版本中可以使用&nbsp;=&nbsp;符号来拼接运算表达式与结果</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span>x = <span class="hljs-number">1</span><br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">print</span>(<span class="hljs-string">f'<span class="hljs-subst">{x+<span class="hljs-number">1</span>}</span>'</span>)   <span class="hljs-comment"># Python 3.6</span><br><span class="hljs-number">2</span><br><br><span class="hljs-meta">&gt;&gt;&gt; </span>x = <span class="hljs-number">1</span><br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">print</span>(<span class="hljs-string">f'<span class="hljs-subst">{x+<span class="hljs-number">1</span>=}</span>'</span>)   <span class="hljs-comment"># Python 3.8</span><br>x+<span class="hljs-number">1</span>=<span class="hljs-number">2</span><br></code></pre></td></tr></tbody></table></figure>
+<h2><span id="%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0str%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95">字符串内建函数（str对象的方法）</span></h2><h3><span id="%E8%AF%AD%E6%B3%95">语法：</span></h3><p>一般都是==点表示法==，如：<code>str.capitalize()</code>，否则有标注</p>
+<h3><span id="%E5%8A%9F%E8%83%BD%E6%83%B3%E6%83%B3%E8%AF%AD%E6%B3%95%E6%A1%86%E6%9E%B6%E8%BE%93%E5%85%A5%E5%8F%82%E6%95%B0%E8%BE%93%E5%87%BA%E7%B1%BB%E5%9E%8B">功能：想想（语法框架，输入参数，输出类型）</span></h3><p>大小写转化，设定宽度，统计出现次数，编码解码，tab转space，查找，判断字符构成（is前缀的函数），合并多个字符串 <code>str.join(sequence)</code>，统计长度，左右对齐，截断边缘指定字符，返回最大小字母，替换 <code>replace(old, new [, max])</code><br>[[字符串内建函数]]</p>
+<h1><span id="python3%C2%A0%E5%88%97%E8%A1%A8%E5%8F%AF%E5%8F%98%E6%9C%89%E5%BA%8F">Python3&nbsp;列表（可变，有序）</span></h1><table>
+<thead>
+<tr>
+<th>Python 表达式</th>
+<th>结果</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3 in [1, 2, 3]</td>
+<td>True</td>
+<td>元素是否存在于列表中</td>
+</tr>
+<tr>
+<td>for x in [1, 2, 3]: print(x, end=” “)</td>
+<td>1 2 3</td>
+<td>迭代</td>
+</tr>
+<tr>
+<td>功能：</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>替换或添加<code>append()</code>或删除<code>del</code>列表项，列表访问与拼接（使用<code>+=</code>等）</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1><span id="python3%C2%A0%E5%85%83%E7%BB%84%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%9C%89%E5%BA%8F">Python3&nbsp;元组（不可变，有序）</span></h1><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">tup1 = ()  # 创建空元组<br>tup2&nbsp;=&nbsp;(50,)  # 仅含一个元素<br></code></pre></td></tr></tbody></table></figure>
+<p>关于元组是不可变的</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">&gt;&gt;&gt;&nbsp;tup&nbsp;=&nbsp;('r',&nbsp;'u',&nbsp;'n',&nbsp;'o',&nbsp;'o',&nbsp;'b')<br>&gt;&gt;&gt;&nbsp;id(tup)&nbsp;&nbsp; &nbsp;&nbsp;# 查看内存地址  <br>4440687904  <br>&gt;&gt;&gt;&nbsp;tup&nbsp;=&nbsp;(1,2,3)  <br>&gt;&gt;&gt;&nbsp;id(tup)  <br>4441088800&nbsp;&nbsp; &nbsp;# 内存地址不一样了<br></code></pre></td></tr></tbody></table></figure>
+
+<h1><span id="python3%C2%A0%E5%AD%97%E5%85%B8%E5%8F%AF%E5%8F%98%E6%97%A0%E5%BA%8F">Python3&nbsp;字典（可变，无序）</span></h1><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">d = {key1 : value1, key2 : value2, key3 : value3 }<br></code></pre></td></tr></tbody></table></figure>
+<p>无序，所以，访问时要以<code>d['key1']</code>访问<br>无序，所以，更新键值对要以<code>d['key1']='value1'</code>更新（新建/修改）</p>
+<h2><span id="%E5%AD%97%E5%85%B8%E9%94%AE%E7%9A%84%E7%89%B9%E6%80%A7">字典键的特性</span></h2><ol>
+<li>不允许同一个键出现两次，否则，后一个值会被记住</li>
+<li>键必须不可变，所以可以用数字，字符串或元组充当，而用列表就不行</li>
+</ol>
+<h1><span id="python3-%E9%9B%86%E5%90%88%E5%8F%AF%E5%8F%98%E6%97%A0%E5%BA%8F%E4%B8%8D%E9%87%8D%E5%A4%8D">Python3 集合（可变，无序，不重复）</span></h1><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">set1 = {1, 2, 3, 4}            # 直接使用大括号创建集合<br>set2 = set([4, 5, 6, 7])      # 使用 set() 函数从列表创建集合<br></code></pre></td></tr></tbody></table></figure>
+<p>注意：创建一个空集合必须用&nbsp;set()&nbsp;而不是&nbsp;{ }，因为&nbsp;{ }&nbsp;是用来创建一个空字典。</p>
+<p>集合可进行计算<code>-&amp;|^</code><br>%%^指不同时包含于a和b的元素%%</p>
+<hr>
+<h1><span id="%E6%93%8D%E4%BD%9C%E6%8A%80%E5%B7%A7">操作技巧</span></h1><h2><span id="%E5%8A%9F%E8%83%BD%E5%8F%8A%E4%BD%BF%E7%94%A8%E8%8C%83%E5%9B%B4">功能及使用范围</span></h2><p>%%对Python中的字符串s，列表l，元组t，字典d，集合e进行操作的内建函数，是不是有长得类似且有类似的功能？请为我归纳这些内建函数一般都会有哪些功能？%%</p>
+<table>
+<thead>
+<tr>
+<th>功能类别</th>
+<th>典型函数/方法</th>
+<th>适用结构</th>
+<th>说明</th>
+<th>其他序列</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>长度与最值</strong></td>
+<td><code>len()</code>、<code>max()</code>、<code>min()</code>、<code>sum()</code></td>
+<td>全部序列（字符串、列表、元组）<br>集合、字典的键</td>
+<td><code>len()</code> 返回元素个数；<code>max/min</code> 返回最大最小值；<code>sum</code> 只对数字序列有效</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>查找与统计</strong></td>
+<td><code>index()</code>、<code>count()</code>、<code>find()</code>、<code>in</code></td>
+<td>字符串、列表、元组</td>
+<td><code>index/count</code> 返回首次出现位置或频次；<code>find</code> 仅字符串有，找不到返回 -1；<code>in</code> 通用成员测试</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>增删改</strong></td>
+<td><code>append()</code>、<code>insert()</code>、<code>pop()</code>、<code>remove()</code>、<code>clear()</code>、<code>add()</code>、<code>discard()</code>、<code>remove()</code>（集合）</td>
+<td>列表、集合、字典</td>
+<td>列表可增删任意位置；集合用 <code>add/discard/remove</code>；字典用 <code>pop(key)</code>、<code>del d[key]</code></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>遍历与迭代</strong></td>
+<td><code>keys()</code>、<code>values()</code>、<code>items()</code>、<code>iter()</code></td>
+<td>字典、集合</td>
+<td>字典可分别迭代键、值、键值对；集合直接迭代元素</td>
+<td>s用for…in..</td>
+</tr>
+<tr>
+<td><strong>排序与反转</strong></td>
+<td><code>sorted()</code>、<code>reversed()</code>、<code>sort()</code>、<code>reverse()</code></td>
+<td>列表、字符串、元组（前两者）</td>
+<td><code>sorted/reversed</code> 返回新对象；<code>sort/reverse</code> 原地修改（仅列表）</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>拆分与合并</strong></td>
+<td><code>split()</code>、<code>join()</code>、<code>extend()</code>、<code>+</code>、<code>update()</code></td>
+<td>字符串、列表、元组、字典</td>
+<td>字符串用 <code>split/join</code>；列表用 <code>extend/+</code>；字典用 <code>update</code> 合并</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>去重与集合运算</strong></td>
+<td><code>set()</code>、<code>union()</code>、<code>intersection(&amp;)</code>、<code>difference(-)</code>、<code>symmetric_difference(^)</code></td>
+<td>集合</td>
+<td>直接构造集合可去重；支持数学运算</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>快速对照示例  </p>
+<ul>
+<li><code>len("abc") == len([1,2,3]) == len({1,2,3}) == 3</code>  </li>
+<li><code>[1,2,2].count(2) == 2</code> 与 <code>"abba".count('b') == 2</code>  </li>
+<li><code>d = {'a':1}; d.keys() == ['a']</code> 与 <code>s = {1,2}; list(s) == [1,2]</code></li>
+</ul>
+<p>一句话总结：Python 用统一的函数名（如 <code>len</code>、<code>in</code>、<code>sorted</code>）覆盖了大多数结构；可变类型（列表、集合、字典）额外提供增删改方法；不可变类型（字符串、元组）则只保留查询与转换功能。</p>
+<hr>
+<h2><span id="%E5%8A%9F%E8%83%BD%E5%85%B1%E6%80%A7">功能共性</span></h2><p>尽管具体方法名和行为有差异，但它们普遍支持以下几类操作：</p>
+<ol>
+<li><strong>长度查询</strong> → <code>len()</code></li>
+<li><strong>成员检测</strong> → <code>in</code></li>
+<li><strong>遍历/迭代</strong> → <code>for x in obj</code></li>
+<li><strong>创建副本</strong> → <code>.copy()</code>（可变类型）</li>
+<li><strong>清空内容</strong> → <code>.clear()</code>（可变类型）</li>
+<li><strong>转换为其他类型</strong> → <code>list(s)</code>, <code>set(l)</code>, <code>tuple(d.keys())</code> 等</li>
+<li><strong>聚合操作</strong> → <code>max/min/sum/sorted/any/all/count</code></li>
+<li><strong>索引/切片访问</strong>（仅限有序容器：str/list/tuple）</li>
+</ol>
+<blockquote>
+<p>⚠️ 注意：<strong>dict 和 set 是无序的（Python 3.7+ dict 有序是实现细节，但逻辑上仍视为映射而非序列）</strong>，因此不支持索引、切片、<code>reversed()</code> 等依赖顺序的操作。</p>
+</blockquote>
+<hr>
+<h2><span id="%E8%AE%B0%E5%BF%86%E6%8A%80%E5%B7%A7">记忆技巧</span></h2><ul>
+<li><p><strong>可变 vs 不可变</strong>：  </p>
+<ul>
+<li>可变：list, dict, set → 有 <code>.append</code>, <code>.add</code>, <code>.update</code>, <code>.clear</code> 等修改方法  </li>
+<li>不可变：str, tuple → 所有“修改”操作都返回新对象</li>
+</ul>
+</li>
+<li><p><strong>有序 vs 无序</strong>：  </p>
+<ul>
+<li>有序：str, list, tuple → 支持索引、切片、<code>reversed</code>  </li>
+<li>无序：set, dict（逻辑上）→ 不支持索引</li>
+</ul>
+</li>
+<li><p><strong>通用函数优先用 <code>len()</code>, <code>in</code>, <code>sorted()</code> 等</strong>，而不是依赖特定方法</p>
+</li>
+</ul>
+<h1><span id="python3-%E6%9D%A1%E4%BB%B6%E6%8E%A7%E5%88%B6">Python3 条件控制</span></h1><ol>
+<li>if-elif-else</li>
+<li>Python 3.10 增加了&nbsp;match…case&nbsp;的条件判断<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">match</span> subject:<br>    <span class="hljs-keyword">case</span> &lt;pattern_1&gt;:<br>        &lt;action_1&gt;<br>    <span class="hljs-keyword">case</span> &lt;pattern_2&gt;:<br>        &lt;action_2&gt;<br>    <span class="hljs-keyword">case</span> &lt;pattern_3&gt;:<br>        &lt;action_3&gt;<br>    <span class="hljs-keyword">case</span> _:<br>        &lt;action_wildcard&gt;<br>    <span class="hljs-comment"># 一个 case 也可以设置多个匹配条件，条件使用&nbsp;｜&nbsp;隔开，例如：</span><br>    <span class="hljs-keyword">case</span> <span class="hljs-number">401</span>|<span class="hljs-number">403</span>|<span class="hljs-number">404</span>:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">"Not allowed"</span><br></code></pre></td></tr></tbody></table></figure></li>
+</ol>
+<h1><span id="python3-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5">Python3 循环语句</span></h1><h2><span id="whileelse%E8%AF%AD%E5%8F%A5">while…[else…]语句</span></h2><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">while (condition)：<br>    (statements)……<br>else:  # 可附加else语句<br>    &lt;additional_statement&gt;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以使用&nbsp;<strong>CTRL+C</strong>&nbsp;来退出当前的无限循环(condition)</p>
+<h2><span id="for%E8%AF%AD%E5%8F%A5">for语句</span></h2><p>Python for 循环可以遍历任何可迭代对象</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">for &lt;variable&gt; in &lt;sequence&gt;: # 整数范围值可以配合 range() 函数使用<br>    &lt;statements&gt;<br>else:<br>    &lt;statements&gt;  # 如果在循环过程中遇到了 break 语句，则会中断循环，此时不会执行 else 子句<br></code></pre></td></tr></tbody></table></figure>
+<h2><span id="pass-%E8%AF%AD%E5%8F%A5">pass 语句</span></h2><p>Python pass是空语句，是为了保持程序结构的完整性。</p>
+<h3><span id="%E4%BE%8B%E9%A2%98%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97">例题：斐波那契数列</span></h3><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python3</span><br> <br><span class="hljs-comment"># Fibonacci series: 斐波纳契数列</span><br><span class="hljs-comment"># 两个元素的总和确定了下一个数</span><br>a, b = <span class="hljs-number">0</span>, <span class="hljs-number">1</span><br><span class="hljs-keyword">while</span> b &lt; <span class="hljs-number">1000</span>:<br>    <span class="hljs-built_in">print</span>(b, end=<span class="hljs-string">','</span>)<br>    a, b = b, a+b<br></code></pre></td></tr></tbody></table></figure>
+
+<p>输出：1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,</p>
+</body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/26/python%E8%AF%AD%E6%B3%95%EF%BC%88%E4%B8%8A%EF%BC%89/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;python语法（上）&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;python语法（上）&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/python%E8%8F%9C%E9%B8%9F/" rel="tag">python菜鸟</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

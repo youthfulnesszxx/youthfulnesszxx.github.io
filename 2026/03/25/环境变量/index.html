@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> 关于本人 -  爆米花苞の小窝</title>
+		<title> 环境变量 -  爆米花苞の小窝</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -123,7 +123,7 @@
 		</a>
 		
 		<a
-			class="kira-list-item mdui-ripple true"
+			class="kira-list-item mdui-ripple false"
 			href="/about.html"
 			title="关于本人"
 		>
@@ -326,38 +326,53 @@
 <div class="kira-post">
 	<article>
 		
-		<div
-			class="kira-post-cover"
-			style="padding-bottom: '56.25%'"
-		>
+		<div class="kira-post-cover">
 			<img
-				data-src="/images/background.jpg"
+				data-src="/images/20260112173925532.webp"
 				data-sizes="auto"
-				alt="关于本人"
+				alt="环境变量"
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1>关于本人</h1>
+			<h1>环境变量</h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
-			<a><i class="kirafont icon-edit-fill"></i>29 字</a>
+			<a><i class="kirafont icon-calendar-fill"></i>2026年03月25日</a>
+			<a><i class="kirafont icon-edit-fill"></i>246 字</a>
 			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
 		</div>
-		<html><head></head><body><h2><span id="%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D">自我介绍</span></h2><p>一枚网安小白，喜欢探索未知领域，爱自学，不喜欢上学校的课</p>
+		<html><head></head><body><blockquote>
+<p>[!note]<br>非环境变量：切换到此工具所在目录才能在终端中使用其命令<br>环境变量：能在任意目录下终端中使用此工具命令</p>
+</blockquote>
+<p>Windows 查看环境变量</p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">echo</span> %PATH%<br><span class="hljs-built_in">echo</span> %PATH:;= &amp; <span class="hljs-built_in">echo</span>.%  <span class="hljs-comment"># 换行查看</span><br></code></pre></td></tr></tbody></table></figure>
+
+<h1><span id="%E4%B8%8D%E5%90%8C%E7%94%A8%E9%80%94%E7%9A%84%E5%8F%98%E9%87%8F%E5%90%8D"><strong>不同用途的变量名</strong></span></h1><h2><span id="%E7%B3%BB%E7%BB%9F%E4%B8%93%E7%94%A8"><strong>系统专用</strong>：</span></h2><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">ComSpec = C:\Windows\system32\cmd.exe    <span class="hljs-comment"># 命令行程序位置</span><br>NUMBER_OF_PROCESSORS = 8                  <span class="hljs-comment"># CPU核心数</span><br>OS = Windows_NT                           <span class="hljs-comment"># 操作系统类型</span><br>PATHEXT = .COM;.EXE;.BAT                   <span class="hljs-comment"># 可执行文件扩展名</span><br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E7%94%A8%E6%88%B7%E4%B8%93%E7%94%A8"><strong>用户专用</strong>：</span></h2><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">USERNAME = 张三                           <span class="hljs-comment"># 你的用户名</span><br>USERPROFILE = C:\Users\张三                <span class="hljs-comment"># 你的个人文件夹</span><br>APPDATA = C:\Users\张三\AppData\Roaming    <span class="hljs-comment"># 你的应用程序数据</span><br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%B8%93%E7%94%A8"><strong>应用程序专用</strong>：</span></h2><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">JAVA_HOME = C:\Program Files\Java\jdk1.8.0    <span class="hljs-comment"># Java专用</span><br>ANDROID_HOME = D:\Android\Sdk                   <span class="hljs-comment"># Android开发专用</span><br>GOROOT = C:\Go                                   <span class="hljs-comment"># Go语言专用</span><br>M2_HOME = D:\apache-maven                         <span class="hljs-comment"># Maven专用</span><br></code></pre></td></tr></tbody></table></figure>
+
+<h1><span id="%E4%BC%98%E5%85%88%E7%BA%A7%E8%A7%84%E5%88%99"><strong>优先级规则</strong></span></h1><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 系统Path有Python 3.9</span><br>C:\Program Files\Python39<br><span class="hljs-comment"># 用户Path有Python 3.11（测试版）</span><br>D:\Python311<br><span class="hljs-comment"># 实际使用时，谁在前面谁优先</span><br><span class="hljs-comment"># 可以通过调整顺序来控制用哪个版本</span><br></code></pre></td></tr></tbody></table></figure>
 </body></html>
 	</article>
 
 	 
     <div class="kira-post-copyright">
         <strong>本文作者：</strong>burpow<br>
-        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/about.html" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;about.html" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;about.html</a><br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/25/%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;25&#x2F;环境变量&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;25&#x2F;环境变量&#x2F;</a><br>
         
             <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
         
     </div>
 
   
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
 	<div class="kira-post-meta kira-rainbow">
 		
 		

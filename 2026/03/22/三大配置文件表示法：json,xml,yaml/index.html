@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> 关于本人 -  爆米花苞の小窝</title>
+		<title> 三大配置文件表示法：json,xml,yaml -  爆米花苞の小窝</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -123,7 +123,7 @@
 		</a>
 		
 		<a
-			class="kira-list-item mdui-ripple true"
+			class="kira-list-item mdui-ripple false"
 			href="/about.html"
 			title="关于本人"
 		>
@@ -326,38 +326,79 @@
 <div class="kira-post">
 	<article>
 		
-		<div
-			class="kira-post-cover"
-			style="padding-bottom: '56.25%'"
-		>
+		<div class="kira-post-cover">
 			<img
-				data-src="/images/background.jpg"
+				data-src="/images/20260311231405789.webp"
 				data-sizes="auto"
-				alt="关于本人"
+				alt="三大配置文件表示法：json,xml,yaml"
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1>关于本人</h1>
+			<h1>三大配置文件表示法：json,xml,yaml</h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
-			<a><i class="kirafont icon-edit-fill"></i>29 字</a>
+			<a><i class="kirafont icon-calendar-fill"></i>2026年03月22日</a>
+			<a><i class="kirafont icon-edit-fill"></i>284 字</a>
 			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
 		</div>
-		<html><head></head><body><h2><span id="%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D">自我介绍</span></h2><p>一枚网安小白，喜欢探索未知领域，爱自学，不喜欢上学校的课</p>
+		<html><head></head><body><h1><span id="json-%E8%A1%A8%E7%A4%BA%E6%B3%95%E7%B1%BB%E4%BC%BC-python">JSON 表示法（类似 python）</span></h1><img src="/images/三大配置文件表示法：json,xml,yaml/Pasted image 20260120154929.png">
+
+<h2><span id="json-%E8%A7%A3%E6%9E%90jsonparse">JSON 解析：JSON.parse()</span></h2><p>例如我们从服务器接收了以下数据：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">{ "name":"runoob", "alexa":10000, "site":"www.runoob.com" }<br></code></pre></td></tr></tbody></table></figure>
+
+<p>我们使用 JSON.parse() 方法处理以上数据，将其转换为 JavaScript 对象：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">var obj = JSON.parse('{ "name":"runoob", "alexa":10000, "site":"www.runoob.com" }');<br></code></pre></td></tr></tbody></table></figure>
+
+<h2><span id="javascript-%E5%AF%B9%E8%B1%A1%E8%BD%AC%E6%8D%A2jsonstringify">JavaScript 对象转换：JSON.stringify()</span></h2><p>例如我们向服务器发送以下数据：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">var obj = { "name":"runoob", "alexa":10000, "site":"www.runoob.com"};<br></code></pre></td></tr></tbody></table></figure>
+
+<p>我们使用 JSON.stringify() 方法处理以上数据，将其转换为字符串：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">var myJSON = JSON.stringify(obj);<br></code></pre></td></tr></tbody></table></figure>
+
+<p><img data-fancybox="gallery" data-sizes="auto" data-src="https://www.runoob.com/images/lamp2.gif" alt="lamp" class="lazyload">eval() 函数可编译并执行任何 JavaScript 代码。这隐藏了一个潜在的安全问题。<br>使用 JSON 解析器将 JSON 转换为 JavaScript 对象是更安全的做法。JSON 解析器只能识别 JSON 文本（严格），而不会编译脚本。</p>
+<h2><span id="php-json">PHP JSON</span></h2><p>PHP json_encode() 用于对变量进行 JSON 编码，该函数如果执行成功返回 JSON 数据，否则返回 FALSE 。</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>json_encode</td>
+<td>对变量进行 JSON 编码</td>
+</tr>
+<tr>
+<td>json_decode</td>
+<td>对 JSON 格式的字符串进行解码，转换为 PHP 变量</td>
+</tr>
+<tr>
+<td>json_last_error</td>
+<td>返回最后发生的错误</td>
+</tr>
+</tbody></table>
+<h1><span id="xml%E6%A0%87%E7%AD%BE%E5%B5%8C%E5%A5%97%E7%B1%BB%E4%BC%BC-html">XML：标签嵌套（类似 HTML）</span></h1><img src="/images/三大配置文件表示法：json,xml,yaml/Pasted image 20260121112314.png">
+
+<h1><span id="yaml%E7%BC%A9%E8%BF%9B%E7%B1%BB%E4%BC%BC-python">YAML：缩进（类似 python）</span></h1><img src="/images/三大配置文件表示法：json,xml,yaml/Pasted image 20260121111455.png">
 </body></html>
 	</article>
 
 	 
     <div class="kira-post-copyright">
         <strong>本文作者：</strong>burpow<br>
-        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/about.html" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;about.html" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;about.html</a><br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/22/%E4%B8%89%E5%A4%A7%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%A1%A8%E7%A4%BA%E6%B3%95%EF%BC%9Ajson,xml,yaml/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;22&#x2F;三大配置文件表示法：json,xml,yaml&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;22&#x2F;三大配置文件表示法：json,xml,yaml&#x2F;</a><br>
         
             <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
         
     </div>
 
   
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
 	<div class="kira-post-meta kira-rainbow">
 		
 		

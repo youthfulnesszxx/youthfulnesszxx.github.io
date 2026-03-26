@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> 我的朋友 -  爆米花苞の小窝</title>
+		<title> Python3 自带模块 -  爆米花苞の小窝</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -139,7 +139,7 @@
 		</a>
 		
 		<a
-			class="kira-list-item mdui-ripple true"
+			class="kira-list-item mdui-ripple false"
 			href="/friends.html"
 			title="我的朋友"
 		>
@@ -270,19 +270,135 @@
 			<div class="kira-content">
 				<div id="kira-top-header"></div>
 				<div class="kira-main-content">
-					<div class="kira-post">
-	<article class="kira-friend">
-		<html><head></head><body><h2><span id="%E6%88%91%E7%9A%84%E6%9C%8B%E5%8F%8B">我的朋友</span></h2></body></html>
-        
+					
+<link rel="stylesheet" href="/css/kira-image.css">
 
-	</article>
-	
-        <div class="kira-post-footer">
-            
 
-            
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
         </div>
-    
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/20260119172721197.webp"
+				data-sizes="auto"
+				alt="Python3 自带模块"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>Python3 自带模块</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
+			<a><i class="kirafont icon-edit-fill"></i>102 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="random%E6%A8%A1%E5%9D%97">random模块</span></h1><table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>random()</td>
+<td>生成0~1随机小数</td>
+</tr>
+<tr>
+<td>randint(num1,num2)</td>
+<td>生成包含端点的整数</td>
+</tr>
+<tr>
+<td>choice(seq)</td>
+<td>序列内随机选一个元素</td>
+</tr>
+<tr>
+<td>shuffle(seq)</td>
+<td>对序列随机排序</td>
+</tr>
+</tbody></table>
+<h1><span id="calendar%E6%A8%A1%E5%9D%97">calendar模块</span></h1><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 引入日历模块</span><br><span class="hljs-keyword">import</span> calendar<br> <br><span class="hljs-comment"># 输入指定年月</span><br>yy = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">"输入年份: "</span>))<br>mm = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">"输入月份: "</span>))<br> <br><span class="hljs-comment"># 显示日历,判断本月天数</span><br><span class="hljs-built_in">print</span>(calendar.month(yy,mm))<br><span class="hljs-built_in">print</span>(calendar.monthrange(<span class="hljs-number">2016</span>,<span class="hljs-number">9</span>))<br></code></pre></td></tr></tbody></table></figure>
+
+<h1><span id="re">re</span></h1></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/26/Python3%20%E8%87%AA%E5%B8%A6%E6%A8%A1%E5%9D%97/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;Python3 自带模块&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;Python3 自带模块&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/python%E8%8F%9C%E9%B8%9F/" rel="tag">python菜鸟</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
 </div>
 
 				</div>
