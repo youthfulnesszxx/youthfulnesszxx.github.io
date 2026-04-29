@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> 电脑快捷键 -  爆米花苞の小窝</title>
+		<title> npm基础命令 -  爆米花苞の小窝</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -328,30 +328,80 @@
 		
 		<div class="kira-post-cover">
 			<img
-				data-src="/images/20260304152807563.webp"
+				data-src="/images/cover/2.jpg"
 				data-sizes="auto"
-				alt="电脑快捷键"
+				alt="npm基础命令"
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1>电脑快捷键</h1>
+			<h1>npm基础命令</h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
-			<a><i class="kirafont icon-edit-fill"></i>57 字</a>
+			<a><i class="kirafont icon-calendar-fill"></i>2026年04月29日</a>
+			<a><i class="kirafont icon-edit-fill"></i>275 字</a>
 			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
 		</div>
-		<html><head></head><body><p><code>win+s</code>搜索<br><code>win+h</code>语音输入<br><code>win+.</code>emoji 输入（Unicode 字符）<br><code>alt+tab</code>切换窗口<br><code>win+shift+s</code>截取部分屏幕<br><code>win+prtSC</code>截屏并保存到“屏幕截图”<br><code>win+v</code>调出剪贴板</p>
-<p>vscode<br><code>ctrl+f</code>查找<br><code>ctrl+h</code>替换</p>
-<p>edge，obsidian 略</p>
-<img src="\images\python菜鸟\电脑快捷键.jpg">
+		<html><head></head><body><p>npm 安装 Node.js 模块语法格式如下：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">$ npm install &lt;Module Name&gt; [-g] #本地or全局安装<br></code></pre></td></tr></tbody></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>本地安装</th>
+<th>全局安装</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>安装范围</strong></td>
+<td>仅在当前项目中可用</td>
+<td>在系统的全局环境中可用</td>
+</tr>
+<tr>
+<td><strong>命令使用</strong></td>
+<td><code>npm install package-name</code></td>
+<td><code>npm install -g package-name</code></td>
+</tr>
+<tr>
+<td><strong>安装位置</strong></td>
+<td><code>node_modules</code>&nbsp; 目录</td>
+<td>系统全局目录（依 OS 而异）</td>
+</tr>
+<tr>
+<td><strong>使用场景</strong></td>
+<td>项目依赖（库、框架）</td>
+<td>CLI 工具、项目生成器</td>
+</tr>
+<tr>
+<td><strong>访问方式</strong></td>
+<td>通过 &nbsp;<code>require()</code>&nbsp; 或 &nbsp;<code>import</code>&nbsp; 使用</td>
+<td>在命令行中直接使用</td>
+</tr>
+<tr>
+<td><strong>依赖声明</strong></td>
+<td>在 &nbsp;<code>package.json</code>&nbsp; 中记录</td>
+<td>不在 &nbsp;<code>package.json</code>&nbsp; 中记录</td>
+</tr>
+<tr>
+<td><strong>版本控制</strong></td>
+<td>不同项目中可用不同版本</td>
+<td>系统中只保留一个版本</td>
+</tr>
+<tr>
+<td><strong>权限问题</strong></td>
+<td>无需特殊权限</td>
+<td>可能需要管理员权限</td>
+</tr>
+</tbody></table>
+<p>全局目录依 OS 而异：通常是 &nbsp;<code>/usr/local/bin</code>（在 Unix-like 系统上）或 &nbsp;<code>%AppData%\npm</code>（在 Windows 上）</p>
+<h3><span id="%E6%9F%A5%E7%9C%8B%E5%AE%89%E8%A3%85%E4%BF%A1%E6%81%AF">查看安装信息</span></h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">$ npm list -g<br><br>├─┬ cnpm@4.3.2<br>│ ├── auto-correct@1.0.0<br>│ ├── bagpipe@0.3.5<br>│ ├── colors@1.1.2<br>│ ├─┬ commander@2.9.0<br>│ │ └── graceful-readlink@1.0.1<br>│ ├─┬ cross-spawn@0.2.9<br>│ │ └── lru-cache@2.7.3<br>……<br></code></pre></td></tr></tbody></table></figure>
 </body></html>
 	</article>
 
 	 
     <div class="kira-post-copyright">
         <strong>本文作者：</strong>burpow<br>
-        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/26/%E7%94%B5%E8%84%91%E5%BF%AB%E6%8D%B7%E9%94%AE/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;电脑快捷键&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;电脑快捷键&#x2F;</a><br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/04/29/npm%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;04&#x2F;29&#x2F;npm基础命令&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;04&#x2F;29&#x2F;npm基础命令&#x2F;</a><br>
         
             <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
         
@@ -366,8 +416,6 @@
 	
 	<div class="kira-post-meta kira-rainbow">
 		
-		
-			<a class="kirafont icon-tag-fill -none-link" href="/tags/python%E8%8F%9C%E9%B8%9F/" rel="tag">python菜鸟</a>
 		
 	</div>
 	
