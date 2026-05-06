@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> CSS 选择器 -  爆米花苞の小窝</title>
+		<title> git使用示例 -  爆米花苞の小窝</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -328,49 +328,67 @@
 		
 		<div class="kira-post-cover">
 			<img
-				data-src="/images/20260119172614429.webp"
+				data-src="/images/cover/5.jpg"
 				data-sizes="auto"
-				alt="CSS 选择器"
+				alt="git使用示例"
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1>CSS 选择器</h1>
+			<h1>git使用示例</h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
-			<a><i class="kirafont icon-edit-fill"></i>350 字</a>
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月06日</a>
+			<a><i class="kirafont icon-edit-fill"></i>237 字</a>
 			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
 		</div>
-		<html><head></head><body><p><a target="_blank" rel="noopener" href="https://www.runoob.com/cssref/css-selectors.html">CSS 选择器 | 菜鸟教程</a></p>
-<h3><span id="%E5%B8%B8%E8%A7%81%E7%9A%84-css-%E9%80%89%E6%8B%A9%E5%99%A8">常见的 CSS 选择器</span></h3><p>下是一些常见的 CSS 选择器：</p>
-<p><strong>元素选择器（Element Selector）：</strong> 通过元素名称选择 HTML 元素。</p>
-<p>如下代码，<code>p</code>&nbsp;选择器将选择所有&nbsp;<strong><code>&lt;p&gt;</code></strong>&nbsp;元素:</p>
-<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">p</span> {<br>  <span class="hljs-attribute">color</span>: blue;<br>}<br></code></pre></td></tr></tbody></table></figure>
+		<html><head></head><body><ol start="0">
+<li>创建本地项目仓库</li>
+</ol>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">git <span class="hljs-built_in">clone</span> &lt;url&gt;<br></code></pre></td></tr></tbody></table></figure>
 
-<p><strong>类选择器（Class Selector）：</strong> 通过类别名称选择具有特定类别的 HTML 元素。</p>
-<p>类选择器以<code>&nbsp;.&nbsp;</code>开头，后面跟着类别名称。</p>
-<p>如下代码，<code>.highlight</code>&nbsp;选择器将选择所有具有类别为&nbsp;<strong>“highlight”</strong>&nbsp;的元素。</p>
-<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-class">.highlight</span> {<br>  <span class="hljs-attribute">background-color</span>: yellow;<br>}<br></code></pre></td></tr></tbody></table></figure>
+<pre><code>或
+</code></pre>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">git init <span class="hljs-comment"># 在任意文件夹中创建.git</span><br></code></pre></td></tr></tbody></table></figure>
 
-<p><strong>ID 选择器（ID Selector）：</strong> 通过元素的唯一标识符（ID）选择 HTML 元素。</p>
-<p>ID 选择器以&nbsp;<code>#</code>&nbsp;开头，后面跟着 ID 名称。</p>
-<p>如下代码，<code>#runoob</code>&nbsp;选择器将选择具有 ID 为&nbsp;<strong>“runoob”</strong>&nbsp;的元素。</p>
-<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-id">#runoob</span> {<br>  <span class="hljs-attribute">width</span>: <span class="hljs-number">200px</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+<p>然后<br>找到 git-bash.exe</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">D:\Python27\Tools\GitHack-master\Git\git-bash.exe<br></code></pre></td></tr></tbody></table></figure>
 
-<p><strong>属性选择器（Attribute Selector）：</strong> 通过元素的属性选择 HTML 元素。属性选择器可以根据属性名和属性值进行选择。</p>
-<p>如下代码，<code>input[type="text"]</code>&nbsp;选择器将选择所有&nbsp;<strong>type</strong>&nbsp;属性为&nbsp;<strong>“text”</strong>&nbsp;的 <code>&lt;input&gt;</code>元素。</p>
-<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">input</span><span class="hljs-selector-attr">[type=<span class="hljs-string">"text"</span>]</span> {<br>  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid gray;<br>}<br></code></pre></td></tr></tbody></table></figure>
+<p>并</p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">cd</span> C:/Users/Administrator/爆米花苞の小窝/.deploy_git/.git<br></code></pre></td></tr></tbody></table></figure>
 
-<p><strong>后代选择器（Descendant Selector）：</strong> 通过指定元素的后代关系选择 HTML 元素。</p>
-<p>后代选择器使用空格分隔元素名称。</p>
-<p>如下代码，div p 选择器将选择所有在 <code>&lt;div&gt; </code>元素内的 <code>&lt;p&gt;</code> 元素。</p>
-<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">div</span> <span class="hljs-selector-tag">p</span> {<br>  <span class="hljs-attribute">font-weight</span>: bold;<br>}<br></code></pre></td></tr></tbody></table></figure></body></html>
+<ol>
+<li>修改文件内容</li>
+<li><code>git add -m "备注"</code><br><code>git commit</code><br><code>git log [--stat]</code><br><code>git diff &lt;commit id&gt;</code></li>
+<li>回溯：<code>git reset --hard &lt;commit id&gt;</code>或<code>git checkout &lt;commit id&gt;</code></li>
+<li>分支：<code>git branch</code><br><code>git checkout -b (develop)</code><br><code>git checkout (master)</code><br>(干上执行) <code>git merge (develop)</code></li>
+</ol>
+<hr>
+<h1><span id="%E5%85%B7%E4%BD%93-git-%E6%BA%90%E4%BB%A3%E7%A0%81%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8%E8%AF%A6%E8%A7%81%E4%B8%8E-deepseek-%E5%AF%B9%E8%AF%9D">具体 git 源代码管理应用(详见与 DeepSeek 对话)</span></h1><p>AI 写好源代码（有 gitignore）</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git init # 标签U<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git add .# 标签A(添加到暂存区)<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git commit -m "备注" # 提交<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git remote add origin https://github.com/youthfullnesszxx/&lt;project&gt; # 关联远程仓库<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git remote set-url origin git@github.com:youthfulnesszxx/&lt;project&gt;.git<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git config core.sshCommand "ssh -i ~/.ssh/&lt;privatekey&gt; -o IdentitiseOnly=yes" # 指定私钥文件<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git push -u origin main # 初次提交<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">git push # 后续提交<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也可以依靠 VScode 中的源代码管理标签</p>
+</body></html>
 	</article>
 
 	 
     <div class="kira-post-copyright">
         <strong>本文作者：</strong>burpow<br>
-        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/26/CSS%20%E9%80%89%E6%8B%A9%E5%99%A8/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;CSS 选择器&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;CSS 选择器&#x2F;</a><br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/06/git/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;06&#x2F;git&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;06&#x2F;git&#x2F;</a><br>
         
             <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
         
@@ -385,8 +403,6 @@
 	
 	<div class="kira-post-meta kira-rainbow">
 		
-		
-			<a class="kirafont icon-tag-fill -none-link" href="/tags/python%E8%8F%9C%E9%B8%9F/" rel="tag">python菜鸟</a>
 		
 	</div>
 	
