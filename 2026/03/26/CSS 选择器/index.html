@@ -51,7 +51,7 @@
 <script src="/deps/js/APlayer.min.js"></script>
 <script src="/deps/js/Meting.min.js"></script>
 
-	<meta name="generator" content="Hexo 7.3.0"></head>
+	<!-- hexo injector head_end start --><link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 	<body>
 		<div
@@ -364,7 +364,23 @@
 <p><strong>后代选择器（Descendant Selector）：</strong> 通过指定元素的后代关系选择 HTML 元素。</p>
 <p>后代选择器使用空格分隔元素名称。</p>
 <p>如下代码，div p 选择器将选择所有在 <code>&lt;div&gt; </code>元素内的 <code>&lt;p&gt;</code> 元素。</p>
-<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">div</span> <span class="hljs-selector-tag">p</span> {<br>  <span class="hljs-attribute">font-weight</span>: bold;<br>}<br></code></pre></td></tr></tbody></table></figure></body></html>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">div</span> <span class="hljs-selector-tag">p</span> {<br>  <span class="hljs-attribute">font-weight</span>: bold;<br>}<br></code></pre></td></tr></tbody></table></figure><!-- hexo injector body_end start -->
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    loadlive2d("live2d", "/live2d/model/tia/model.json");
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 

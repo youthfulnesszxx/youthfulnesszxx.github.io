@@ -51,7 +51,7 @@
 <script src="/deps/js/APlayer.min.js"></script>
 <script src="/deps/js/Meting.min.js"></script>
 
-	<meta name="generator" content="Hexo 7.3.0"></head>
+	<!-- hexo injector head_end start --><link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 	<body>
 		<div
@@ -707,7 +707,23 @@
 <h3><span id="%E4%BE%8B%E9%A2%98%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97">例题：斐波那契数列</span></h3><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python3</span><br> <br><span class="hljs-comment"># Fibonacci series: 斐波纳契数列</span><br><span class="hljs-comment"># 两个元素的总和确定了下一个数</span><br>a, b = <span class="hljs-number">0</span>, <span class="hljs-number">1</span><br><span class="hljs-keyword">while</span> b &lt; <span class="hljs-number">1000</span>:<br>    <span class="hljs-built_in">print</span>(b, end=<span class="hljs-string">','</span>)<br>    a, b = b, a+b<br></code></pre></td></tr></tbody></table></figure>
 
 <p>输出：1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,</p>
-</body></html>
+<!-- hexo injector body_end start -->
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    loadlive2d("live2d", "/live2d/model/tia/model.json");
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 

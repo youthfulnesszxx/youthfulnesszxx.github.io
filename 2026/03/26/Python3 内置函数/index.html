@@ -51,7 +51,7 @@
 <script src="/deps/js/APlayer.min.js"></script>
 <script src="/deps/js/Meting.min.js"></script>
 
-	<meta name="generator" content="Hexo 7.3.0"></head>
+	<!-- hexo injector head_end start --><link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 	<body>
 		<div
@@ -361,7 +361,23 @@
 <figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">0 one<br>1 two<br>2 three<br></code></pre></td></tr></tbody></table></figure>
 
 <h1><span id="zip">zip()</span></h1><p>zip()函数可以同时遍历多个序列</p>
-<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 编程导航课程评分统计</span><br>course_names = [<span class="hljs-string">"Python基础"</span>, <span class="hljs-string">"数据结构"</span>, <span class="hljs-string">"算法设计"</span>, <span class="hljs-string">"Web开发"</span>, <span class="hljs-string">"机器学习"</span>]<br>course_ratings = [<span class="hljs-number">4.8</span>, <span class="hljs-number">4.6</span>, <span class="hljs-number">4.7</span>, <span class="hljs-number">4.5</span>, <span class="hljs-number">4.9</span>]<br>course_students = [<span class="hljs-number">1250</span>, <span class="hljs-number">980</span>, <span class="hljs-number">760</span>, <span class="hljs-number">1100</span>, <span class="hljs-number">650</span>]<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"=== 编程导航课程统计 ==="</span>)<br><span class="hljs-keyword">for</span> name, rating, students <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(course_names, course_ratings, course_students):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"<span class="hljs-subst">{name:&lt;<span class="hljs-number">12</span>}</span> 评分: <span class="hljs-subst">{rating}</span>/5.0  学员: <span class="hljs-subst">{students}</span>人"</span>)<br></code></pre></td></tr></tbody></table></figure></body></html>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 编程导航课程评分统计</span><br>course_names = [<span class="hljs-string">"Python基础"</span>, <span class="hljs-string">"数据结构"</span>, <span class="hljs-string">"算法设计"</span>, <span class="hljs-string">"Web开发"</span>, <span class="hljs-string">"机器学习"</span>]<br>course_ratings = [<span class="hljs-number">4.8</span>, <span class="hljs-number">4.6</span>, <span class="hljs-number">4.7</span>, <span class="hljs-number">4.5</span>, <span class="hljs-number">4.9</span>]<br>course_students = [<span class="hljs-number">1250</span>, <span class="hljs-number">980</span>, <span class="hljs-number">760</span>, <span class="hljs-number">1100</span>, <span class="hljs-number">650</span>]<br><br><span class="hljs-built_in">print</span>(<span class="hljs-string">"=== 编程导航课程统计 ==="</span>)<br><span class="hljs-keyword">for</span> name, rating, students <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(course_names, course_ratings, course_students):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"<span class="hljs-subst">{name:&lt;<span class="hljs-number">12</span>}</span> 评分: <span class="hljs-subst">{rating}</span>/5.0  学员: <span class="hljs-subst">{students}</span>人"</span>)<br></code></pre></td></tr></tbody></table></figure><!-- hexo injector body_end start -->
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    loadlive2d("live2d", "/live2d/model/tia/model.json");
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 

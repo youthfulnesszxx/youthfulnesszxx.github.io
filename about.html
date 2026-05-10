@@ -51,7 +51,7 @@
 <script src="/deps/js/APlayer.min.js"></script>
 <script src="/deps/js/Meting.min.js"></script>
 
-	<meta name="generator" content="Hexo 7.3.0"></head>
+	<!-- hexo injector head_end start --><link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 	<body>
 		<div
@@ -340,12 +340,28 @@
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月08日</a>
 			<a><i class="kirafont icon-edit-fill"></i>29 字</a>
 			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
 		</div>
 		<html><head></head><body><h2><span id="%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D">自我介绍</span></h2><p>一枚网安小白，喜欢探索未知领域，爱自学，不喜欢上学校的课</p>
-</body></html>
+<!-- hexo injector body_end start -->
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    loadlive2d("live2d", "/live2d/model/tia/model.json");
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 

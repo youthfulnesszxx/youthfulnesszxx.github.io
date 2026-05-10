@@ -51,7 +51,7 @@
 <script src="/deps/js/APlayer.min.js"></script>
 <script src="/deps/js/Meting.min.js"></script>
 
-	<meta name="generator" content="Hexo 7.3.0"></head>
+	<!-- hexo injector head_end start --><link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 	<body>
 		<div
@@ -367,7 +367,23 @@
 </tbody></table>
 <h1><span id="calendar%E6%A8%A1%E5%9D%97">calendar模块</span></h1><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 引入日历模块</span><br><span class="hljs-keyword">import</span> calendar<br> <br><span class="hljs-comment"># 输入指定年月</span><br>yy = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">"输入年份: "</span>))<br>mm = <span class="hljs-built_in">int</span>(<span class="hljs-built_in">input</span>(<span class="hljs-string">"输入月份: "</span>))<br> <br><span class="hljs-comment"># 显示日历,判断本月天数</span><br><span class="hljs-built_in">print</span>(calendar.month(yy,mm))<br><span class="hljs-built_in">print</span>(calendar.monthrange(<span class="hljs-number">2016</span>,<span class="hljs-number">9</span>))<br></code></pre></td></tr></tbody></table></figure>
 
-<h1><span id="re">re</span></h1></body></html>
+<h1><span id="re">re</span></h1><!-- hexo injector body_end start -->
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    loadlive2d("live2d", "/live2d/model/tia/model.json");
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 

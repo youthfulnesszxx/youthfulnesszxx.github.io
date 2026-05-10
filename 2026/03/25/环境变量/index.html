@@ -51,7 +51,7 @@
 <script src="/deps/js/APlayer.min.js"></script>
 <script src="/deps/js/Meting.min.js"></script>
 
-	<meta name="generator" content="Hexo 7.3.0"></head>
+	<!-- hexo injector head_end start --><link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 	<body>
 		<div
@@ -354,7 +354,23 @@
 <h2><span id="%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%B8%93%E7%94%A8"><strong>应用程序专用</strong>：</span></h2><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">JAVA_HOME = C:\Program Files\Java\jdk1.8.0    <span class="hljs-comment"># Java专用</span><br>ANDROID_HOME = D:\Android\Sdk                   <span class="hljs-comment"># Android开发专用</span><br>GOROOT = C:\Go                                   <span class="hljs-comment"># Go语言专用</span><br>M2_HOME = D:\apache-maven                         <span class="hljs-comment"># Maven专用</span><br></code></pre></td></tr></tbody></table></figure>
 
 <h1><span id="%E4%BC%98%E5%85%88%E7%BA%A7%E8%A7%84%E5%88%99"><strong>优先级规则</strong></span></h1><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 系统Path有Python 3.9</span><br>C:\Program Files\Python39<br><span class="hljs-comment"># 用户Path有Python 3.11（测试版）</span><br>D:\Python311<br><span class="hljs-comment"># 实际使用时，谁在前面谁优先</span><br><span class="hljs-comment"># 可以通过调整顺序来控制用哪个版本</span><br></code></pre></td></tr></tbody></table></figure>
-</body></html>
+<!-- hexo injector body_end start -->
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    loadlive2d("live2d", "/live2d/model/tia/model.json");
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 

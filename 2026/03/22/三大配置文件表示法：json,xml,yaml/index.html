@@ -51,7 +51,7 @@
 <script src="/deps/js/APlayer.min.js"></script>
 <script src="/deps/js/Meting.min.js"></script>
 
-	<meta name="generator" content="Hexo 7.3.0"></head>
+	<!-- hexo injector head_end start --><link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
 
 	<body>
 		<div
@@ -380,7 +380,23 @@
 <h1><span id="xml%E6%A0%87%E7%AD%BE%E5%B5%8C%E5%A5%97%E7%B1%BB%E4%BC%BC-html">XML：标签嵌套（类似 HTML）</span></h1><img src="/images/三大配置文件表示法：json,xml,yaml/Pasted image 20260121112314.png">
 
 <h1><span id="yaml%E7%BC%A9%E8%BF%9B%E7%B1%BB%E4%BC%BC-python">YAML：缩进（类似 python）</span></h1><img src="/images/三大配置文件表示法：json,xml,yaml/Pasted image 20260121111455.png">
-</body></html>
+<!-- hexo injector body_end start -->
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    loadlive2d("live2d", "/live2d/model/tia/model.json");
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 
