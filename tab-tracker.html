@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/css/layout.css">
 
 		
-		<title> vscode提示词图标含义 -  爆米花苞の小窝</title>
+		<title> 爆米花苞の小窝</title>
 		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
 		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
 		
@@ -394,22 +394,174 @@ article h2::after { background: var(--theme-color) !important; }
 <div class="kira-post">
 	<article>
 		
-		<div class="kira-post-cover">
+		<div
+			class="kira-post-cover"
+			style="padding-bottom: '56.25%'"
+		>
 			<img
-				data-src="/images/20260221174100355.webp"
+				data-src="/images/background.jpg"
 				data-sizes="auto"
-				alt="vscode提示词图标含义"
+				alt=""
 				class="lazyload kira-post-cover-image disabled-kira-image"
 			/>
-			<h1>vscode提示词图标含义</h1>
+			<h1></h1>
 		</div>
 		
 		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-			<a><i class="kirafont icon-calendar-fill"></i>2026年03月26日</a>
-			<a><i class="kirafont icon-edit-fill"></i>78 字</a>
-			<a><i class="kirafont icon-time-circle-fill"></i>大概 1 分钟</a>
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月18日</a>
+			<a><i class="kirafont icon-edit-fill"></i>548 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 3 分钟</a>
 		</div>
-		<html><head></head><body><p>看到<strong>立方体</strong>通常是函数或方法，<br>看到<strong>树状</strong>通常是类，<br>看到<strong>棒棒糖</strong>通常是接口，<br>看到<strong>左对齐的文本</strong>是保留关键字，<br>看到<strong>大括号</strong>图标是模块<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/AAABingBingBing/p/14756641.html">在VScode中，代码提示左边的图标各自代表的含义 - [ABing] - 博客园</a></p>
+		<!DOCTYPE html><html lang="zh"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tab Tracker</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0a0a;
+    --fg: #e8e4df;
+    --dim: #a09a92;
+    --accent: #c4a882;
+    --faint: #6b6560;
+    --mono: 'Courier New', Courier, monospace;
+    --serif: Georgia, 'Times New Roman', serif;
+  }
+  html { font-size: 18px; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: var(--serif);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10vh 24px;
+  }
+  .container { max-width: 640px; width: 100%; }
+  h1 { font-size: 2.4rem; font-weight: 400; margin-bottom: 1rem; }
+  .subtitle { font-style: italic; color: var(--dim); margin-bottom: 3rem; line-height: 1.7; }
+  .obs { margin-bottom: 2rem; opacity: 0; transform: translateY(14px); transition: all 0.8s ease; }
+  .obs.visible { opacity: 1; transform: translateY(0); }
+  .obs-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 0.5rem;
+  }
+  .obs-datum {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .obs-prose { font-size: 0.95rem; line-height: 1.8; color: var(--dim); }
+  .divider { width: 30px; height: 1px; background: var(--faint); margin: 2rem 0; }
+
+  /* 底部实时计数器 */
+  .live-counter {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    text-align: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(transparent, var(--bg) 40%);
+    pointer-events: none;
+    z-index: 10;
+  }
+  .live-counter span { color: var(--dim); }
+
+  /* 顶部切回通知 */
+  .tab-notice {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-align: center;
+    padding: 0.85rem 1rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--faint);
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: all 0.5s ease;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .tab-notice.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1><span id="tab-tracker">Tab Tracker</span></h1>
+  <p class="subtitle">记录你切换标签页的次数。试试切到别的标签再回来。</p>
+  <div id="records"></div>
+</div>
+
+<div class="live-counter" id="liveCounter"></div>
+<div class="tab-notice" id="tabNotice"></div>
+
+<script>
+'use strict';
+
+const T0 = performance.now();
+let tabSwitches = 0;
+let tabLeftAt = null;
+
+// 核心：监听 visibilitychange 事件
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // 页面隐藏：记录离开时间，切换次数+1
+    tabSwitches++;
+    tabLeftAt = performance.now();
+  } else if (tabLeftAt) {
+    // 页面恢复：计算离开时长
+    const gone = ((performance.now() - tabLeftAt) / 1000).toFixed(1);
+    tabLeftAt = null;
+
+    // 顶部通知
+    const notice = document.getElementById('tabNotice');
+    notice.textContent = '你离开了 ' + gone + ' 秒，我注意到了。';
+    notice.classList.add('visible');
+    setTimeout(() => notice.classList.remove('visible'), 4000);
+
+    // 页面内追加一条记录
+    const records = document.getElementById('records');
+    const div = document.createElement('div');
+    div.innerHTML =
+      '<div class="divider"></div>' +
+      '<div class="obs visible" style="opacity:1;transform:none">' +
+      '  <div class="obs-label">第 ' + tabSwitches + ' 次离开</div>' +
+      '  <div class="obs-datum">' + gone + ' 秒</div>' +
+      '  <div class="obs-prose">你在第 ' + tabSwitches + ' 次切换了标签页，离开了 ' + gone + ' 秒后回来。document.hidden 属性和 visibilitychange 事件让页面精确地感知你的离开与回归。</div>' +
+      '</div>';
+    records.appendChild(div);
+  }
+});
+
+// 底部实时计数器
+function tick() {
+  const el = document.getElementById('liveCounter');
+  const sec = ((performance.now() - T0) / 1000).toFixed(0);
+  el.innerHTML =
+    '已停留 <span>' + sec + 's</span> · ' +
+    '切换标签 <span>' + tabSwitches + '</span> 次';
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+
+
 <!-- hexo injector body_end start -->
 <button id="color-rotate-btn" title="旋转配色"></button>
 <script>
@@ -559,23 +711,15 @@ article h2::after { background: var(--theme-color) !important; }
 	 
     <div class="kira-post-copyright">
         <strong>本文作者：</strong>burpow<br>
-        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/03/26/vscode%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%9B%BE%E6%A0%87%E5%90%AB%E4%B9%89/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;vscode提示词图标含义&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;03&#x2F;26&#x2F;vscode提示词图标含义&#x2F;</a><br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/tab-tracker.html" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;tab-tracker.html" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;tab-tracker.html</a><br>
         
             <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
         
     </div>
 
   
-	<div class="kira-post-nav">
-		<nav class="post-nav">
-			
-		</nav>
-	</div>
-	
 	<div class="kira-post-meta kira-rainbow">
 		
-		
-			<a class="kirafont icon-tag-fill -none-link" href="/tags/python%E8%8F%9C%E9%B8%9F/" rel="tag">python菜鸟</a>
 		
 	</div>
 	
