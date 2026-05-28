@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第12节-PE文件格式与Windows装载 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/17.jpg"
+				data-sizes="auto"
+				alt="第12节-PE文件格式与Windows装载"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第12节-PE文件格式与Windows装载</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5.6k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 24 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-12-%E8%8A%82pe-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E4%B8%8E-windows-%E8%A3%85%E8%BD%BD">第 12 节：PE 文件格式与 Windows 装载</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 6 周<br>课程主题：可执行文件与程序装载<br>本节目标：理解 Windows 下 PE 可执行文件的基本结构，掌握 DOS Header、PE Header、Section Table、<code>.text</code>、<code>.rdata</code>、<code>.data</code>、<code>.rsrc</code>、Import Table、IAT、DLL 加载等概念，并能用 PE-bear、Detect It Easy、Ghidra、x64dbg 观察 PE 文件。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>PE 是什么？</li>
+<li>Windows 为什么能识别一个 <code>.exe</code> 或 <code>.dll</code>？</li>
+<li>DOS Header 和 <code>MZ</code> 魔数是什么？</li>
+<li>PE Header 和 Optional Header 中保存了什么？</li>
+<li>Section Table 是什么？</li>
+<li><code>.text</code>、<code>.rdata</code>、<code>.data</code>、<code>.rsrc</code> 分别通常放什么？</li>
+<li>Import Table 和 IAT 是什么？</li>
+<li>DLL 是如何被加载和调用的？</li>
+<li>PE 和 ELF 有哪些相似点和不同点？</li>
+<li>为什么 PE 文件格式对 Windows 逆向、漏洞分析、恶意代码分析非常重要？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Windows 程序 -&gt; PE 文件 -&gt; Windows Loader 解析 -&gt; 映射到进程地址空间 -&gt; 加载 DLL -&gt; 修复导入表 -&gt; 从入口点执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>上一节我们学习了 Linux ELF，这一节学习 Windows PE。两者都是可执行文件格式，但设计细节不同。</p>
+<hr>
+<h2><span id="2-pe-%E6%98%AF%E4%BB%80%E4%B9%88">2. PE 是什么</span></h2><p>PE 全称是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Portable Executable<br></code></pre></td></tr></tbody></table></figure>
+
+<p>中文常译为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">可移植可执行文件格式<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 下常见 PE 文件包括：</p>
+<ul>
+<li><code>.exe</code></li>
+<li><code>.dll</code></li>
+<li><code>.sys</code></li>
+<li><code>.ocx</code></li>
+<li><code>.scr</code></li>
+<li>某些 <code>.cpl</code></li>
+</ul>
+<p>也就是说，PE 不只包括普通可执行程序。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">notepad.exe<br>kernel32.dll<br>ntdll.dll<br>some_driver.sys<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们都可能是 PE 格式。</p>
+<hr>
+<h2><span id="3-pe-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8D%E8%A6%81">3. PE 为什么重要</span></h2><p>PE 是 Windows 逆向工程的基础。</p>
+<h3><span id="31-%E5%AF%B9-windows-loader">3.1 对 Windows Loader</span></h3><p>Windows Loader 需要根据 PE 文件知道：</p>
+<ul>
+<li>这是不是合法 PE 文件</li>
+<li>入口点在哪里</li>
+<li>需要映射哪些节到内存</li>
+<li>每个节的权限是什么</li>
+<li>依赖哪些 DLL</li>
+<li>导入哪些函数</li>
+<li>是否有资源</li>
+<li>是否需要重定位</li>
+<li>是否启用了安全缓解机制</li>
+</ul>
+<hr>
+<h3><span id="32-%E5%AF%B9%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">3.2 对逆向工程</span></h3><p>逆向 PE 程序时，你会关注：</p>
+<ul>
+<li>ImageBase</li>
+<li>Entry Point</li>
+<li>Section</li>
+<li>Import Table</li>
+<li>IAT</li>
+<li>Export Table</li>
+<li>字符串</li>
+<li>资源</li>
+<li>TLS Callback</li>
+<li>是否加壳</li>
+<li>是否动态解析 API</li>
+</ul>
+<hr>
+<h3><span id="33-%E5%AF%B9%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90">3.3 对恶意代码分析</span></h3><p>Windows 恶意代码大多是 PE 文件。</p>
+<p>分析时常看：</p>
+<ul>
+<li>导入了哪些 API</li>
+<li>是否有可疑节名</li>
+<li>是否节权限异常</li>
+<li>是否包含资源 payload</li>
+<li>是否加壳</li>
+<li>是否动态加载 DLL</li>
+<li>是否修改 IAT</li>
+<li>是否有反调试 API</li>
+<li>是否使用网络、文件、注册表、进程相关 API</li>
+</ul>
+<hr>
+<h2><span id="4-%E5%87%86%E5%A4%87%E4%B8%80%E4%B8%AA%E7%A4%BA%E4%BE%8B%E7%A8%8B%E5%BA%8F">4. 准备一个示例程序</span></h2><p>可以准备一个简单 Windows C 程序 <code>pe_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;windows.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><span class="hljs-type">char</span> global_buf[<span class="hljs-number">32</span>] = <span class="hljs-string">"hello pe"</span>;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">helper</span><span class="hljs-params">()</span> {<br>    MessageBoxA(<span class="hljs-literal">NULL</span>, global_buf, <span class="hljs-string">"PE Demo"</span>, MB_OK);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    HANDLE h = CreateFileA(<br>        <span class="hljs-string">"pe_demo_output.txt"</span>,<br>        GENERIC_WRITE,<br>        <span class="hljs-number">0</span>,<br>        <span class="hljs-literal">NULL</span>,<br>        CREATE_ALWAYS,<br>        FILE_ATTRIBUTE_NORMAL,<br>        <span class="hljs-literal">NULL</span><br>    );<br><br>    <span class="hljs-keyword">if</span> (h != INVALID_HANDLE_VALUE) {<br>        DWORD written;<br>        WriteFile(h, <span class="hljs-string">"hello file\r\n"</span>, <span class="hljs-number">12</span>, &amp;written, <span class="hljs-literal">NULL</span>);<br>        CloseHandle(h);<br>    }<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_var=%d\n"</span>, global_var);<br>    helper();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果你使用 MinGW，可以编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">x86_64-w64-mingw32-gcc -g -O0 pe_demo.c -o pe_demo.exe<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果在 Windows 上使用 Visual Studio 或 Developer Command Prompt，可以用对应编译器生成 exe。</p>
+<p>如果暂时不能编译，也可以用任意简单 exe，例如自己写的 hello.exe 或系统自带小程序做观察。</p>
+<hr>
+<h2><span id="5-pe-%E6%96%87%E4%BB%B6%E7%9A%84%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84">5. PE 文件的整体结构</span></h2><p>PE 文件大致结构可以简化为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs text">+---------------------------+<br>| DOS Header                |<br>+---------------------------+<br>| DOS Stub                  |<br>+---------------------------+<br>| PE Signature              |<br>+---------------------------+<br>| COFF File Header          |<br>+---------------------------+<br>| Optional Header           |<br>+---------------------------+<br>| Section Table             |<br>+---------------------------+<br>| .text                     |<br>| .rdata                    |<br>| .data                     |<br>| .rsrc                     |<br>| .reloc                    |<br>+---------------------------+<br></code></pre></td></tr></tbody></table></figure>
+
+<p>不同编译器、链接器和加壳器生成的 PE 会有所不同。</p>
+<p>但核心结构类似。</p>
+<hr>
+<h2><span id="6-dos-header-%E5%92%8C-mz-%E9%AD%94%E6%95%B0">6. DOS Header 和 MZ 魔数</span></h2><p>PE 文件最开头是 DOS Header。</p>
+<p>它的前两个字节通常是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">4D 5A<br></code></pre></td></tr></tbody></table></figure>
+
+<p>对应 ASCII：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">MZ<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以很多工具会说：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">MZ Header<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>MZ</code> 是 PE 文件的重要魔数。</p>
+<p>你可以用十六进制工具查看 exe 文件开头。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">00000000: 4D 5A ...<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明它可能是 PE 文件。</p>
+<p>DOS Header 中有一个很重要的字段：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">e_lfanew<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它保存 PE Header 在文件中的偏移。</p>
+<p>Windows Loader 会通过它找到真正的 PE 头。</p>
+<hr>
+<h2><span id="7-dos-stub-%E6%98%AF%E4%BB%80%E4%B9%88">7. DOS Stub 是什么</span></h2><p>DOS Header 后面通常有一小段 DOS Stub。</p>
+<p>很多 PE 文件中可以看到字符串：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">This program cannot be run in DOS mode.<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这是历史兼容遗留。</p>
+<p>现代 Windows 程序一般不依赖 DOS Stub 的业务逻辑。</p>
+<p>逆向时看到它不用紧张。</p>
+<p>它只是 PE 文件结构中的常见部分。</p>
+<hr>
+<h2><span id="8-pe-signature">8. PE Signature</span></h2><p>通过 DOS Header 的 <code>e_lfanew</code> 找到 PE Header 后，会看到 PE 签名：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">50 45 00 00<br></code></pre></td></tr></tbody></table></figure>
+
+<p>对应：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">PE\0\0<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这是 PE Header 的标识。</p>
+<p>所以一个典型 PE 文件会同时包含：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">MZ<br>PE\0\0<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>MZ</code> 在文件开头，<code>PE\0\0</code> 在 <code>e_lfanew</code> 指向的位置。</p>
+<hr>
+<h2><span id="9-coff-file-header">9. COFF File Header</span></h2><p>PE Signature 后面是 COFF File Header。</p>
+<p>它包含一些基本文件信息，例如：</p>
+<ul>
+<li>Machine：目标架构</li>
+<li>NumberOfSections：节数量</li>
+<li>TimeDateStamp：时间戳</li>
+<li>PointerToSymbolTable：符号表指针，现代 PE 中常不重要</li>
+<li>SizeOfOptionalHeader：Optional Header 大小</li>
+<li>Characteristics：文件属性</li>
+</ul>
+<p>常见 Machine：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x014c</td>
+<td>x86 32 位</td>
+</tr>
+<tr>
+<td>0x8664</td>
+<td>x86-64 / AMD64</td>
+</tr>
+</tbody></table>
+<p>逆向时，Machine 可以告诉你这是 32 位还是 64 位程序。</p>
+<p>这会影响：</p>
+<ul>
+<li>寄存器</li>
+<li>调用约定</li>
+<li>栈布局</li>
+<li>调试器选择</li>
+<li>反汇编模式</li>
+</ul>
+<hr>
+<h2><span id="10-optional-header-%E5%B9%B6%E4%B8%8D%E5%8F%AF%E9%80%89">10. Optional Header 并不“可选”</span></h2><p>PE 中有一个结构叫：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Optional Header<br></code></pre></td></tr></tbody></table></figure>
+
+<p>名字叫 Optional，但对可执行文件来说非常重要，基本不是可有可无。</p>
+<p>它包含装载所需的关键信息，例如：</p>
+<ul>
+<li>AddressOfEntryPoint</li>
+<li>ImageBase</li>
+<li>SectionAlignment</li>
+<li>FileAlignment</li>
+<li>SizeOfImage</li>
+<li>SizeOfHeaders</li>
+<li>Subsystem</li>
+<li>DLLCharacteristics</li>
+<li>DataDirectory</li>
+</ul>
+<p>这些字段决定 Windows 如何把 PE 映射到内存。</p>
+<hr>
+<h2><span id="11-addressofentrypoint">11. AddressOfEntryPoint</span></h2><p><code>AddressOfEntryPoint</code> 是程序入口点的 RVA。</p>
+<p>RVA 是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Relative Virtual Address<br></code></pre></td></tr></tbody></table></figure>
+
+<p>即相对虚拟地址。</p>
+<p>它不是文件偏移，也不是绝对运行地址。</p>
+<p>如果：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">ImageBase = 0x140000000<br>AddressOfEntryPoint = 0x1000<br></code></pre></td></tr></tbody></table></figure>
+
+<p>那么默认入口虚拟地址大致是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x140001000<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p>入口点通常不是 <code>main</code>。</p>
+<p>Windows 程序也会先执行运行时启动代码，然后再调用 <code>main</code> / <code>WinMain</code>。</p>
+<hr>
+<h2><span id="12-imagebase">12. ImageBase</span></h2><p>ImageBase 是 PE 希望被加载到的首选基址。</p>
+<p>例如 64 位程序常见：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">ImageBase = 0x140000000<br></code></pre></td></tr></tbody></table></figure>
+
+<p>DLL 也有自己的 ImageBase。</p>
+<p>如果启用了 ASLR，实际加载地址可能不是首选 ImageBase。</p>
+<p>Windows Loader 会选择合适地址加载，并根据需要做重定位。</p>
+<p>逆向时，你需要区分：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">文件中的 RVA<br>内存中的 VA<br>文件偏移 Raw Offset<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这三个概念非常重要。</p>
+<hr>
+<h2><span id="13-rvava-%E5%92%8C-file-offset">13. RVA、VA 和 File Offset</span></h2><p>PE 分析中常见三个地址概念。</p>
+<h3><span id="131-rva">13.1 RVA</span></h3><p>RVA 是相对虚拟地址。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">RVA = VA - ImageBase<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">ImageBase = 0x140000000<br>VA = 0x140001000<br>RVA = 0x1000<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="132-va">13.2 VA</span></h3><p>VA 是虚拟地址，即程序加载到内存后的地址。</p>
+<p>调试器中看到的地址通常是 VA。</p>
+<p>例如 x64dbg 中：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0000000140001000<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="133-file-offset">13.3 File Offset</span></h3><p>File Offset 是文件偏移。</p>
+<p>它表示数据在磁盘 PE 文件中的位置。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">文件第 0x400 字节处<br></code></pre></td></tr></tbody></table></figure>
+
+<p>RVA 和 File Offset 需要通过 Section Table 转换。</p>
+<p>逆向工具会帮你做很多转换，但你需要知道它们不是同一个概念。</p>
+<hr>
+<h2><span id="14-section-table-%E6%98%AF%E4%BB%80%E4%B9%88">14. Section Table 是什么</span></h2><p>Section Table 描述 PE 文件中各个节的信息。</p>
+<p>常见字段：</p>
+<ul>
+<li>Name</li>
+<li>VirtualAddress</li>
+<li>VirtualSize</li>
+<li>PointerToRawData</li>
+<li>SizeOfRawData</li>
+<li>Characteristics</li>
+</ul>
+<p>其中：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Name</td>
+<td>节名</td>
+</tr>
+<tr>
+<td>VirtualAddress</td>
+<td>加载到内存后的 RVA</td>
+</tr>
+<tr>
+<td>VirtualSize</td>
+<td>内存中大小</td>
+</tr>
+<tr>
+<td>PointerToRawData</td>
+<td>文件中偏移</td>
+</tr>
+<tr>
+<td>SizeOfRawData</td>
+<td>文件中大小</td>
+</tr>
+<tr>
+<td>Characteristics</td>
+<td>权限和属性</td>
+</tr>
+</tbody></table>
+<p>常见节：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">.text<br>.rdata<br>.data<br>.rsrc<br>.reloc<br></code></pre></td></tr></tbody></table></figure>
+
+<p>不同编译器可能使用不同节名。</p>
+<p>加壳程序也可能出现奇怪节名。</p>
+<hr>
+<h2><span id="15-text-%E8%8A%82">15. <code>.text</code> 节</span></h2><p><code>.text</code> 通常存放程序代码。</p>
+<p>包括：</p>
+<ul>
+<li>函数机器指令</li>
+<li>运行时启动代码</li>
+<li>编译器生成的辅助代码</li>
+</ul>
+<p>它通常具有权限：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">可读 + 可执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>一般不应该可写。</p>
+<p>如果你看到某个 PE 的 <code>.text</code> 节同时可写和可执行，需要提高警惕。</p>
+<p>这不一定恶意，但值得分析。</p>
+<hr>
+<h2><span id="16-rdata-%E8%8A%82">16. <code>.rdata</code> 节</span></h2><p><code>.rdata</code> 通常存放只读数据。</p>
+<p>常见内容：</p>
+<ul>
+<li>字符串常量</li>
+<li>导入相关只读结构</li>
+<li>RTTI 信息</li>
+<li>const 数据</li>
+<li>某些跳转表</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">MessageBoxA(<span class="hljs-literal">NULL</span>, <span class="hljs-string">"hello"</span>, <span class="hljs-string">"title"</span>, MB_OK);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>字符串 <code>hello</code> 和 <code>title</code> 可能在 <code>.rdata</code>。</p>
+<p>逆向时字符串窗口中的很多字符串来自 <code>.rdata</code>。</p>
+<hr>
+<h2><span id="17-data-%E8%8A%82">17. <code>.data</code> 节</span></h2><p><code>.data</code> 通常存放已初始化的全局变量和静态变量。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><span class="hljs-type">char</span> global_buf[<span class="hljs-number">32</span>] = <span class="hljs-string">"hello pe"</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些数据需要在文件中保存初始值。</p>
+<p><code>.data</code> 通常权限是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">可读 + 可写<br></code></pre></td></tr></tbody></table></figure>
+
+<p>通常不可执行。</p>
+<hr>
+<h2><span id="18-rsrc-%E8%8A%82">18. <code>.rsrc</code> 节</span></h2><p><code>.rsrc</code> 是资源节。</p>
+<p>Windows 程序可以把资源放在 PE 文件中，例如：</p>
+<ul>
+<li>图标</li>
+<li>对话框</li>
+<li>菜单</li>
+<li>字符串表</li>
+<li>版本信息</li>
+<li>位图</li>
+<li>嵌入文件</li>
+</ul>
+<p>恶意代码有时也会把 payload 或配置数据藏在资源节里。</p>
+<p>所以恶意代码分析中，<code>.rsrc</code> 很重要。</p>
+<p>可以用工具查看资源：</p>
+<ul>
+<li>Resource Hacker</li>
+<li>PE-bear</li>
+<li>Detect It Easy</li>
+<li>CFF Explorer</li>
+<li>Ghidra</li>
+</ul>
+<hr>
+<h2><span id="19-reloc-%E8%8A%82">19. <code>.reloc</code> 节</span></h2><p><code>.reloc</code> 是重定位节。</p>
+<p>如果 PE 不能加载到首选 ImageBase，Windows Loader 需要修正一些地址。</p>
+<p><code>.reloc</code> 提供重定位信息。</p>
+<p>ASLR 依赖程序能够被重定位。</p>
+<p>如果 PE 没有重定位信息，地址随机化可能受限。</p>
+<p>逆向和漏洞利用中，重定位和 ASLR 关系密切。</p>
+<hr>
+<h2><span id="20-data-directory">20. Data Directory</span></h2><p>Optional Header 中有 Data Directory。</p>
+<p>它指向 PE 中一些重要表结构。</p>
+<p>常见包括：</p>
+<ul>
+<li>Export Table</li>
+<li>Import Table</li>
+<li>Resource Table</li>
+<li>Exception Table</li>
+<li>Base Relocation Table</li>
+<li>TLS Table</li>
+<li>Load Config Table</li>
+<li>IAT</li>
+</ul>
+<p>你不需要一开始全部掌握，但要知道：</p>
+<blockquote>
+<p>PE 中很多高级结构不是靠节名固定定位，而是通过 Data Directory 指向。</p>
+</blockquote>
+<p>例如 Import Table 的位置由 Data Directory 告诉 Loader。</p>
+<hr>
+<h2><span id="21-import-table-%E6%98%AF%E4%BB%80%E4%B9%88">21. Import Table 是什么</span></h2><p>Import Table 保存程序依赖的 DLL 和函数信息。</p>
+<p>例如一个程序可能导入：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">KERNEL32.dll<br>  CreateFileA<br>  WriteFile<br>  CloseHandle<br>USER32.dll<br>  MessageBoxA<br>MSVCRT.dll<br>  printf<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些导入告诉 Windows Loader：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">运行这个程序前，需要加载这些 DLL，并解析这些函数地址。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向分析中，Import Table 是非常重要的行为线索。</p>
+<p>如果程序导入：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateProcessW<br>VirtualAlloc<br>WriteProcessMemory<br>CreateRemoteThread<br>RegSetValueExW<br>InternetOpenW<br>connect<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可以初步推测它可能具有进程、内存、注册表、网络相关行为。</p>
+<hr>
+<h2><span id="22-iat-%E6%98%AF%E4%BB%80%E4%B9%88">22. IAT 是什么</span></h2><p>IAT 全称：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Import Address Table<br></code></pre></td></tr></tbody></table></figure>
+
+<p>中文常译为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">导入地址表<br></code></pre></td></tr></tbody></table></figure>
+
+<p>程序调用外部 DLL 函数时，需要知道函数实际地址。</p>
+<p>Windows Loader 加载程序时，会把导入函数的实际地址填入 IAT。</p>
+<p>程序后续调用外部 API 时，可能通过 IAT 间接调用。</p>
+<p>简化理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Import Table 描述要导入什么<br>IAT 保存导入函数运行时地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>IAT 对逆向和 Hook 都很重要。</p>
+<hr>
+<h2><span id="23-iat-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8D%E8%A6%81">23. IAT 为什么重要</span></h2><p>IAT 重要原因：</p>
+<ol>
+<li>能反映程序使用了哪些外部 API</li>
+<li>程序调用外部 API 时可能通过 IAT</li>
+<li>安全软件和分析工具可以监控 IAT</li>
+<li>恶意代码可能修改 IAT 实现 Hook</li>
+<li>加壳程序可能重建 IAT</li>
+<li>脱壳分析常涉及 IAT 修复</li>
+</ol>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">程序调用 MessageBoxA<br>实际可能是 call qword ptr [MessageBoxA 的 IAT 项]<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这个 IAT 项中保存的是 <code>user32.dll!MessageBoxA</code> 的实际地址。</p>
+<hr>
+<h2><span id="24-export-table-%E6%98%AF%E4%BB%80%E4%B9%88">24. Export Table 是什么</span></h2><p>Export Table 保存一个 PE 文件向外提供的函数或符号。</p>
+<p>DLL 常有导出表。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">kernel32.dll 导出 CreateFileW、ReadFile、WriteFile 等函数<br>user32.dll 导出 MessageBoxA 等函数<br></code></pre></td></tr></tbody></table></figure>
+
+<p>EXE 也可以有导出表，但 DLL 更常见。</p>
+<p>逆向 DLL 时，Export Table 可以告诉你：</p>
+<ul>
+<li>这个 DLL 提供哪些函数</li>
+<li>函数名是什么</li>
+<li>函数序号是什么</li>
+<li>函数 RVA 是多少</li>
+</ul>
+<hr>
+<h2><span id="25-dll-%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E7%9A%84%E7%9B%B4%E8%A7%89">25. DLL 加载过程的直觉</span></h2><p>Windows 程序启动时，Loader 会：</p>
+<ol>
+<li>映射 EXE 到进程地址空间</li>
+<li>读取 Import Table</li>
+<li>找到依赖的 DLL</li>
+<li>把 DLL 映射到进程地址空间</li>
+<li>解析导入函数地址</li>
+<li>填写 IAT</li>
+<li>处理重定位</li>
+<li>初始化 TLS 等结构</li>
+<li>调用入口点</li>
+</ol>
+<p>所以一个 Windows 进程通常不只有 EXE 本身，还会加载很多 DLL。</p>
+<p>在 Process Explorer 或 x64dbg 中可以看到模块列表。</p>
+<hr>
+<h2><span id="26-%E9%9D%99%E6%80%81%E5%AF%BC%E5%85%A5%E5%92%8C%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD">26. 静态导入和动态加载</span></h2><h3><span id="261-%E9%9D%99%E6%80%81%E5%AF%BC%E5%85%A5">26.1 静态导入</span></h3><p>程序在 Import Table 中明确列出依赖 DLL 和函数。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">KERNEL32.dll!CreateFileW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这种容易被 PE 工具看到。</p>
+<hr>
+<h3><span id="262-%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD">26.2 动态加载</span></h3><p>程序运行时调用：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">LoadLibraryA/W<br>GetProcAddress<br></code></pre></td></tr></tbody></table></figure>
+
+<p>动态加载 DLL 并解析函数地址。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">HMODULE h = LoadLibraryA(<span class="hljs-string">"kernel32.dll"</span>);<br>FARPROC p = GetProcAddress(h, <span class="hljs-string">"VirtualAlloc"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这样 <code>VirtualAlloc</code> 可能不会直接出现在 Import Table 中。</p>
+<p>恶意代码常用动态加载隐藏敏感 API。</p>
+<hr>
+<h2><span id="27-tls-callback-%E6%98%AF%E4%BB%80%E4%B9%88">27. TLS Callback 是什么</span></h2><p>TLS 全称：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Thread Local Storage<br></code></pre></td></tr></tbody></table></figure>
+
+<p>PE 中可以有 TLS Callback。</p>
+<p>TLS Callback 的特点是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">它可能在程序入口点之前执行。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这对逆向很重要。</p>
+<p>因为你以为程序从 Entry Point 开始，实际上在入口点之前可能已经执行了 TLS Callback。</p>
+<p>恶意代码和壳有时会利用 TLS Callback 做：</p>
+<ul>
+<li>反调试</li>
+<li>解密代码</li>
+<li>初始化隐藏逻辑</li>
+<li>检查环境</li>
+</ul>
+<p>所以 PE 分析时，如果行为很早发生，要检查 TLS Table。</p>
+<hr>
+<h2><span id="28-pe-%E8%8A%82%E6%9D%83%E9%99%90%E5%92%8C%E5%BC%82%E5%B8%B8%E8%8A%82%E5%90%8D">28. PE 节权限和异常节名</span></h2><p>PE Section 有权限属性。</p>
+<p>常见权限包括：</p>
+<ul>
+<li>可读</li>
+<li>可写</li>
+<li>可执行</li>
+</ul>
+<p>正常情况下：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">.text   可读 + 可执行<br>.rdata  可读<br>.data   可读 + 可写<br>.rsrc   可读<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">某节可写 + 可执行<br>节名很奇怪<br>节熵很高<br>节大小异常<br></code></pre></td></tr></tbody></table></figure>
+
+<p>就要进一步分析。</p>
+<p>加壳或恶意样本中可能出现：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">UPX0<br>UPX1<br>.aspack<br>.vmp0<br>随机节名<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些不一定都恶意，但可能表示压缩、加壳或保护。</p>
+<hr>
+<h2><span id="29-pe-%E4%B8%8E-elf-%E7%9A%84%E5%AF%B9%E7%85%A7">29. PE 与 ELF 的对照</span></h2><table>
+<thead>
+<tr>
+<th>主题</th>
+<th>ELF</th>
+<th>PE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>常见系统</td>
+<td>Linux / Unix-like</td>
+<td>Windows</td>
+</tr>
+<tr>
+<td>魔数</td>
+<td><code>7f 45 4c 46</code></td>
+<td><code>MZ</code> + <code>PE\0\0</code></td>
+</tr>
+<tr>
+<td>可执行文件</td>
+<td>无固定扩展名</td>
+<td>常见 <code>.exe</code></td>
+</tr>
+<tr>
+<td>共享库</td>
+<td><code>.so</code></td>
+<td><code>.dll</code></td>
+</tr>
+<tr>
+<td>代码节</td>
+<td><code>.text</code></td>
+<td><code>.text</code></td>
+</tr>
+<tr>
+<td>只读数据</td>
+<td><code>.rodata</code></td>
+<td><code>.rdata</code></td>
+</tr>
+<tr>
+<td>数据节</td>
+<td><code>.data</code> / <code>.bss</code></td>
+<td><code>.data</code></td>
+</tr>
+<tr>
+<td>装载视角</td>
+<td>Program Header</td>
+<td>PE Header + Section Table</td>
+</tr>
+<tr>
+<td>动态导入</td>
+<td>PLT/GOT、dynsym</td>
+<td>Import Table、IAT</td>
+</tr>
+<tr>
+<td>重定位</td>
+<td>relocation sections</td>
+<td><code>.reloc</code></td>
+</tr>
+<tr>
+<td>资源</td>
+<td>较少内建资源机制</td>
+<td><code>.rsrc</code> 常见</td>
+</tr>
+</tbody></table>
+<p>两者思想相似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">都是告诉操作系统如何把文件映射到内存并开始执行。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>但具体结构和工具不同。</p>
+<hr>
+<h2><span id="30-pe-%E5%92%8C%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">30. PE 和逆向工程</span></h2><p>逆向 PE 程序时，可以按这个顺序观察：</p>
+<ol>
+<li>用 Detect It Easy 判断文件类型、架构、是否加壳</li>
+<li>用 PE-bear 查看 Header、Section、Import Table</li>
+<li>用 strings 或工具查看字符串</li>
+<li>用 Ghidra / IDA 查看函数和反编译</li>
+<li>用 x64dbg 动态调试入口点和关键 API</li>
+<li>用 Process Monitor 观察文件、注册表、进程行为</li>
+<li>用 Wireshark 观察网络行为</li>
+</ol>
+<p>PE 分析不只是看静态结构，还要结合运行行为。</p>
+<hr>
+<h2><span id="31-pe-%E5%92%8C%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90">31. PE 和漏洞分析</span></h2><p>Windows 漏洞分析中，PE 信息可以回答：</p>
+<ul>
+<li>程序是 32 位还是 64 位</li>
+<li>是否启用 ASLR</li>
+<li>是否启用 DEP</li>
+<li>是否启用 CFG</li>
+<li>是否有 SafeSEH / SEHOP</li>
+<li>程序基址是多少</li>
+<li>哪些模块被加载</li>
+<li>IAT 中有哪些 API</li>
+<li>哪些节可写/可执行</li>
+<li>崩溃地址属于哪个模块</li>
+</ul>
+<p>例如 x64dbg 中看到崩溃地址：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">00007FF6A1234567<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你需要判断：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">这个地址属于主程序？某个 DLL？堆？栈？<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这和模块加载和 PE 基址有关。</p>
+<hr>
+<h2><span id="32-pe-%E5%92%8C%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90">32. PE 和恶意代码分析</span></h2><p>恶意代码分析中，PE 是最常见对象之一。</p>
+<p>静态分析时常看：</p>
+<ul>
+<li>文件哈希</li>
+<li>编译时间戳</li>
+<li>入口点</li>
+<li>节名和节权限</li>
+<li>导入表</li>
+<li>字符串</li>
+<li>资源节</li>
+<li>是否加壳</li>
+<li>TLS Callback</li>
+</ul>
+<p>动态分析时常看：</p>
+<ul>
+<li>文件行为</li>
+<li>注册表行为</li>
+<li>网络行为</li>
+<li>进程树</li>
+<li>API 调用</li>
+<li>内存分配和权限修改</li>
+<li>是否释放或注入 payload</li>
+</ul>
+<p>PE 结构提供静态线索，动态工具验证真实行为。</p>
+<hr>
+<h2><span id="33-windows-%E5%AE%9E%E9%AA%8C%E7%94%A8-detect-it-easy-%E8%AF%86%E5%88%AB-pe">33. Windows 实验：用 Detect It Easy 识别 PE</span></h2><p>准备一个 exe，例如 <code>pe_demo.exe</code>。</p>
+<p>用 Detect It Easy 打开。</p>
+<p>观察：</p>
+<ul>
+<li>文件类型是否为 PE</li>
+<li>32 位还是 64 位</li>
+<li>编译器或链接器信息</li>
+<li>是否可能加壳</li>
+<li>入口点</li>
+<li>节信息</li>
+</ul>
+<p>提交时记录：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 文件类型<br>2. 架构<br>3. 编译器识别结果<br>4. 入口点<br>5. 是否有加壳迹象<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="34-windows-%E5%AE%9E%E9%AA%8C%E7%94%A8-pe-bear-%E6%9F%A5%E7%9C%8B%E7%BB%93%E6%9E%84">34. Windows 实验：用 PE-bear 查看结构</span></h2><p>用 PE-bear 打开 <code>pe_demo.exe</code>。</p>
+<p>重点查看：</p>
+<ul>
+<li>DOS Header</li>
+<li>NT Headers</li>
+<li>File Header</li>
+<li>Optional Header</li>
+<li>Section Headers</li>
+<li>Import Table</li>
+<li>IAT</li>
+<li>Resource</li>
+</ul>
+<p>记录：</p>
+<ul>
+<li><code>MZ</code> 是否存在</li>
+<li><code>PE\0\0</code> 是否存在</li>
+<li>ImageBase</li>
+<li>AddressOfEntryPoint</li>
+<li>Section 数量</li>
+<li><code>.text</code>、<code>.rdata</code>、<code>.data</code>、<code>.rsrc</code> 是否存在</li>
+<li>导入了哪些 DLL</li>
+<li>导入了哪些函数</li>
+</ul>
+<hr>
+<h2><span id="35-windows-%E5%AE%9E%E9%AA%8C%E7%94%A8-ghidra-%E6%9F%A5%E7%9C%8B%E5%AF%BC%E5%85%A5%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2">35. Windows 实验：用 Ghidra 查看导入和字符串</span></h2><p>用 Ghidra 打开 <code>pe_demo.exe</code>。</p>
+<p>步骤：</p>
+<ol>
+<li>Import File</li>
+<li>运行自动分析</li>
+<li>查看 Symbol Tree</li>
+<li>查看 Imports</li>
+<li>查看 Defined Strings</li>
+<li>找 <code>hello pe</code>、<code>pe_demo_output.txt</code></li>
+<li>查看字符串 XREF</li>
+<li>找到调用 <code>CreateFileA</code>、<code>WriteFile</code>、<code>MessageBoxA</code> 的位置</li>
+<li>查看 Decompiler 伪代码</li>
+</ol>
+<p>思考：</p>
+<ul>
+<li>导入函数是否能帮助理解行为？</li>
+<li>字符串是否能定位关键逻辑？</li>
+<li>伪代码是否和原始 C 程序接近？</li>
+</ul>
+<hr>
+<h2><span id="36-windows-%E5%AE%9E%E9%AA%8C%E7%94%A8-x64dbg-%E8%A7%82%E5%AF%9F%E5%85%A5%E5%8F%A3%E7%82%B9%E5%92%8C-api">36. Windows 实验：用 x64dbg 观察入口点和 API</span></h2><p>用 x64dbg 打开 <code>pe_demo.exe</code>。</p>
+<p>练习：</p>
+<ol>
+<li>运行到系统断点或入口点</li>
+<li>查看模块基址</li>
+<li>查看入口点附近代码</li>
+<li>在 <code>CreateFileA</code> 或 <code>MessageBoxA</code> 下断点</li>
+<li>运行程序</li>
+<li>命中断点后查看参数寄存器</li>
+<li>查看返回值 <code>RAX</code></li>
+<li>查看栈和内存</li>
+</ol>
+<p>重点观察：</p>
+<ul>
+<li><code>RIP</code> 当前属于哪个模块</li>
+<li>主程序基址是多少</li>
+<li>API 参数在哪里</li>
+<li>文件名字符串在哪里</li>
+<li>API 调用是否成功</li>
+</ul>
+<hr>
+<h2><span id="37-windows-%E5%AE%9E%E9%AA%8Cprocess-monitor-%E8%A7%82%E5%AF%9F-pe-%E8%A1%8C%E4%B8%BA">37. Windows 实验：Process Monitor 观察 PE 行为</span></h2><p>用 Process Monitor：</p>
+<ol>
+<li>清空事件</li>
+<li>设置过滤器：Process Name is <code>pe_demo.exe</code></li>
+<li>运行程序</li>
+<li>观察文件事件</li>
+<li>如果有 MessageBox，确认程序行为</li>
+</ol>
+<p>重点看：</p>
+<ul>
+<li><code>CreateFile</code></li>
+<li><code>WriteFile</code></li>
+<li><code>CloseFile</code></li>
+<li>Image Load 事件</li>
+</ul>
+<p>记录：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 程序创建了哪个文件<br>2. 写入是否成功<br>3. 加载了哪些 DLL<br>4. 行为是否和 Import Table 对应<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="38-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">38. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>PE 是 Windows 常见可执行文件格式，常见于 <code>.exe</code>、<code>.dll</code>、<code>.sys</code>。</li>
+<li>PE 文件开头通常有 <code>MZ</code>，并通过 <code>e_lfanew</code> 找到 <code>PE\0\0</code> 签名。</li>
+<li>Optional Header 中有入口点、ImageBase、Data Directory 等装载关键信息。</li>
+<li>RVA、VA、File Offset 是 PE 分析中的三个重要地址概念。</li>
+<li>Section Table 描述 <code>.text</code>、<code>.rdata</code>、<code>.data</code>、<code>.rsrc</code> 等节的位置、大小和权限。</li>
+<li>Import Table 描述程序需要哪些 DLL 和函数。</li>
+<li>IAT 保存导入函数运行时实际地址，是逆向、Hook、脱壳分析的重要结构。</li>
+<li>DLL 加载和导入解析由 Windows Loader 完成。</li>
+<li>TLS Callback 可能在入口点之前执行，恶意代码和壳可能利用它。</li>
+<li>PE 分析需要结合静态结构和动态行为工具。</li>
+</ol>
+<hr>
+<h2><span id="39-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">39. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1pe-%E5%9F%BA%E6%9C%AC%E8%AF%86%E5%88%AB">作业 1：PE 基本识别</span></h3><p>选择一个简单 exe，用 Detect It Easy 或 PE-bear 查看。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 文件名<br>2. 是否为 PE<br>3. 32 位还是 64 位<br>4. 是否有 MZ<br>5. 是否有 PE\0\0<br>6. 入口点 RVA<br>7. ImageBase<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2section-table-%E5%88%86%E6%9E%90">作业 2：Section Table 分析</span></h3><p>用 PE-bear 查看 Section。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">1. Section 数量<br>2. 每个 Section 名称<br>3. .text 的权限<br>4. .rdata 中可能有什么<br>5. .data 中可能有什么<br>6. 是否存在 .rsrc<br>7. 是否存在异常节名或 RWX 权限<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3import-table-%E5%92%8C-iat-%E5%88%86%E6%9E%90">作业 3：Import Table 和 IAT 分析</span></h3><p>查看 Import Table。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 导入了哪些 DLL<br>2. 每个 DLL 中至少 3 个导入函数<br>3. 哪些 API 暗示文件行为<br>4. 哪些 API 暗示进程或内存行为<br>5. Import Table 和 IAT 的区别<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-4%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C-xref-%E5%88%86%E6%9E%90">作业 4：字符串和 XREF 分析</span></h3><p>用 Ghidra 打开 exe。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 发现的关键字符串<br>2. 字符串位于哪个区域或节<br>3. 哪个函数引用了该字符串<br>4. 该函数大致做什么<br>5. 字符串如何帮助定位关键逻辑<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-5%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95-api-%E5%8F%82%E6%95%B0">作业 5：动态调试 API 参数</span></h3><p>用 x64dbg：</p>
+<ol>
+<li>在一个导入 API 上下断点，例如 <code>CreateFileA/W</code>、<code>MessageBoxA</code>、<code>WriteFile</code></li>
+<li>运行程序</li>
+<li>查看参数寄存器和返回值</li>
+</ol>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 下断点的 API<br>2. 命中断点时 RIP<br>3. RCX/RDX/R8/R9 的值<br>4. 参数指向的字符串或数据<br>5. RAX 返回值<br>6. 这个 API 调用说明了什么行为<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-6process-monitor-%E8%A1%8C%E4%B8%BA%E9%AA%8C%E8%AF%81">作业 6：Process Monitor 行为验证</span></h3><p>运行程序并用 Process Monitor 观察。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 过滤条件<br>2. 观察到的文件事件<br>3. 观察到的 Image Load 事件<br>4. 行为是否和导入表一致<br>5. 静态分析和动态分析各自给了什么证据<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="40-%E8%87%AA%E6%B5%8B%E9%A2%98">40. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>PE 的全称是什么？常见哪些文件扩展名使用 PE 格式？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p><code>MZ</code> 和 <code>PE\0\0</code> 分别是什么？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p><code>e_lfanew</code> 的作用是什么？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p>RVA、VA、File Offset 有什么区别？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p><code>.text</code>、<code>.rdata</code>、<code>.data</code>、<code>.rsrc</code> 通常分别存放什么？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>Import Table 和 IAT 有什么区别？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>为什么 TLS Callback 对逆向分析很重要？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>为什么恶意代码可能动态解析 API？</p>
+<h3><span id="%E9%A2%98-9">题 9</span></h3><p>PE 和 ELF 有哪些相似点？</p>
+<hr>
+<h2><span id="41-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">41. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>PE 全称是 Portable Executable。Windows 下常见 <code>.exe</code>、<code>.dll</code>、<code>.sys</code>、<code>.scr</code>、<code>.ocx</code> 等文件可能使用 PE 格式。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p><code>MZ</code> 是 DOS Header 开头的魔数，表示这是典型 PE 文件开头；<code>PE\0\0</code> 是 PE Signature，位于 <code>e_lfanew</code> 指向的位置，用于标识真正的 PE Header。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p><code>e_lfanew</code> 位于 DOS Header 中，用于指向 PE Header 在文件中的偏移。Windows Loader 通过它找到 <code>PE\0\0</code> 和后续 PE 结构。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p>RVA 是相对虚拟地址，相对于 ImageBase；VA 是程序加载到内存后的虚拟地址；File Offset 是数据在磁盘文件中的偏移。三者不是同一个概念，需要通过 ImageBase 和 Section Table 转换。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p><code>.text</code> 通常存放代码；<code>.rdata</code> 存放只读数据、字符串和部分导入相关信息；<code>.data</code> 存放已初始化可写全局数据；<code>.rsrc</code> 存放图标、菜单、版本信息、字符串表、嵌入文件等资源。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>Import Table 描述程序需要导入哪些 DLL 和函数；IAT 保存这些导入函数在运行时解析后的实际地址，程序调用外部 API 时可能通过 IAT 间接调用。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>因为 TLS Callback 可能在程序入口点之前执行。恶意代码和加壳程序可能利用它进行反调试、解密、环境检查或隐藏初始化逻辑。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>动态解析 API 可以减少静态导入表中的敏感函数暴露，也能在运行时按需加载 DLL 和函数。恶意代码常用这种方式隐藏行为或增加分析难度。</p>
+<h3><span id="%E7%AD%94-9">答 9</span></h3><p>PE 和 ELF 都是可执行文件格式，都描述程序如何被加载到内存、入口点在哪里、有哪些代码和数据区域、依赖哪些外部库、如何处理重定位和动态链接等。</p>
+<hr>
+<h2><span id="42-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">42. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">线程是什么<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>进程和线程的区别</li>
+<li>一个进程内多个线程共享什么</li>
+<li>每个线程私有什么</li>
+<li>线程栈</li>
+<li>Linux pthread</li>
+<li>Windows Thread</li>
+<li>为什么恶意代码和系统程序经常创建线程</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC12%E8%8A%82-PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E4%B8%8EWindows%E8%A3%85%E8%BD%BD/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第12节-PE文件格式与Windows装载&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第12节-PE文件格式与Windows装载&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

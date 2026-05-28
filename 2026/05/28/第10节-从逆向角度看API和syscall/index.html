@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第10节-从逆向角度看API和syscall -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/15.jpg"
+				data-sizes="auto"
+				alt="第10节-从逆向角度看API和syscall"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第10节-从逆向角度看API和syscall</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5.8k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 26 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-10-%E8%8A%82%E4%BB%8E%E9%80%86%E5%90%91%E8%A7%92%E5%BA%A6%E7%9C%8B-api-%E5%92%8C-syscall">第 10 节：从逆向角度看 API 和 syscall</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 5 周<br>课程主题：系统调用<br>本节目标：从逆向工程和安全分析角度理解库函数、API、系统调用之间的调用链，掌握 Linux 下 <code>ltrace</code> / <code>strace</code> 的区别，以及 Windows 下 Win32 API、Native API、<code>ntdll.dll</code> 和 syscall 的基本关系。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>库函数、API、系统调用之间是什么关系？</li>
+<li>为什么逆向分析常从 API 调用入手？</li>
+<li>Linux 下 libc 在系统调用前做了什么？</li>
+<li><code>ltrace</code> 和 <code>strace</code> 有什么区别？</li>
+<li>Windows 下 <code>kernel32.dll</code>、<code>KernelBase.dll</code>、<code>ntdll.dll</code> 分别大致是什么角色？</li>
+<li><code>CreateFileW</code> 和 <code>NtCreateFile</code> 有什么关系？</li>
+<li>什么是 syscall stub？</li>
+<li>为什么恶意代码行为经常被描述成 API 序列？</li>
+<li>为什么安全软件会监控 API 和系统调用？</li>
+<li>如何用工具观察程序的 API / syscall 行为？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">源代码调用函数 -&gt; 用户态库/API -&gt; 更底层封装 -&gt; syscall 入口 -&gt; 内核处理 -&gt; 返回用户态<br></code></pre></td></tr></tbody></table></figure>
+
+<p>上一节我们从操作系统角度学习了系统调用；这一节重点从逆向和安全分析角度看这些调用链。</p>
+<hr>
+<h2><span id="2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%86%E5%90%91%E8%A6%81%E5%85%B3%E6%B3%A8-api-%E5%92%8C-syscall">2. 为什么逆向要关注 API 和 syscall</span></h2><p>逆向工程中，单看普通计算指令往往很难快速判断程序目的。</p>
+<p>例如你看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, DWORD PTR [rbp-0x4]<br>add eax, 1<br>mov DWORD PTR [rbp-0x4], eax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这只能说明程序在计算。</p>
+<p>但如果你看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br>WriteFile<br>CreateProcessW<br>connect<br>send<br>recv<br>VirtualAlloc<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你马上可以推测程序可能有：</p>
+<ul>
+<li>文件操作</li>
+<li>进程创建</li>
+<li>网络通信</li>
+<li>内存分配</li>
+<li>动态执行代码</li>
+</ul>
+<p>API 和系统调用是程序和操作系统交互的边界。</p>
+<p>所以它们能反映程序行为。</p>
+<p>逆向分析时常常先问：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">这个程序调用了哪些系统 API？<br>这些 API 的参数是什么？<br>调用顺序是什么？<br>返回结果是什么？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="3-%E8%A1%8C%E4%B8%BA%E6%AF%94%E5%8D%95%E6%9D%A1%E6%8C%87%E4%BB%A4%E6%9B%B4%E9%87%8D%E8%A6%81">3. 行为比单条指令更重要</span></h2><p>从安全分析角度，单个 API 不一定说明问题。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>普通软件也会创建文件。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">VirtualAlloc<br></code></pre></td></tr></tbody></table></figure>
+
+<p>普通程序也会分配内存。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">connect<br></code></pre></td></tr></tbody></table></figure>
+
+<p>浏览器、聊天软件、更新程序都会联网。</p>
+<p>真正重要的是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">API 序列 + 参数 + 上下文<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW -&gt; WriteFile -&gt; CreateProcessW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">写出一个文件并执行它<br></code></pre></td></tr></tbody></table></figure>
+
+<p>再例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">VirtualAlloc -&gt; WriteProcessMemory -&gt; CreateRemoteThread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在 Windows 安全分析中就非常值得关注，因为它可能和进程注入有关。</p>
+<p>所以逆向时要关注行为链，而不是孤立 API。</p>
+<hr>
+<h2><span id="4-linux-%E4%B8%8B%E7%9A%84%E8%B0%83%E7%94%A8%E9%93%BE">4. Linux 下的调用链</span></h2><p>Linux 下一个普通 C 程序调用文件写入时，可能是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">main<br> -&gt; printf / fwrite / write<br> -&gt; libc<br> -&gt; syscall wrapper<br> -&gt; syscall 指令<br> -&gt; Linux 内核<br> -&gt; 文件系统 / 设备驱动<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能经历：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">printf<br> -&gt; libc 缓冲处理<br> -&gt; write<br> -&gt; syscall<br> -&gt; 内核<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果直接写：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">write(<span class="hljs-number">1</span>, <span class="hljs-string">"hello\n"</span>, <span class="hljs-number">6</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调用链会短一些：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">write<br> -&gt; libc syscall wrapper<br> -&gt; syscall<br> -&gt; 内核<br></code></pre></td></tr></tbody></table></figure>
+
+<p>但即使你调用的是 <code>write</code>，通常也不是你自己直接写 <code>syscall</code> 指令，而是调用 libc 提供的封装。</p>
+<hr>
+<h2><span id="5-libc-%E6%98%AF%E4%BB%80%E4%B9%88">5. libc 是什么</span></h2><p>libc 是 C 标准库和系统接口的重要实现。</p>
+<p>Linux 上常见的是 glibc。</p>
+<p>它提供很多函数，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs text">printf<br>malloc<br>free<br>open<br>read<br>write<br>fopen<br>strcpy<br>strlen<br>fork<br>execve<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些函数并不都直接进入内核。</p>
+<p>可以粗略分为三类：</p>
+<h3><span id="51-%E7%BA%AF%E7%94%A8%E6%88%B7%E6%80%81%E5%87%BD%E6%95%B0">5.1 纯用户态函数</span></h3><p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">strlen<br>strcmp<br>memcpy<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们通常只处理用户态内存，不需要进入内核。</p>
+<hr>
+<h3><span id="52-%E5%8F%AF%E8%83%BD%E8%A7%A6%E5%8F%91%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E5%BA%93%E5%87%BD%E6%95%B0">5.2 可能触发系统调用的库函数</span></h3><p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">printf<br>malloc<br>fopen<br>fread<br>fwrite<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们内部可能根据情况调用系统调用。</p>
+<p>例如 <code>malloc</code> 可能通过：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">brk<br>mmap<br></code></pre></td></tr></tbody></table></figure>
+
+<p>向内核申请内存区域。</p>
+<hr>
+<h3><span id="53-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%B0%81%E8%A3%85%E5%87%BD%E6%95%B0">5.3 系统调用封装函数</span></h3><p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">read<br>write<br>open<br>close<br>execve<br>fork<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些函数更接近系统调用。</p>
+<p>它们负责按照 ABI 准备参数，执行进入内核的指令，并处理返回值和 <code>errno</code>。</p>
+<hr>
+<h2><span id="6-syscall-wrapper-%E6%98%AF%E4%BB%80%E4%B9%88">6. syscall wrapper 是什么</span></h2><p>系统调用封装函数可以理解成 syscall wrapper。</p>
+<p>它负责：</p>
+<ol>
+<li>接收 C 函数参数</li>
+<li>把参数放到系统调用约定要求的寄存器</li>
+<li>设置系统调用号</li>
+<li>执行 <code>syscall</code> 指令</li>
+<li>读取返回值</li>
+<li>如果出错，设置 <code>errno</code></li>
+<li>返回给调用者</li>
+</ol>
+<p>例如用户写：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">write(<span class="hljs-number">1</span>, <span class="hljs-string">"hello\n"</span>, <span class="hljs-number">6</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>libc 内部大致会准备：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">rax = write 的系统调用号<br>rdi = 1<br>rsi = 字符串地址<br>rdx = 6<br>syscall<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你通常不需要自己写这些底层细节。</p>
+<p>libc 帮你封装好了。</p>
+<hr>
+<h2><span id="7-ltrace-%E5%92%8C-strace-%E7%9A%84%E5%8C%BA%E5%88%AB">7. <code>ltrace</code> 和 <code>strace</code> 的区别</span></h2><p>Linux 下常用两个观察工具：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">ltrace<br>strace<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们关注层次不同。</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>主要观察对象</th>
+<th>典型输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ltrace</td>
+<td>用户态库函数调用</td>
+<td><code>printf(...)</code>、<code>strcmp(...)</code>、<code>malloc(...)</code></td>
+</tr>
+<tr>
+<td>strace</td>
+<td>系统调用</td>
+<td><code>write(...)</code>、<code>openat(...)</code>、<code>mmap(...)</code></td>
+</tr>
+</tbody></table>
+<p>简单理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">ltrace 看库函数层<br>strace 看系统调用层<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如程序调用：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>ltrace</code> 可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">puts("hello")<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>strace</code> 可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">write(1, "hello\n", 6)<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="8-%E4%B8%BA%E4%BB%80%E4%B9%88-ltrace-%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%80%BB%E8%83%BD%E7%9C%8B%E5%88%B0">8. 为什么 <code>ltrace</code> 不一定总能看到</span></h2><p><code>ltrace</code> 主要跟踪动态链接库函数调用。</p>
+<p>如果程序：</p>
+<ul>
+<li>静态链接</li>
+<li>使用内联函数</li>
+<li>被优化</li>
+<li>直接系统调用</li>
+<li>被加壳或混淆</li>
+<li>不通过 PLT 调用库函数</li>
+</ul>
+<p><code>ltrace</code> 可能看不到预期内容。</p>
+<p>所以分析时不要只依赖一个工具。</p>
+<p>常见组合是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">strings -&gt; ltrace -&gt; strace -&gt; objdump/Ghidra -&gt; gdb<br></code></pre></td></tr></tbody></table></figure>
+
+<p>不同工具提供不同层次证据。</p>
+<hr>
+<h2><span id="9-linux-%E5%AE%9E%E9%AA%8C%E5%AF%B9%E6%AF%94-ltrace-%E5%92%8C-strace">9. Linux 实验：对比 <code>ltrace</code> 和 <code>strace</code></span></h2><p>创建 <code>trace_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">char</span> input[<span class="hljs-number">32</span>];<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"input: "</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%31s"</span>, input);<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(input, <span class="hljs-string">"secret"</span>) == <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"success\n"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"fail\n"</span>);<br>    }<br><br>    write(<span class="hljs-number">1</span>, <span class="hljs-string">"done\n"</span>, <span class="hljs-number">5</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -O0 trace_demo.c -o trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用 <code>ltrace</code>：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ltrace ./trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>输入：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">secret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">printf("input: ")<br>__isoc99_scanf("%31s", ...)<br>strcmp("secret", "secret")<br>printf("success\n")<br>write(1, "done\n", 5)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用 <code>strace</code>：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace ./trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到系统调用，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">read(0, ...)<br>write(1, ...)<br>exit_group(0)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>思考：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">ltrace 更容易看到 strcmp 的语义<br>strace 更容易看到程序和内核的交互<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="10-strcmp-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AF%B9%E9%80%86%E5%90%91%E5%BE%88%E6%9C%89%E7%94%A8">10. <code>strcmp</code> 为什么对逆向很有用</span></h2><p>很多简单验证程序会使用：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">strcmp</span>(input, <span class="hljs-string">"secret"</span>)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果用 <code>ltrace</code> 运行，可能直接看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">strcmp("user_input", "secret")<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这对逆向分析非常有帮助。</p>
+<p>因为你不用先读复杂汇编，就能看到程序把输入和哪个字符串比较。</p>
+<p>但真实程序可能会：</p>
+<ul>
+<li>自己实现比较函数</li>
+<li>加密字符串</li>
+<li>运行时解密</li>
+<li>使用哈希比较</li>
+<li>混淆控制流</li>
+</ul>
+<p>所以 <code>ltrace</code> 对入门题和简单程序很有用，但不能依赖它解决所有逆向问题。</p>
+<hr>
+<h2><span id="11-strace-%E7%9C%8B%E4%B8%8D%E5%88%B0%E4%BB%80%E4%B9%88">11. <code>strace</code> 看不到什么</span></h2><p><code>strace</code> 只看系统调用层。</p>
+<p>如果一个程序在用户态内部做了大量计算，<code>strace</code> 可能看不到细节。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">for</span> (...) {<br>    hash = hash * <span class="hljs-number">131</span> + input[i];<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这是用户态计算。</p>
+<p>它不需要进入内核。</p>
+<p>所以 <code>strace</code> 不会显示每次计算。</p>
+<p>它只能看到：</p>
+<ul>
+<li>读输入</li>
+<li>写输出</li>
+<li>文件操作</li>
+<li>网络操作</li>
+<li>进程创建</li>
+<li>内存映射</li>
+<li>退出</li>
+</ul>
+<p>因此：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">strace 适合看系统行为，不适合看纯算法逻辑。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>算法逻辑需要用：</p>
+<ul>
+<li>GDB</li>
+<li>Ghidra</li>
+<li>IDA</li>
+<li>反汇编</li>
+<li>反编译</li>
+</ul>
+<p>来分析。</p>
+<hr>
+<h2><span id="12-linux-%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%92%8C-pltgot-%E7%9A%84%E7%9B%B4%E8%A7%89">12. Linux 动态链接和 PLT/GOT 的直觉</span></h2><p>动态链接程序调用外部库函数时，通常涉及 PLT/GOT。</p>
+<p>你现在不需要完全掌握细节，但需要建立直觉。</p>
+<p>例如程序调用：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">puts</span>(<span class="hljs-string">"hello"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可执行文件里并不一定直接写死 libc 中 <code>puts</code> 的最终地址。</p>
+<p>因为 libc 运行时加载地址可能变化。</p>
+<p>所以 ELF 会通过动态链接机制解析函数地址。</p>
+<p>常见结构：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">PLT：Procedure Linkage Table<br>GOT：Global Offset Table<br></code></pre></td></tr></tbody></table></figure>
+
+<p>简化理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">PLT 像跳板<br>GOT 保存最终解析出的函数地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向时看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">call puts@plt<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">调用动态链接的 puts 函数<br></code></pre></td></tr></tbody></table></figure>
+
+<p>后面 ELF 文件格式章节会更详细讲 PLT/GOT。</p>
+<hr>
+<h2><span id="13-windows-%E4%B8%8B%E7%9A%84-api-%E8%B0%83%E7%94%A8%E5%B1%82%E6%AC%A1">13. Windows 下的 API 调用层次</span></h2><p>Windows 下 API 层次更复杂一些。</p>
+<p>常见调用链可以简化为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">应用程序<br> -&gt; Win32 API<br> -&gt; KernelBase.dll / kernel32.dll<br> -&gt; ntdll.dll<br> -&gt; Native API / NTAPI<br> -&gt; syscall stub<br> -&gt; Windows 内核<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如文件创建：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br> -&gt; KernelBase.dll / kernel32.dll<br> -&gt; NtCreateFile<br> -&gt; ntdll.dll syscall stub<br> -&gt; 内核处理<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p>Windows 版本不同，内部实现可能变化。</p>
+<p>但逆向时常见思路是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">高层 Win32 API 表达语义<br>底层 NTAPI 更接近内核入口<br>ntdll.dll 中有进入内核的 syscall 代码<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="14-kernel32dll-%E6%98%AF%E4%BB%80%E4%B9%88">14. <code>kernel32.dll</code> 是什么</span></h2><p><code>kernel32.dll</code> 是 Windows 用户态核心 DLL 之一。</p>
+<p>很多常见 Win32 API 都从这里导出，或者经由它转发。</p>
+<p>常见 API：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br>ReadFile<br>WriteFile<br>CreateProcessW<br>VirtualAlloc<br>GetLastError<br>CloseHandle<br></code></pre></td></tr></tbody></table></figure>
+
+<p>现代 Windows 中，一些实现可能转到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">KernelBase.dll<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以你在调试器里可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">kernel32.dll -&gt; KernelBase.dll -&gt; ntdll.dll<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向时，不要因为中间多跳了一层就困惑。</p>
+<p>这只是 Windows API 实现层次的一部分。</p>
+<hr>
+<h2><span id="15-ntdlldll-%E6%98%AF%E4%BB%80%E4%B9%88">15. <code>ntdll.dll</code> 是什么</span></h2><p><code>ntdll.dll</code> 是 Windows 用户态和内核态之间非常关键的一层。</p>
+<p>它包含：</p>
+<ul>
+<li>Native API / NTAPI 的用户态入口</li>
+<li>系统调用 stub</li>
+<li>运行时支持函数</li>
+<li>异常处理相关机制</li>
+</ul>
+<p>常见 Native API：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">NtCreateFile<br>NtReadFile<br>NtWriteFile<br>NtCreateProcess<br>NtAllocateVirtualMemory<br>NtProtectVirtualMemory<br>NtCreateThreadEx<br></code></pre></td></tr></tbody></table></figure>
+
+<p>许多 Win32 API 最终会调用 ntdll 中的 Native API。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW -&gt; NtCreateFile<br>VirtualAlloc -&gt; NtAllocateVirtualMemory<br>WriteFile -&gt; NtWriteFile<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是为什么 Windows 逆向中经常看到 <code>ntdll.dll</code>。</p>
+<hr>
+<h2><span id="16-syscall-stub-%E6%98%AF%E4%BB%80%E4%B9%88">16. syscall stub 是什么</span></h2><p>syscall stub 是用户态中一小段进入内核的代码。</p>
+<p>在 Windows x64 中，ntdll 的某些函数内部可能类似：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov r10, rcx<br>mov eax, 系统调用号<br>syscall<br>ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>简化理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">准备系统调用号和参数<br>执行 syscall 指令<br>从内核返回<br></code></pre></td></tr></tbody></table></figure>
+
+<p>系统调用号会随 Windows 版本变化。</p>
+<p>所以不要随便硬编码系统调用号。</p>
+<p>逆向和安全分析中，看到这样的模式，可以推测它是系统调用入口。</p>
+<hr>
+<h2><span id="17-createfilew-%E5%88%B0-ntcreatefile-%E7%9A%84%E7%9B%B4%E8%A7%89">17. <code>CreateFileW</code> 到 <code>NtCreateFile</code> 的直觉</span></h2><p>应用程序可能调用：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">CreateFileW(<span class="hljs-string">L"test.txt"</span>, ...);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它是 Win32 API，语义比较友好。</p>
+<p>底层可能转换成更底层的 NT 风格参数，然后调用：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">NtCreateFile<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>NtCreateFile</code> 再进入内核。</p>
+<p>所以同一个文件创建行为，在不同工具中可能显示不同层次：</p>
+<table>
+<thead>
+<tr>
+<th>工具/层次</th>
+<th>可能看到</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>源代码</td>
+<td><code>CreateFileW</code></td>
+</tr>
+<tr>
+<td>x64dbg 高层断点</td>
+<td><code>CreateFileW</code></td>
+</tr>
+<tr>
+<td>更底层调试</td>
+<td><code>NtCreateFile</code></td>
+</tr>
+<tr>
+<td>Process Monitor</td>
+<td><code>CreateFile</code> 操作事件</td>
+</tr>
+<tr>
+<td>内核跟踪</td>
+<td>文件系统/对象管理器相关事件</td>
+</tr>
+</tbody></table>
+<p>它们描述的是同一类行为的不同层次。</p>
+<hr>
+<h2><span id="18-windows-api-%E5%8F%82%E6%95%B0%E8%A7%82%E5%AF%9F">18. Windows API 参数观察</span></h2><p>Windows x64 调用约定中，前四个整数/指针参数通常是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rcx, rdx, r8, r9<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以在 x64dbg 中，如果你在 <code>CreateFileW</code> 下断点，可以观察：</p>
+<ul>
+<li><code>rcx</code>：文件名指针</li>
+<li><code>rdx</code>：访问权限</li>
+<li><code>r8</code>：共享模式</li>
+<li><code>r9</code>：安全属性指针</li>
+<li>栈上：后续参数</li>
+</ul>
+<p>如果 <code>rcx</code> 是宽字符串指针，可以在 Dump 中按 Unicode 查看。</p>
+<p>这对分析 Windows 程序非常有用。</p>
+<p>例如你可以看到程序实际打开了哪个路径。</p>
+<hr>
+<h2><span id="19-process-monitor-%E7%9C%8B%E5%88%B0%E7%9A%84%E6%98%AF-api-%E5%90%97">19. Process Monitor 看到的是 API 吗</span></h2><p>Process Monitor 展示的是系统行为事件。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFile<br>ReadFile<br>WriteFile<br>RegSetValue<br>Process Create<br>TCP Connect<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些名称不一定等同于应用程序直接调用的 API 名。</p>
+<p>它们是 Process Monitor 以易读方式展示的操作类型。</p>
+<p>例如程序可能调用：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br>NtCreateFile<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Process Monitor 可能显示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFile<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以要理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">工具展示的是某一层抽象，不一定是源码中的函数名。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="20-api-hook-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">20. API Hook 的基本概念</span></h2><p>安全软件、沙箱、调试工具可能会 Hook API。</p>
+<p>Hook 可以理解为：</p>
+<blockquote>
+<p>在函数调用路径上插入自己的监控或修改逻辑。</p>
+</blockquote>
+<p>例如监控：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br>WriteFile<br>CreateProcessW<br>connect<br></code></pre></td></tr></tbody></table></figure>
+
+<p>当程序调用这些 API 时，监控组件可以记录：</p>
+<ul>
+<li>调用者是谁</li>
+<li>参数是什么</li>
+<li>返回值是什么</li>
+<li>调用时间</li>
+<li>调用栈</li>
+</ul>
+<p>这对安全防护有用。</p>
+<p>但恶意代码也可能检测 Hook 或绕过用户态 Hook。</p>
+<p>这就是为什么会出现直接系统调用等技术。</p>
+<p>本课程只从防御和分析角度理解这些概念。</p>
+<hr>
+<h2><span id="21-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E8%A1%8C%E4%B8%BA%E5%B8%B8%E8%A2%AB%E6%8F%8F%E8%BF%B0%E4%B8%BA-api-%E5%BA%8F%E5%88%97">21. 为什么恶意代码行为常被描述为 API 序列</span></h2><p>因为 API 序列能很好描述行为。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">URLDownloadToFileW -&gt; CreateProcessW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">下载文件并执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">OpenProcess -&gt; VirtualAllocEx -&gt; WriteProcessMemory -&gt; CreateRemoteThread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">向其他进程写入代码并创建远程线程<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">RegOpenKeyExW -&gt; RegSetValueExW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">修改注册表<br></code></pre></td></tr></tbody></table></figure>
+
+<p>API 序列比单个 API 更能表达意图。</p>
+<hr>
+<h2><span id="22-api-%E5%BA%8F%E5%88%97%E5%88%86%E6%9E%90%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">22. API 序列分析的注意事项</span></h2><p>不要看到某个 API 就直接判定恶意。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">VirtualAlloc<br></code></pre></td></tr></tbody></table></figure>
+
+<p>很多正常程序都会使用。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateProcessW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>安装程序、更新程序、终端、IDE 都会使用。</p>
+<p>分析时要结合：</p>
+<ul>
+<li>父进程是谁</li>
+<li>程序路径是否可疑</li>
+<li>命令行参数是什么</li>
+<li>是否在临时目录</li>
+<li>是否隐藏窗口</li>
+<li>是否连接陌生网络</li>
+<li>是否写入启动项</li>
+<li>是否修改其他进程内存</li>
+<li>行为是否符合业务逻辑</li>
+</ul>
+<p>安全分析不是只看 API 名称，而是看上下文。</p>
+<hr>
+<h2><span id="23-linux-api--syscall-%E8%A1%8C%E4%B8%BA%E9%93%BE%E7%A4%BA%E4%BE%8B">23. Linux API / syscall 行为链示例</span></h2><p>Linux 程序行为也可以用系统调用序列描述。</p>
+<p>例如文件复制：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">openat -&gt; read -&gt; openat -&gt; write -&gt; close<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如执行命令：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">clone -&gt; execve -&gt; wait4<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如网络连接：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">socket -&gt; connect -&gt; sendto -&gt; recvfrom<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如修改内存权限：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">mmap -&gt; mprotect<br></code></pre></td></tr></tbody></table></figure>
+
+<p>看到这些序列，你就能推断程序行为。</p>
+<hr>
+<h2><span id="24-%E4%BB%8E%E9%80%86%E5%90%91%E8%A7%92%E5%BA%A6%E7%9C%8B%E5%AF%BC%E5%85%A5%E8%A1%A8">24. 从逆向角度看导入表</span></h2><p>在 Windows PE 中，Import Table 会列出程序导入的 DLL 和函数。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">kernel32.dll: CreateFileW, WriteFile, CreateProcessW<br>ws2_32.dll: socket, connect, send, recv<br>advapi32.dll: RegSetValueExW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些导入函数是静态线索。</p>
+<p>它们说明程序可能使用相关功能。</p>
+<p>但注意：</p>
+<ol>
+<li>导入了不一定真的调用</li>
+<li>没导入也不代表不会用</li>
+<li>程序可能动态解析 API</li>
+<li>程序可能加壳隐藏导入表</li>
+</ol>
+<p>所以导入表是线索，不是最终结论。</p>
+<hr>
+<h2><span id="25-%E5%8A%A8%E6%80%81%E8%A7%A3%E6%9E%90-api">25. 动态解析 API</span></h2><p>有些程序不会在导入表中直接显示敏感 API。</p>
+<p>它可能运行时调用：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">LoadLibrary<br>GetProcAddress<br></code></pre></td></tr></tbody></table></figure>
+
+<p>动态获取 API 地址。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">LoadLibraryA("kernel32.dll")<br>GetProcAddress(handle, "VirtualAlloc")<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这样静态导入表里可能看不到 <code>VirtualAlloc</code>。</p>
+<p>恶意代码常用这种方式隐藏行为。</p>
+<p>分析时可以：</p>
+<ul>
+<li>观察字符串</li>
+<li>对 <code>LoadLibrary</code> / <code>GetProcAddress</code> 下断点</li>
+<li>动态调试返回的函数地址</li>
+<li>监控后续 API 行为</li>
+</ul>
+<hr>
+<h2><span id="26-linux-%E4%B8%AD%E7%9A%84%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD">26. Linux 中的动态加载</span></h2><p>Linux 也有动态加载机制。</p>
+<p>常见函数：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">dlopen<br>dlsym<br>dlclose<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如程序运行时加载某个 <code>.so</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">dl_handle = dlopen(<span class="hljs-string">"libexample.so"</span>, RTLD_NOW);<br>func = dlsym(dl_handle, <span class="hljs-string">"target_func"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这和 Windows 的 <code>LoadLibrary</code> / <code>GetProcAddress</code> 类似。</p>
+<p>逆向时，如果看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">dlopen<br>dlsym<br></code></pre></td></tr></tbody></table></figure>
+
+<p>说明程序可能运行时解析函数。</p>
+<hr>
+<h2><span id="27-linux-%E5%AE%9E%E9%AA%8Cltrace-%E7%9C%8B%E5%BA%93%E5%87%BD%E6%95%B0">27. Linux 实验：<code>ltrace</code> 看库函数</span></h2><p>创建 <code>api_trace_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">char</span> input[<span class="hljs-number">32</span>];<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"password: "</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%31s"</span>, input);<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(input, <span class="hljs-string">"secret123"</span>) == <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">puts</span>(<span class="hljs-string">"success"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">puts</span>(<span class="hljs-string">"fail"</span>);<br>    }<br><br>    <span class="hljs-type">char</span> *p = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">16</span>);<br>    <span class="hljs-keyword">if</span> (p) {<br>        <span class="hljs-built_in">strcpy</span>(p, <span class="hljs-string">"done"</span>);<br>        <span class="hljs-built_in">puts</span>(p);<br>        <span class="hljs-built_in">free</span>(p);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -O0 api_trace_demo.c -o api_trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ltrace ./api_trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>输入：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">secret123<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li><code>printf</code></li>
+<li><code>scanf</code></li>
+<li><code>strcmp</code></li>
+<li><code>puts</code></li>
+<li><code>malloc</code></li>
+<li><code>strcpy</code></li>
+<li><code>free</code></li>
+</ul>
+<p>思考：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">哪些调用是纯用户态库函数？<br>哪些调用可能进一步触发系统调用？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="28-linux-%E5%AE%9E%E9%AA%8Cstrace-%E7%9C%8B%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8">28. Linux 实验：<code>strace</code> 看系统调用</span></h2><p>继续使用 <code>api_trace_demo</code>。</p>
+<p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace ./api_trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或者过滤：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace -e trace=<span class="hljs-built_in">read</span>,write,brk,mmap,munmap ./api_trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li>输入对应的 <code>read</code></li>
+<li>输出对应的 <code>write</code></li>
+<li>内存相关的 <code>brk</code> / <code>mmap</code></li>
+</ul>
+<p>对比 <code>ltrace</code>：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">ltrace 能看到 strcmp、malloc、free<br>strace 能看到 read、write、mmap、brk<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明两者关注层次不同。</p>
+<hr>
+<h2><span id="29-linux-%E5%AE%9E%E9%AA%8Capi-%E8%A1%8C%E4%B8%BA%E9%93%BE%E5%88%86%E6%9E%90">29. Linux 实验：API 行为链分析</span></h2><p>创建 <code>behavior_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;fcntl.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> fd = open(<span class="hljs-string">"behavior.txt"</span>, O_CREAT | O_WRONLY | O_TRUNC, <span class="hljs-number">0644</span>);<br>    <span class="hljs-keyword">if</span> (fd &lt; <span class="hljs-number">0</span>) {<br>        perror(<span class="hljs-string">"open"</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br><br>    write(fd, <span class="hljs-string">"hello behavior\n"</span>, <span class="hljs-number">15</span>);<br>    close(fd);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc behavior_demo.c -o behavior_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace -e trace=file,write,close ./behavior_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你应该能得到类似行为链：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">openat -&gt; write -&gt; close<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用自然语言描述：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序创建 behavior.txt，写入 hello behavior，然后关闭文件。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是把系统调用序列转化成行为描述。</p>
+<hr>
+<h2><span id="30-windows-%E5%AE%9E%E9%AA%8Cprocess-monitor-%E7%9C%8B%E8%A1%8C%E4%B8%BA%E9%93%BE">30. Windows 实验：Process Monitor 看行为链</span></h2><p>Windows 下可以准备一个简单程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;windows.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    HANDLE h = CreateFileW(<br>        <span class="hljs-string">L"behavior.txt"</span>,<br>        GENERIC_WRITE,<br>        <span class="hljs-number">0</span>,<br>        <span class="hljs-literal">NULL</span>,<br>        CREATE_ALWAYS,<br>        FILE_ATTRIBUTE_NORMAL,<br>        <span class="hljs-literal">NULL</span><br>    );<br><br>    <span class="hljs-keyword">if</span> (h != INVALID_HANDLE_VALUE) {<br>        DWORD written;<br>        WriteFile(h, <span class="hljs-string">"hello behavior\r\n"</span>, <span class="hljs-number">16</span>, &amp;written, <span class="hljs-literal">NULL</span>);<br>        CloseHandle(h);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用 Process Monitor 观察：</p>
+<ol>
+<li>过滤进程名</li>
+<li>运行程序</li>
+<li>查看文件事件</li>
+</ol>
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFile<br>WriteFile<br>CloseFile<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用自然语言描述：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序创建 behavior.txt，并写入数据。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="31-windows-%E5%AE%9E%E9%AA%8Cx64dbg-%E7%9C%8B-api-%E5%8F%82%E6%95%B0">31. Windows 实验：x64dbg 看 API 参数</span></h2><p>用 x64dbg 打开上面的 Windows 程序。</p>
+<p>尝试：</p>
+<ol>
+<li>在 <code>CreateFileW</code> 下断点</li>
+<li>运行程序</li>
+<li>命中断点后查看寄存器</li>
+<li>查看 <code>rcx</code> 指向的宽字符串</li>
+<li>继续运行到 <code>WriteFile</code></li>
+<li>查看写入缓冲区</li>
+<li>查看 <code>rax</code> 返回值</li>
+</ol>
+<p>重点：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">API 名称 + 参数 + 返回值 = 行为证据<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果你只知道调用了 <code>CreateFileW</code>，信息还不够。</p>
+<p>你还要知道：</p>
+<ul>
+<li>创建了哪个路径</li>
+<li>访问权限是什么</li>
+<li>创建方式是什么</li>
+<li>是否成功</li>
+</ul>
+<hr>
+<h2><span id="32-%E4%BB%8E%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B-apisyscall">32. 从漏洞分析角度看 API/syscall</span></h2><p>漏洞分析时，API 和 syscall 能帮你定位输入和危险操作。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">read -&gt; strcpy -&gt; crash<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">从外部读取输入后，没有边界检查就复制到缓冲区<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">recv -&gt; memcpy -&gt; heap corruption<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">网络输入影响堆内存<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">open -&gt; read -&gt; parse -&gt; crash<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">文件解析漏洞<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你要逐渐形成数据流意识：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">输入从哪里来？<br>经过哪些函数？<br>写到哪里？<br>在哪里崩溃？<br></code></pre></td></tr></tbody></table></figure>
+
+<p>API/syscall 是追踪输入来源的重要线索。</p>
+<hr>
+<h2><span id="33-%E4%BB%8E%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B-apisyscall">33. 从恶意代码分析角度看 API/syscall</span></h2><p>恶意代码分析中，API/syscall 更是核心。</p>
+<p>常见行为和 API 对应：</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>Windows 常见 API</th>
+<th>Linux 常见 syscall/API</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建文件</td>
+<td>CreateFileW</td>
+<td>openat</td>
+</tr>
+<tr>
+<td>写文件</td>
+<td>WriteFile</td>
+<td>write</td>
+</tr>
+<tr>
+<td>创建进程</td>
+<td>CreateProcessW</td>
+<td>fork/execve/clone</td>
+</tr>
+<tr>
+<td>网络连接</td>
+<td>connect / WinHttp</td>
+<td>socket/connect</td>
+</tr>
+<tr>
+<td>分配内存</td>
+<td>VirtualAlloc</td>
+<td>mmap/brk</td>
+</tr>
+<tr>
+<td>改内存权限</td>
+<td>VirtualProtect</td>
+<td>mprotect</td>
+</tr>
+<tr>
+<td>创建线程</td>
+<td>CreateThread</td>
+<td>clone/pthread_create</td>
+</tr>
+<tr>
+<td>注册表修改</td>
+<td>RegSetValueExW</td>
+<td>Linux 无直接注册表概念</td>
+</tr>
+<tr>
+<td>动态加载库</td>
+<td>LoadLibraryW</td>
+<td>dlopen</td>
+</tr>
+<tr>
+<td>获取函数地址</td>
+<td>GetProcAddress</td>
+<td>dlsym</td>
+</tr>
+</tbody></table>
+<p>分析时要把底层调用翻译成行为。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">mmap -&gt; write data -&gt; mprotect(PROT_EXEC)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能表示程序在准备可执行内存。</p>
+<hr>
+<h2><span id="34-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">34. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>API 和系统调用是程序与操作系统交互的重要边界。</li>
+<li>逆向分析中，API 调用比普通计算指令更容易体现程序行为。</li>
+<li>Linux 下 libc 提供大量库函数和系统调用封装。</li>
+<li><code>ltrace</code> 主要观察库函数调用，<code>strace</code> 主要观察系统调用。</li>
+<li><code>strace</code> 适合看系统行为，不适合看纯用户态算法细节。</li>
+<li>Windows 下常见调用链是 Win32 API -&gt; KernelBase/kernel32 -&gt; ntdll -&gt; syscall -&gt; 内核。</li>
+<li><code>ntdll.dll</code> 中包含 Native API 和 syscall stub。</li>
+<li>Process Monitor 展示的是系统行为事件，不一定等于源码中的 API 名称。</li>
+<li>恶意代码行为常被描述为 API 序列，因为 API 序列能表达程序意图。</li>
+<li>分析 API/syscall 时必须结合参数、返回值和上下文。</li>
+</ol>
+<hr>
+<h2><span id="35-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">35. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1%E5%AF%B9%E6%AF%94-ltrace-%E5%92%8C-strace">作业 1：对比 <code>ltrace</code> 和 <code>strace</code></span></h3><p>写 <code>trace_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">char</span> input[<span class="hljs-number">32</span>];<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"input: "</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%31s"</span>, input);<br><br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(input, <span class="hljs-string">"secret"</span>) == <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"success\n"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"fail\n"</span>);<br>    }<br><br>    write(<span class="hljs-number">1</span>, <span class="hljs-string">"done\n"</span>, <span class="hljs-number">5</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -O0 trace_demo.c -o trace_demo<br>ltrace ./trace_demo<br>strace ./trace_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. ltrace 中你看到的关键库函数<br>2. strace 中你看到的关键系统调用<br>3. strcmp 的参数是什么<br>4. write 的参数是什么<br>5. ltrace 和 strace 的区别<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2%E5%88%86%E6%9E%90%E6%96%87%E4%BB%B6%E8%A1%8C%E4%B8%BA%E9%93%BE">作业 2：分析文件行为链</span></h3><p>写 <code>behavior_demo.c</code>，创建并写入文件。</p>
+<p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace -e trace=file,write,close ./behavior_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 系统调用序列<br>2. 创建的文件名<br>3. 写入的内容<br>4. 返回值是否成功<br>5. 用自然语言描述程序行为<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3%E5%BA%93%E5%87%BD%E6%95%B0%E5%92%8C%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%88%86%E7%B1%BB">作业 3：库函数和系统调用分类</span></h3><p>根据 <code>api_trace_demo.c</code> 的 <code>ltrace</code> 和 <code>strace</code> 输出，列出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 纯用户态库函数<br>2. 可能触发系统调用的库函数<br>3. 实际观察到的系统调用<br></code></pre></td></tr></tbody></table></figure>
+
+<p>思考：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">为什么 strcmp 不会出现在 strace 里？<br>为什么 printf 可能最终体现为 write？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-4windows-api-%E8%A1%8C%E4%B8%BA%E8%A7%82%E5%AF%9F">作业 4：Windows API 行为观察</span></h3><p>如果你有 Windows 环境：</p>
+<ol>
+<li>写一个调用 <code>CreateFileW</code> / <code>WriteFile</code> / <code>CloseHandle</code> 的程序</li>
+<li>用 Process Monitor 观察文件行为</li>
+<li>用 x64dbg 在 <code>CreateFileW</code> 下断点</li>
+<li>查看参数和返回值</li>
+</ol>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. Process Monitor 中的行为事件<br>2. x64dbg 中 CreateFileW 的参数<br>3. 文件路径在哪里看到<br>4. API 返回值是什么<br>5. Process Monitor 事件和 API 调用有什么对应关系<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-5%E5%AF%BC%E5%85%A5%E8%A1%A8%E5%88%86%E6%9E%90">作业 5：导入表分析</span></h3><p>找一个简单 Windows exe 或 Linux ELF。</p>
+<p>Windows：</p>
+<ul>
+<li>用 PE-bear / Ghidra 查看 Imports</li>
+</ul>
+<p>Linux：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -s program<br>objdump -T program<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 程序导入了哪些库<br>2. 至少 5 个导入函数<br>3. 这些函数暗示了哪些可能行为<br>4. 导入函数是否一定会被调用<br>5. 如果程序动态解析 API，导入表可能有什么局限<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="36-%E8%87%AA%E6%B5%8B%E9%A2%98">36. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p><code>ltrace</code> 和 <code>strace</code> 的主要区别是什么？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>为什么 <code>strcmp</code> 通常能被 <code>ltrace</code> 看到，但不会被 <code>strace</code> 看到？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>Linux 下 libc 的 syscall wrapper 大致做什么？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p>Windows 下 <code>CreateFileW</code> 和 <code>NtCreateFile</code> 大致是什么关系？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p><code>ntdll.dll</code> 为什么在 Windows 逆向中重要？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>为什么 API 序列比单个 API 更能表达程序行为？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>导入表能告诉我们什么？它有什么局限？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>为什么分析 API/syscall 时必须看参数和返回值？</p>
+<hr>
+<h2><span id="37-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">37. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p><code>ltrace</code> 主要跟踪用户态动态库函数调用，例如 <code>printf</code>、<code>strcmp</code>、<code>malloc</code>；<code>strace</code> 主要跟踪系统调用，例如 <code>read</code>、<code>write</code>、<code>openat</code>、<code>mmap</code>。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>因为 <code>strcmp</code> 通常是用户态库函数，只在进程自己的地址空间中比较内存，不需要进入内核；<code>strace</code> 只观察系统调用层，所以通常看不到 <code>strcmp</code>。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>它接收 C 函数参数，按照系统调用约定把系统调用号和参数放到指定寄存器，执行 <code>syscall</code> 指令进入内核，处理返回值和错误码，再返回给调用者。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p><code>CreateFileW</code> 是高层 Win32 API，语义更友好；它底层可能经过 KernelBase/kernel32 转换参数后调用 ntdll 中的 <code>NtCreateFile</code>，再通过 syscall 进入内核。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p>因为 <code>ntdll.dll</code> 包含许多 Native API 和进入内核的 syscall stub，是 Windows 用户态到内核态的重要边界，很多底层行为和反调试/安全分析都会涉及它。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>单个 API 可能出现在正常程序中，不能直接说明意图；API 序列结合顺序和上下文更能表达行为，例如写文件后创建进程、分配内存后修改权限等。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>导入表能显示程序静态导入的库和函数，帮助推测可能行为。局限是导入了不一定调用，没导入也可能通过动态解析 API 使用相关功能，加壳或混淆也可能隐藏导入。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>因为 API 名称只能说明操作类型，参数和返回值才能说明具体对象和结果。例如 <code>CreateFileW</code> 必须看文件路径、访问权限和返回句柄，才能判断它实际做了什么以及是否成功。</p>
+<hr>
+<h2><span id="38-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">38. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">ELF 文件格式<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>ELF Header</li>
+<li>Program Header</li>
+<li>Section Header</li>
+<li><code>.text</code>、<code>.data</code>、<code>.bss</code>、<code>.rodata</code></li>
+<li><code>.plt</code>、<code>.got</code></li>
+<li>动态链接和静态链接</li>
+<li>如何用 <code>readelf</code>、<code>objdump</code> 观察 ELF 结构</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC10%E8%8A%82-%E4%BB%8E%E9%80%86%E5%90%91%E8%A7%92%E5%BA%A6%E7%9C%8BAPI%E5%92%8Csyscall/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第10节-从逆向角度看API和syscall&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第10节-从逆向角度看API和syscall&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

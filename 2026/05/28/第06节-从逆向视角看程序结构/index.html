@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第06节-从逆向视角看程序结构 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/11.jpg"
+				data-sizes="auto"
+				alt="第06节-从逆向视角看程序结构"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第06节-从逆向视角看程序结构</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>6k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 25 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-6-%E8%8A%82%E4%BB%8E%E9%80%86%E5%90%91%E8%A7%86%E8%A7%92%E7%9C%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">第 6 节：从逆向视角看程序结构</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 3 周<br>课程主题：调试器和逆向入门<br>本节目标：理解源代码视角和二进制视角的区别，掌握符号表、strip、反汇编、反编译、字符串、交叉引用、函数调用图等逆向分析基础概念。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>源代码视角和二进制视角有什么区别？</li>
+<li>编译后，函数名、变量名、类型信息还在不在？</li>
+<li>符号表是什么？</li>
+<li><code>strip</code> 为什么会让逆向变难？</li>
+<li>反汇编和反编译有什么区别？</li>
+<li>Ghidra、IDA、x64dbg 各自更适合做什么？</li>
+<li>字符串为什么是逆向分析的重要入口？</li>
+<li>交叉引用是什么？</li>
+<li>函数调用图能帮助我们看什么？</li>
+<li>为什么逆向时不能完全相信反编译伪代码？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">源代码 -&gt; 编译 -&gt; 二进制文件 -&gt; 反汇编 -&gt; 反编译 -&gt; 字符串/交叉引用/调用图 -&gt; 推断程序逻辑<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这节课会把前面学过的编译、汇编、调试器连接到真正的逆向分析流程中。</p>
+<hr>
+<h2><span id="2-%E4%BB%80%E4%B9%88%E6%98%AF%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">2. 什么是逆向工程</span></h2><p>逆向工程可以先简单理解为：</p>
+<blockquote>
+<p>在没有完整源码的情况下，通过分析二进制文件、运行行为和系统交互，推断程序的结构、逻辑和目的。</p>
+</blockquote>
+<p>在软件安全中，逆向工程常用于：</p>
+<ul>
+<li>漏洞分析</li>
+<li>恶意代码分析</li>
+<li>补丁对比</li>
+<li>协议分析</li>
+<li>加密逻辑分析</li>
+<li>CTF Reverse 题目</li>
+<li>软件兼容性研究</li>
+<li>安全审计</li>
+</ul>
+<p>逆向工程不是“猜谜游戏”。</p>
+<p>它依赖大量证据：</p>
+<ul>
+<li>文件格式</li>
+<li>汇编代码</li>
+<li>反编译伪代码</li>
+<li>字符串</li>
+<li>导入 API</li>
+<li>函数调用关系</li>
+<li>调试器运行结果</li>
+<li>文件/网络/进程行为</li>
+</ul>
+<p>你的目标不是把每条指令翻译成 C，而是逐步回答：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">这个程序是什么？<br>它从哪里开始执行？<br>它有哪些关键函数？<br>它处理了什么输入？<br>它调用了哪些系统 API？<br>它有什么可疑行为？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="3-%E6%BA%90%E4%BB%A3%E7%A0%81%E8%A7%86%E8%A7%92%E5%92%8C%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A7%86%E8%A7%92">3. 源代码视角和二进制视角</span></h2><p>写 C 程序时，你看到的是源代码视角。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">check_password</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *input)</span> {<br>    <span class="hljs-keyword">if</span> (input[<span class="hljs-number">0</span>] == <span class="hljs-string">'A'</span>) {<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">char</span> buf[<span class="hljs-number">32</span>];<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%31s"</span>, buf);<br><br>    <span class="hljs-keyword">if</span> (check_password(buf)) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"success\n"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"fail\n"</span>);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你能直接看到：</p>
+<ul>
+<li>函数名</li>
+<li>变量名</li>
+<li>类型</li>
+<li><code>if</code> 结构</li>
+<li>字符串</li>
+<li>输入输出逻辑</li>
+</ul>
+<p>但编译成二进制后，你看到的可能是：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br>mov rbp, rsp<br>sub rsp, 0x30<br>lea rax, [rbp-0x20]<br>mov rsi, rax<br>lea rdi, [rip+0xe9f]<br>call __isoc99_scanf<br>lea rax, [rbp-0x20]<br>mov rdi, rax<br>call 0x401156<br>test eax, eax<br>je 0x4011c0<br>lea rdi, [rip+0xe8a]<br>call puts<br>jmp 0x4011cc<br>lea rdi, [rip+0xe86]<br>call puts<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在二进制视角中，很多高级信息会消失或变得不明显。</p>
+<hr>
+<h2><span id="4-%E7%BC%96%E8%AF%91%E5%90%8E%E5%93%AA%E4%BA%9B%E4%BF%A1%E6%81%AF%E5%8F%AF%E8%83%BD%E8%BF%98%E5%9C%A8">4. 编译后哪些信息可能还在</span></h2><p>编译后，二进制文件中可能还保留一些信息。</p>
+<p>例如：</p>
+<ul>
+<li>机器指令</li>
+<li>字符串常量</li>
+<li>导入函数名</li>
+<li>导出函数名</li>
+<li>动态库依赖</li>
+<li>部分符号信息</li>
+<li>调试信息</li>
+<li>文件格式元数据</li>
+</ul>
+<p>例如字符串：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">success<br>fail<br>%31s<br></code></pre></td></tr></tbody></table></figure>
+
+<p>通常可能保留在 <code>.rodata</code> 或 <code>.rdata</code> 中。</p>
+<p>导入 API 也可能保留，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">printf<br>scanf<br>puts<br>CreateFileW<br>VirtualAlloc<br>CreateProcessW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些信息是逆向分析的重要线索。</p>
+<hr>
+<h2><span id="5-%E7%BC%96%E8%AF%91%E5%90%8E%E5%93%AA%E4%BA%9B%E4%BF%A1%E6%81%AF%E5%8F%AF%E8%83%BD%E6%B6%88%E5%A4%B1">5. 编译后哪些信息可能消失</span></h2><p>编译后，很多源代码级信息可能消失。</p>
+<p>例如：</p>
+<ul>
+<li>局部变量名</li>
+<li>原始注释</li>
+<li>宏定义原貌</li>
+<li>高级控制结构</li>
+<li>部分函数名</li>
+<li>类型信息</li>
+<li>源代码文件结构</li>
+<li>代码格式</li>
+</ul>
+<p>如果没有调试符号，你可能看不到：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">check_password</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *input)</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>而只能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">FUN_00401156<br>sub_401156<br>function_401156<br></code></pre></td></tr></tbody></table></figure>
+
+<p>变量也可能变成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">local_20<br>param_1<br>iVar1<br>uVar2<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以逆向不是恢复“原始源码”，而是恢复“程序逻辑”。</p>
+<hr>
+<h2><span id="6-%E7%AC%A6%E5%8F%B7%E6%98%AF%E4%BB%80%E4%B9%88">6. 符号是什么</span></h2><p>符号可以理解为：</p>
+<blockquote>
+<p>程序中函数、全局变量等对象的名字和地址之间的对应关系。</p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">main -&gt; 0x401180<br>check_password -&gt; 0x401156<br>global_var -&gt; 0x404030<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些名字能帮助调试器和逆向工具显示更友好的信息。</p>
+<p>如果二进制保留符号，你可能看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">0000000000401156 &lt;check_password&gt;:<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果符号被去掉，你可能只看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">0000000000401156:<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或者工具给它自动命名：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">FUN_00401156<br>sub_401156<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="7-%E7%AC%A6%E5%8F%B7%E8%A1%A8%E6%98%AF%E4%BB%80%E4%B9%88">7. 符号表是什么</span></h2><p>符号表就是保存符号信息的数据结构。</p>
+<p>在 ELF 文件中，常见符号相关节包括：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">.symtab<br>.dynsym<br>.strtab<br>.dynstr<br></code></pre></td></tr></tbody></table></figure>
+
+<p>简化理解：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.symtab</code></td>
+<td>普通符号表，可能包含较多函数和变量名</td>
+</tr>
+<tr>
+<td><code>.dynsym</code></td>
+<td>动态符号表，动态链接需要用到</td>
+</tr>
+<tr>
+<td><code>.strtab</code></td>
+<td>普通字符串表，保存符号名字符串</td>
+</tr>
+<tr>
+<td><code>.dynstr</code></td>
+<td>动态字符串表，保存动态符号名等</td>
+</tr>
+</tbody></table>
+<p>即使普通符号被去掉，动态链接程序通常仍会保留动态符号。</p>
+<p>因为动态链接器运行时需要知道导入导出符号。</p>
+<hr>
+<h2><span id="8-%E7%94%A8-nm-%E6%9F%A5%E7%9C%8B%E7%AC%A6%E5%8F%B7">8. 用 <code>nm</code> 查看符号</span></h2><p>Linux 下可以用 <code>nm</code> 查看符号。</p>
+<p>准备程序 <code>symbol_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">helper</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"helper\n"</span>);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    helper();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 symbol_demo.c -o symbol_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>查看符号：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nm symbol_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">0000000000001139 T helper<br>0000000000001150 T main<br>0000000000004018 D global_var<br></code></pre></td></tr></tbody></table></figure>
+
+<p>其中：</p>
+<table>
+<thead>
+<tr>
+<th>标记</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T</td>
+<td>代码段中的符号，通常是函数</td>
+</tr>
+<tr>
+<td>D</td>
+<td>已初始化数据段中的符号</td>
+</tr>
+<tr>
+<td>B</td>
+<td>BSS 中的符号</td>
+</tr>
+<tr>
+<td>U</td>
+<td>未定义符号，需要从外部库解析</td>
+</tr>
+</tbody></table>
+<hr>
+<h2><span id="9-strip-%E6%98%AF%E4%BB%80%E4%B9%88">9. <code>strip</code> 是什么</span></h2><p><code>strip</code> 用于移除二进制文件中的符号和调试信息。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cp</span> symbol_demo symbol_demo_stripped<br>strip symbol_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>再执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nm symbol_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">nm: symbol_demo_stripped: no symbols<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明普通符号被移除了。</p>
+<p>再用 objdump 看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel symbol_demo<br>objdump -d -M intel symbol_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会发现：</p>
+<ul>
+<li>未 strip 的版本函数名更清晰</li>
+<li>strip 后很多函数名消失</li>
+<li>工具只能根据地址或自动分析结果命名函数</li>
+</ul>
+<hr>
+<h2><span id="10-strip-%E5%90%8E%E7%A8%8B%E5%BA%8F%E8%BF%98%E8%83%BD%E8%BF%90%E8%A1%8C%E5%90%97">10. strip 后程序还能运行吗</span></h2><p>可以。</p>
+<p>因为普通符号和调试信息主要是给人、调试器、分析工具看的。</p>
+<p>CPU 执行程序并不需要这些名字。</p>
+<p>CPU 只需要：</p>
+<ul>
+<li>机器指令</li>
+<li>地址</li>
+<li>入口点</li>
+<li>必要的动态链接信息</li>
+</ul>
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">去掉符号不影响程序运行，但会增加逆向分析难度。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是为什么真实商业软件、恶意代码、CTF 题目经常没有完整符号。</p>
+<hr>
+<h2><span id="11-%E8%B0%83%E8%AF%95%E4%BF%A1%E6%81%AF%E6%98%AF%E4%BB%80%E4%B9%88">11. 调试信息是什么</span></h2><p>调试信息比普通符号更丰富。</p>
+<p>它可能包含：</p>
+<ul>
+<li>源文件路径</li>
+<li>行号</li>
+<li>局部变量名</li>
+<li>变量类型</li>
+<li>函数参数</li>
+<li>结构体定义</li>
+</ul>
+<p>编译时加 <code>-g</code>：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g demo.c -o demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>会把调试信息写入可执行文件。</p>
+<p>有调试信息时，GDB 可以：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>list<br>print variable<br>bt<br></code></pre></td></tr></tbody></table></figure>
+
+<p>并显示源码级信息。</p>
+<p>去掉调试信息后，GDB 仍能调试，但更多只能靠：</p>
+<ul>
+<li>汇编</li>
+<li>地址</li>
+<li>寄存器</li>
+<li>内存</li>
+</ul>
+<hr>
+<h2><span id="12-%E5%8F%8D%E6%B1%87%E7%BC%96%E6%98%AF%E4%BB%80%E4%B9%88">12. 反汇编是什么</span></h2><p>反汇编是：</p>
+<blockquote>
+<p>把机器码字节转换成汇编指令。</p>
+</blockquote>
+<p>例如机器码：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">55 48 89 e5<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编后：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br>mov rbp, rsp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常用反汇编工具：</p>
+<ul>
+<li>objdump</li>
+<li>GDB</li>
+<li>IDA</li>
+<li>Ghidra</li>
+<li>x64dbg</li>
+</ul>
+<p>反汇编结果比较接近 CPU 实际执行的内容。</p>
+<p>它比反编译伪代码更底层，也更可靠。</p>
+<p>但缺点是：</p>
+<ul>
+<li>可读性差</li>
+<li>需要理解寄存器和指令</li>
+<li>高级结构不明显</li>
+</ul>
+<hr>
+<h2><span id="13-%E5%8F%8D%E7%BC%96%E8%AF%91%E6%98%AF%E4%BB%80%E4%B9%88">13. 反编译是什么</span></h2><p>反编译是：</p>
+<blockquote>
+<p>尝试把机器码或汇编还原成类似 C 语言的伪代码。</p>
+</blockquote>
+<p>例如汇编：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">cmp DWORD PTR [rbp-0x4], 0xa<br>jne 0x401180<br>call puts<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反编译工具可能显示：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (local_4 == <span class="hljs-number">10</span>) {<br>    <span class="hljs-built_in">puts</span>(<span class="hljs-string">"yes"</span>);<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见反编译工具：</p>
+<ul>
+<li>Ghidra Decompiler</li>
+<li>IDA Hex-Rays</li>
+<li>Binary Ninja</li>
+</ul>
+<p>反编译优点：</p>
+<ul>
+<li>可读性强</li>
+<li>更接近源代码</li>
+<li>适合快速理解逻辑</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>可能不准确</li>
+<li>变量名是工具猜的</li>
+<li>类型可能错</li>
+<li>控制流可能被误识别</li>
+<li>优化后的代码可能很难还原</li>
+<li>混淆代码可能让伪代码非常混乱</li>
+</ul>
+<p>所以要记住：</p>
+<blockquote>
+<p>反编译伪代码是工具推测结果，不是原始源码。</p>
+</blockquote>
+<p>遇到关键逻辑时，要回到汇编验证。</p>
+<hr>
+<h2><span id="14-%E5%8F%8D%E6%B1%87%E7%BC%96%E5%92%8C%E5%8F%8D%E7%BC%96%E8%AF%91%E7%9A%84%E5%8C%BA%E5%88%AB">14. 反汇编和反编译的区别</span></h2><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>反汇编</th>
+<th>反编译</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入</td>
+<td>机器码</td>
+<td>机器码/汇编</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>汇编指令</td>
+<td>类 C 伪代码</td>
+</tr>
+<tr>
+<td>可靠性</td>
+<td>更接近真实执行</td>
+<td>可能有误判</td>
+</tr>
+<tr>
+<td>可读性</td>
+<td>较差</td>
+<td>较好</td>
+</tr>
+<tr>
+<td>适合场景</td>
+<td>精确分析、漏洞、控制流</td>
+<td>快速理解程序逻辑</td>
+</tr>
+<tr>
+<td>工具</td>
+<td>objdump、GDB、IDA、x64dbg</td>
+<td>Ghidra、IDA Hex-Rays</td>
+</tr>
+</tbody></table>
+<p>推荐方法：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">先用反编译快速理解大意<br>再用反汇编确认关键细节<br>最后用调试器动态验证<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="15-%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8D%E8%A6%81">15. 字符串为什么重要</span></h2><p>字符串是逆向分析中最常用的入口之一。</p>
+<p>因为程序中很多行为会留下字符串线索。</p>
+<p>例如：</p>
+<ul>
+<li>菜单文本</li>
+<li>错误信息</li>
+<li>成功/失败提示</li>
+<li>文件路径</li>
+<li>URL</li>
+<li>IP 地址</li>
+<li>注册表路径</li>
+<li>命令行参数</li>
+<li>加密前后的明文</li>
+<li>API 名称</li>
+</ul>
+<p>例如看到字符串：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">success<br>wrong password<br>C:\\Users\\Public\\update.exe<br>http://example.com/api/check<br>Software\\Microsoft\\Windows\\CurrentVersion\\Run<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可以推测程序可能有：</p>
+<ul>
+<li>密码校验逻辑</li>
+<li>文件写入行为</li>
+<li>网络通信行为</li>
+<li>注册表持久化行为</li>
+</ul>
+<p>字符串往往能帮助你快速定位关键函数。</p>
+<hr>
+<h2><span id="16-%E7%94%A8-strings-%E6%9F%A5%E7%9C%8B%E5%AD%97%E7%AC%A6%E4%B8%B2">16. 用 <code>strings</code> 查看字符串</span></h2><p>Linux 下可以用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings program<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings symbol_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也可以结合 grep：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings program | grep -i password<br>strings program | grep -i http<br>strings program | grep -i error<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p><code>strings</code> 只能看到明文字符串。</p>
+<p>如果字符串被加密、压缩或运行时生成，<code>strings</code> 可能看不到。</p>
+<p>这时需要：</p>
+<ul>
+<li>动态调试</li>
+<li>内存搜索</li>
+<li>找解密函数</li>
+<li>跟踪字符串使用位置</li>
+</ul>
+<hr>
+<h2><span id="17-%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88">17. 交叉引用是什么</span></h2><p>交叉引用英文常写作：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">XREF<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它表示：</p>
+<blockquote>
+<p>某个函数、变量或字符串被哪里引用了。</p>
+</blockquote>
+<p>例如程序中有字符串：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">wrong password<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你想知道哪里使用了它。</p>
+<p>在 Ghidra 或 IDA 中，可以对这个字符串查看 XREF。</p>
+<p>工具会告诉你：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">这个字符串被 FUN_00401180 引用了<br></code></pre></td></tr></tbody></table></figure>
+
+<p>那么 <code>FUN_00401180</code> 很可能和密码校验或错误处理有关。</p>
+<p>交叉引用非常重要，因为它能从线索跳到代码。</p>
+<p>常见分析流程：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">发现可疑字符串 -&gt; 查看交叉引用 -&gt; 找到使用它的函数 -&gt; 分析函数逻辑<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="18-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E5%9B%BE%E6%98%AF%E4%BB%80%E4%B9%88">18. 函数调用图是什么</span></h2><p>函数调用图展示函数之间的调用关系。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">main<br> ├── init_config<br> ├── check_password<br> │    ├── strlen<br> │    └── strcmp<br> └── print_result<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它能帮助你理解程序结构。</p>
+<p>在复杂程序中，函数很多，单看汇编容易迷路。</p>
+<p>调用图可以帮你判断：</p>
+<ul>
+<li>哪个函数是入口逻辑</li>
+<li>哪些函数是初始化</li>
+<li>哪些函数处理输入</li>
+<li>哪些函数调用敏感 API</li>
+<li>哪些函数可能是加密/解密逻辑</li>
+<li>哪些函数可能是网络通信逻辑</li>
+</ul>
+<p>Ghidra、IDA、Binary Ninja 都能显示不同形式的函数图或调用图。</p>
+<hr>
+<h2><span id="19-%E6%8E%A7%E5%88%B6%E6%B5%81%E5%9B%BE%E6%98%AF%E4%BB%80%E4%B9%88">19. 控制流图是什么</span></h2><p>控制流图通常展示一个函数内部的分支结构。</p>
+<p>例如一个函数中有：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (...) {<br>    ...<br>} <span class="hljs-keyword">else</span> {<br>    ...<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编中会表现为多个基本块和跳转。</p>
+<p>控制流图能帮助你看：</p>
+<ul>
+<li>条件判断</li>
+<li>循环</li>
+<li>错误分支</li>
+<li>成功分支</li>
+<li>复杂跳转</li>
+</ul>
+<p>在逆向中，常见思路是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">找到关键判断 -&gt; 看成功分支和失败分支 -&gt; 反推条件<br></code></pre></td></tr></tbody></table></figure>
+
+<p>CTF Reverse 中尤其常见。</p>
+<hr>
+<h2><span id="20-ghidra-%E5%9F%BA%E6%9C%AC%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B">20. Ghidra 基本分析流程</span></h2><p>Ghidra 是一个免费开源的逆向分析工具。</p>
+<p>基本流程：</p>
+<ol>
+<li>新建 Project</li>
+<li>Import File</li>
+<li>选择目标二进制</li>
+<li>让 Ghidra 自动分析</li>
+<li>查看 Symbol Tree</li>
+<li>查看 Functions</li>
+<li>查看 Strings</li>
+<li>查看 Decompiler</li>
+<li>查看 Listing 汇编</li>
+<li>使用 XREF 找引用</li>
+</ol>
+<p>常见窗口：</p>
+<table>
+<thead>
+<tr>
+<th>窗口</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Listing</td>
+<td>汇编和数据视图</td>
+</tr>
+<tr>
+<td>Decompiler</td>
+<td>反编译伪代码</td>
+</tr>
+<tr>
+<td>Symbol Tree</td>
+<td>函数、标签、符号</td>
+</tr>
+<tr>
+<td>Program Trees</td>
+<td>程序结构</td>
+</tr>
+<tr>
+<td>Data Type Manager</td>
+<td>类型信息</td>
+</tr>
+<tr>
+<td>Defined Strings</td>
+<td>字符串列表</td>
+</tr>
+</tbody></table>
+<p>初学时重点掌握：</p>
+<ul>
+<li>找 <code>main</code></li>
+<li>看字符串</li>
+<li>看交叉引用</li>
+<li>看反编译伪代码</li>
+<li>对照汇编确认关键逻辑</li>
+</ul>
+<hr>
+<h2><span id="21-ida-%E5%9F%BA%E6%9C%AC%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF">21. IDA 基本分析思路</span></h2><p>IDA 是经典逆向工具。</p>
+<p>常见概念：</p>
+<ul>
+<li>Functions 窗口</li>
+<li>Strings 窗口</li>
+<li>Imports 窗口</li>
+<li>Exports 窗口</li>
+<li>Graph View</li>
+<li>Text View</li>
+<li>Xrefs</li>
+<li>Pseudocode</li>
+</ul>
+<p>IDA 的图形视图非常适合看函数控制流。</p>
+<p>如果使用 IDA Free，也可以完成很多入门分析。</p>
+<p>基本思路和 Ghidra 类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">文件格式 -&gt; 入口点 -&gt; 字符串 -&gt; 导入函数 -&gt; 交叉引用 -&gt; 关键函数 -&gt; 动态验证<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="22-x64dbg-%E5%9C%A8%E9%80%86%E5%90%91%E4%B8%AD%E7%9A%84%E8%A7%92%E8%89%B2">22. x64dbg 在逆向中的角色</span></h2><p>Ghidra 和 IDA 更偏静态分析。</p>
+<p>x64dbg 更偏 Windows 动态调试。</p>
+<p>x64dbg 适合：</p>
+<ul>
+<li>下断点</li>
+<li>单步执行</li>
+<li>看寄存器</li>
+<li>看栈</li>
+<li>看内存</li>
+<li>看模块</li>
+<li>跟踪 API 调用</li>
+<li>修改运行时数据</li>
+<li>观察解密后的字符串</li>
+<li>分析简单壳或反调试</li>
+</ul>
+<p>常见组合是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Ghidra / IDA 静态定位关键函数<br>x64dbg 动态验证关键函数行为<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="23-linux-%E5%AE%9E%E9%AA%8Cdebug-%E7%89%88%E5%92%8C-strip-%E7%89%88%E5%AF%B9%E6%AF%94">23. Linux 实验：debug 版和 strip 版对比</span></h2><p>创建 <code>reverse_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">check_password</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *input)</span> {<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(input, <span class="hljs-string">"open_sesame"</span>) == <span class="hljs-number">0</span>) {<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">char</span> buf[<span class="hljs-number">64</span>];<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"input password: "</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%63s"</span>, buf);<br><br>    <span class="hljs-keyword">if</span> (check_password(buf)) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"success\n"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"fail\n"</span>);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译 debug 版：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 reverse_demo.c -o reverse_demo_debug<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译普通版：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -O0 reverse_demo.c -o reverse_demo_release<br></code></pre></td></tr></tbody></table></figure>
+
+<p>复制并 strip：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cp</span> reverse_demo_release reverse_demo_stripped<br>strip reverse_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>对比：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">file reverse_demo_debug reverse_demo_release reverse_demo_stripped<br>nm reverse_demo_debug | grep check<br>nm reverse_demo_release | grep check<br>nm reverse_demo_stripped | grep check<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li>哪个版本符号最多？</li>
+<li>strip 后还能看到 <code>check_password</code> 吗？</li>
+<li>程序是否仍然能运行？</li>
+</ul>
+<hr>
+<h2><span id="24-linux-%E5%AE%9E%E9%AA%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%8F%8D%E6%B1%87%E7%BC%96">24. Linux 实验：字符串和反汇编</span></h2><p>查看字符串：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings reverse_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你应该能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">open_sesame<br>input password:<br>success<br>fail<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel reverse_demo_stripped &gt; reverse_demo_stripped.asm<br></code></pre></td></tr></tbody></table></figure>
+
+<p>虽然函数名可能消失，但字符串还在。</p>
+<p>你可以继续用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -s -j .rodata reverse_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>查看只读数据区。</p>
+<p>思考：</p>
+<ul>
+<li>密码字符串在哪里？</li>
+<li>成功/失败字符串在哪里？</li>
+<li>如果没有函数名，字符串是否仍然能帮助定位逻辑？</li>
+</ul>
+<hr>
+<h2><span id="25-ghidra-%E5%AE%9E%E9%AA%8C%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%89%BE%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0">25. Ghidra 实验：用字符串找关键函数</span></h2><p>用 Ghidra 打开 <code>reverse_demo_stripped</code>。</p>
+<p>步骤：</p>
+<ol>
+<li>Import File</li>
+<li>运行自动分析</li>
+<li>打开 Defined Strings</li>
+<li>找到 <code>open_sesame</code></li>
+<li>右键查看 References / XREF</li>
+<li>跳到引用它的函数</li>
+<li>查看 Decompiler 伪代码</li>
+<li>尝试判断哪个函数是 <code>check_password</code></li>
+<li>给函数重命名为 <code>check_password</code></li>
+<li>给局部变量改一个更清晰的名字</li>
+</ol>
+<p>这一步很重要。</p>
+<p>真实逆向中，你经常要自己给函数和变量重新命名。</p>
+<p>重命名不是为了好看，而是为了建立理解。</p>
+<hr>
+<h2><span id="26-ghidra-%E5%AE%9E%E9%AA%8C%E5%AF%B9%E6%AF%94%E5%8F%8D%E6%B1%87%E7%BC%96%E5%92%8C%E5%8F%8D%E7%BC%96%E8%AF%91">26. Ghidra 实验：对比反汇编和反编译</span></h2><p>在 Ghidra 中找到关键函数后，同时观察：</p>
+<ul>
+<li>Listing 窗口中的汇编</li>
+<li>Decompiler 窗口中的伪代码</li>
+</ul>
+<p>重点看：</p>
+<ul>
+<li><code>strcmp</code> 调用</li>
+<li>参数是什么</li>
+<li>返回值如何判断</li>
+<li>成功和失败分支</li>
+</ul>
+<p>思考：</p>
+<ol>
+<li>反编译伪代码是否接近原始 C？</li>
+<li>变量名是否还原正确？</li>
+<li>函数名是否需要你手动修改？</li>
+<li>如果伪代码看不懂，汇编能否提供更多确定信息？</li>
+</ol>
+<hr>
+<h2><span id="27-windows-%E5%AF%B9%E7%85%A7%E5%AE%9E%E9%AA%8Cpe-%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%AF%BC%E5%85%A5%E8%A1%A8">27. Windows 对照实验：PE 中的字符串和导入表</span></h2><p>如果你有 Windows 环境，可以写类似程序并编译成 exe。</p>
+<p>使用工具：</p>
+<ul>
+<li>Detect It Easy</li>
+<li>PE-bear</li>
+<li>Ghidra</li>
+<li>x64dbg</li>
+</ul>
+<p>观察：</p>
+<ol>
+<li>文件是否是 PE</li>
+<li>有哪些 Section</li>
+<li>Import Table 中有哪些函数</li>
+<li>字符串窗口能否看到 <code>success</code>、<code>fail</code>、密码字符串</li>
+<li>Ghidra 中能否通过字符串 XREF 找到关键函数</li>
+<li>x64dbg 中能否在 <code>strcmp</code> 或相关比较位置下断点</li>
+</ol>
+<p>Windows 下导入函数可能来自：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">msvcrt.dll<br>ucrtbase.dll<br>kernel32.dll<br></code></pre></td></tr></tbody></table></figure>
+
+<p>具体取决于编译器和运行库。</p>
+<hr>
+<h2><span id="28-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B">28. 逆向分析的基本流程</span></h2><p>拿到一个陌生二进制时，可以按这个顺序来：</p>
+<h3><span id="281-%E8%AF%86%E5%88%AB%E6%96%87%E4%BB%B6">28.1 识别文件</span></h3><p>Linux：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file program<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows：</p>
+<ul>
+<li>Detect It Easy</li>
+<li>PE-bear</li>
+</ul>
+<p>看：</p>
+<ul>
+<li>ELF / PE</li>
+<li>32 位 / 64 位</li>
+<li>是否动态链接</li>
+<li>是否可能加壳</li>
+</ul>
+<hr>
+<h3><span id="282-%E6%9F%A5%E7%9C%8B%E5%AD%97%E7%AC%A6%E4%B8%B2">28.2 查看字符串</span></h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings program<br></code></pre></td></tr></tbody></table></figure>
+
+<p>关注：</p>
+<ul>
+<li>错误信息</li>
+<li>成功信息</li>
+<li>URL</li>
+<li>文件路径</li>
+<li>命令</li>
+<li>注册表路径</li>
+<li>API 名称</li>
+</ul>
+<hr>
+<h3><span id="283-%E6%9F%A5%E7%9C%8B%E5%AF%BC%E5%85%A5%E5%87%BD%E6%95%B0">28.3 查看导入函数</span></h3><p>Linux：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">ldd program<br>readelf -s program<br>objdump -T program<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows：</p>
+<ul>
+<li>PE-bear Import Table</li>
+<li>Ghidra Imports</li>
+<li>IDA Imports</li>
+</ul>
+<p>关注：</p>
+<ul>
+<li>文件操作 API</li>
+<li>网络 API</li>
+<li>进程线程 API</li>
+<li>内存管理 API</li>
+<li>加密 API</li>
+</ul>
+<hr>
+<h3><span id="284-%E6%89%BE%E5%85%A5%E5%8F%A3%E7%82%B9%E5%92%8C-main">28.4 找入口点和 main</span></h3><p>入口点不一定是 <code>main</code>。</p>
+<p>真实流程通常是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">入口点 -&gt; 运行时初始化 -&gt; main<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Ghidra / IDA 通常能帮助你定位 <code>main</code> 或类似函数。</p>
+<hr>
+<h3><span id="285-%E7%94%A8%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C-xref-%E6%89%BE%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0">28.5 用字符串和 XREF 找关键函数</span></h3><p>这是最常用方法之一：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">找到关键字符串 -&gt; 查看引用 -&gt; 找到关键函数 -&gt; 分析逻辑<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="286-%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E9%AA%8C%E8%AF%81">28.6 动态调试验证</span></h3><p>静态分析只是推测。</p>
+<p>关键结论最好用调试器验证：</p>
+<ul>
+<li>下断点</li>
+<li>观察参数</li>
+<li>观察返回值</li>
+<li>观察内存</li>
+<li>观察分支跳转</li>
+</ul>
+<hr>
+<h2><span id="29-%E4%BB%8E%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">29. 从漏洞分析角度看程序结构</span></h2><p>漏洞分析时，你也需要程序结构视角。</p>
+<p>你要找：</p>
+<ul>
+<li>输入入口在哪里</li>
+<li>输入传给了哪些函数</li>
+<li>是否有长度检查</li>
+<li>是否调用危险函数</li>
+<li>数据是否进入栈或堆缓冲区</li>
+<li>崩溃点和输入处理函数之间的调用关系</li>
+</ul>
+<p>常见危险函数线索：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">strcpy<br>strcat<br>sprintf<br>gets<br>scanf<br>memcpy<br>strncpy 使用不当<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果在导入表或反编译中看到这些函数，要提高警惕。</p>
+<p>但注意：</p>
+<blockquote>
+<p>出现危险函数不等于一定有漏洞，关键看输入是否可控、长度是否受限、目标缓冲区大小是否足够。</p>
+</blockquote>
+<hr>
+<h2><span id="30-%E4%BB%8E%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84">30. 从恶意代码分析角度看程序结构</span></h2><p>恶意代码分析时，结构视角同样重要。</p>
+<p>你要找：</p>
+<ul>
+<li>初始化函数</li>
+<li>反调试函数</li>
+<li>解密函数</li>
+<li>配置解析函数</li>
+<li>网络通信函数</li>
+<li>文件写入函数</li>
+<li>持久化函数</li>
+<li>注入或执行函数</li>
+</ul>
+<p>常见可疑 API 线索包括：</p>
+<p>Windows：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br>WriteFile<br>CreateProcessW<br>VirtualAlloc<br>VirtualProtect<br>WriteProcessMemory<br>CreateRemoteThread<br>RegSetValueExW<br>InternetOpenW<br>WinHttpOpen<br>connect<br>send<br>recv<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Linux：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs text">open<br>write<br>execve<br>fork<br>ptrace<br>mmap<br>mprotect<br>socket<br>connect<br>send<br>recv<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些 API 本身不一定恶意，但组合起来能描述行为。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">VirtualAlloc + WriteProcessMemory + CreateRemoteThread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在安全分析中就非常值得关注。</p>
+<hr>
+<h2><span id="31-%E4%B8%8D%E8%A6%81%E8%BF%87%E5%BA%A6%E7%9B%B8%E4%BF%A1%E5%87%BD%E6%95%B0%E5%90%8D">31. 不要过度相信函数名</span></h2><p>有些函数名是真实符号。</p>
+<p>有些函数名是工具自动生成的。</p>
+<p>有些函数名可能被开发者故意误导。</p>
+<p>例如恶意代码可能把函数命名为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">normal_update<br>check_license<br>safe_function<br></code></pre></td></tr></tbody></table></figure>
+
+<p>但实际做的是可疑行为。</p>
+<p>所以逆向时不要只相信名字，要看证据：</p>
+<ul>
+<li>函数调用了什么 API</li>
+<li>参数是什么</li>
+<li>写了哪些路径</li>
+<li>连了哪些地址</li>
+<li>改了哪些内存</li>
+<li>运行时行为是什么</li>
+</ul>
+<hr>
+<h2><span id="32-%E4%B8%8D%E8%A6%81%E8%BF%87%E5%BA%A6%E7%9B%B8%E4%BF%A1%E5%8F%8D%E7%BC%96%E8%AF%91%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B">32. 不要过度相信反编译变量类型</span></h2><p>反编译器会猜变量类型。</p>
+<p>例如它可能把某个变量猜成：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-type">char</span> *<br>undefined8<br>longlong<br></code></pre></td></tr></tbody></table></figure>
+
+<p>但这些类型不一定准确。</p>
+<p>如果你分析关键逻辑，要验证：</p>
+<ul>
+<li>这个变量被当作地址使用吗？</li>
+<li>它传给了哪个函数？</li>
+<li>它参与了整数运算还是指针运算？</li>
+<li>它对应的寄存器和内存访问宽度是多少？</li>
+</ul>
+<p>类型错误会导致伪代码误导你。</p>
+<p>这就是为什么关键处要看汇编。</p>
+<hr>
+<h2><span id="33-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">33. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>逆向工程是在没有完整源码时推断程序结构和行为。</li>
+<li>源代码编译后，很多高级信息会消失或变得不明显。</li>
+<li>符号表保存函数、变量等名字和地址的对应关系。</li>
+<li><code>strip</code> 会移除很多符号和调试信息，使逆向更困难。</li>
+<li>反汇编更接近真实机器执行，反编译更容易阅读但可能不准确。</li>
+<li>字符串是逆向分析的重要入口。</li>
+<li>交叉引用能帮助你从字符串、函数或变量跳到使用它们的位置。</li>
+<li>函数调用图和控制流图能帮助理解程序结构。</li>
+<li>静态分析和动态调试应该结合使用。</li>
+<li>逆向时要看证据，不要盲目信任函数名、变量名或反编译伪代码。</li>
+</ol>
+<hr>
+<h2><span id="34-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">34. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1debug--release--stripped-%E5%AF%B9%E6%AF%94">作业 1：debug / release / stripped 对比</span></h3><p>写 <code>reverse_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">check_password</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *input)</span> {<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(input, <span class="hljs-string">"open_sesame"</span>) == <span class="hljs-number">0</span>) {<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">char</span> buf[<span class="hljs-number">64</span>];<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"input password: "</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">"%63s"</span>, buf);<br><br>    <span class="hljs-keyword">if</span> (check_password(buf)) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"success\n"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"fail\n"</span>);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 reverse_demo.c -o reverse_demo_debug<br>gcc -O0 reverse_demo.c -o reverse_demo_release<br><span class="hljs-built_in">cp</span> reverse_demo_release reverse_demo_stripped<br>strip reverse_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">file reverse_demo_debug reverse_demo_release reverse_demo_stripped<br>nm reverse_demo_debug | grep check<br>nm reverse_demo_release | grep check<br>nm reverse_demo_stripped | grep check<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 三个文件的 file 输出<br>2. 三个文件中 nm 是否能看到 check_password<br>3. strip 后程序是否还能运行<br>4. strip 对逆向有什么影响<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%86%E6%9E%90">作业 2：字符串分析</span></h3><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings reverse_demo_stripped<br>objdump -s -j .rodata reverse_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 你找到的关键字符串<br>2. 密码字符串是否还能看到<br>3. success/fail 是否还能看到<br>4. 为什么字符串能帮助定位关键逻辑<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3ghidra-%E5%88%86%E6%9E%90-stripped-%E7%A8%8B%E5%BA%8F">作业 3：Ghidra 分析 stripped 程序</span></h3><p>用 Ghidra 打开 <code>reverse_demo_stripped</code>。</p>
+<p>要求：</p>
+<ol>
+<li>找到 Defined Strings</li>
+<li>找到 <code>open_sesame</code></li>
+<li>查看它的 XREF</li>
+<li>跳到引用它的函数</li>
+<li>判断哪个函数是密码检查函数</li>
+<li>给该函数重命名为 <code>check_password</code></li>
+<li>找到 success/fail 分支</li>
+</ol>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 关键字符串截图或记录<br>2. 引用 open_sesame 的函数地址<br>3. 你重命名的函数名<br>4. 你如何判断成功/失败分支<br>5. 反编译伪代码中哪些地方可能是工具猜测的<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-4%E5%8A%A8%E6%80%81%E9%AA%8C%E8%AF%81">作业 4：动态验证</span></h3><p>用 GDB 或 x64dbg 动态调试程序。</p>
+<p>Linux GDB 示例：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./reverse_demo_debug<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break check_password<br>run<br>bt<br>info registers<br>x/s $rdi<br>finish<br>info registers<br></code></pre></td></tr></tbody></table></figure>
+
+<p>输入：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">open_sesame<br></code></pre></td></tr></tbody></table></figure>
+
+<p>再测试错误密码。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 正确密码时 check_password 返回值<br>2. 错误密码时 check_password 返回值<br>3. 参数字符串在哪里看到<br>4. 动态调试是否验证了静态分析结论<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="35-%E8%87%AA%E6%B5%8B%E9%A2%98">35. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>源代码视角和二进制视角最大的区别是什么？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>符号表的作用是什么？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p><code>strip</code> 会对逆向分析造成什么影响？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p>反汇编和反编译有什么区别？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p>为什么不能完全相信反编译伪代码？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>字符串为什么是逆向分析的重要入口？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>交叉引用 XREF 是什么？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>拿到一个陌生二进制，你可以按什么基本流程分析？</p>
+<hr>
+<h2><span id="36-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">36. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>源代码视角保留函数名、变量名、类型、控制结构和注释等高级信息；二进制视角主要面对机器指令、地址、字符串、导入函数和有限符号，很多高级信息已经丢失或需要推断。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>符号表保存函数、全局变量等对象的名字和地址之间的对应关系，帮助调试器和逆向工具显示更清晰的信息。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p><code>strip</code> 会移除很多普通符号和调试信息，使函数名、变量信息、源码行号等消失，从而增加逆向分析难度，但通常不影响程序运行。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p>反汇编把机器码转换成汇编指令，更接近真实执行；反编译尝试把机器码还原成类 C 伪代码，可读性更好，但可能不准确。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p>因为反编译器需要猜测变量类型、控制结构和函数边界。优化、混淆、缺少符号等情况都可能导致伪代码不准确。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>字符串常常包含错误信息、成功提示、文件路径、URL、命令、注册表路径等行为线索，可以帮助快速定位关键函数。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>交叉引用表示某个函数、变量或字符串被哪些位置引用。通过 XREF 可以从一个线索跳到使用它的代码位置。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>可以先识别文件格式，再查看字符串和导入函数，然后找入口点和 main，利用字符串和 XREF 找关键函数，最后用调试器动态验证分析结论。</p>
+<hr>
+<h2><span id="37-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">37. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">进程是什么<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>程序和进程的区别</li>
+<li>PID、父进程、子进程</li>
+<li>进程状态</li>
+<li>PCB 的概念</li>
+<li>Linux <code>fork</code></li>
+<li>Windows <code>CreateProcess</code></li>
+<li>为什么进程行为分析是恶意代码分析的重要基础</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC06%E8%8A%82-%E4%BB%8E%E9%80%86%E5%90%91%E8%A7%86%E8%A7%92%E7%9C%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第06节-从逆向视角看程序结构&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第06节-从逆向视角看程序结构&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

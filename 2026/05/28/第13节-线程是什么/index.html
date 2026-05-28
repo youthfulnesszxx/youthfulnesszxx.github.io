@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第13节-线程是什么 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/18.jpg"
+				data-sizes="auto"
+				alt="第13节-线程是什么"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第13节-线程是什么</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>6.2k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 27 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-13-%E8%8A%82%E7%BA%BF%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88">第 13 节：线程是什么</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 7 周<br>课程主题：线程与并发<br>本节目标：理解线程的基本概念，掌握进程和线程的区别，知道一个进程内多个线程共享什么、各自私有什么，并能用 Linux pthread 和 Windows 工具观察线程行为。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>线程是什么？</li>
+<li>进程和线程有什么区别？</li>
+<li>一个进程里的多个线程共享哪些资源？</li>
+<li>每个线程私有哪些资源？</li>
+<li>线程为什么比进程更轻量？</li>
+<li>什么是线程栈？</li>
+<li>Linux 下 pthread 是什么？</li>
+<li>Windows 下 Thread 是什么？</li>
+<li>如何观察一个进程中的多个线程？</li>
+<li>为什么恶意代码和系统程序经常创建线程？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">进程提供资源容器 -&gt; 线程作为执行流 -&gt; 多个线程共享进程资源 -&gt; 每个线程有自己的执行上下文和栈<br></code></pre></td></tr></tbody></table></figure>
+
+<p>上一周我们学习了进程，这一节开始理解进程内部的多个执行流。</p>
+<hr>
+<h2><span id="2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%BA%BF%E7%A8%8B">2. 为什么需要线程</span></h2><p>如果只有进程，也可以完成很多任务。</p>
+<p>例如：</p>
+<ul>
+<li>一个进程处理用户输入</li>
+<li>一个进程处理文件读写</li>
+<li>一个进程处理网络请求</li>
+</ul>
+<p>但是进程之间隔离较强，创建和切换成本较高。</p>
+<p>很多时候，我们希望一个程序内部同时做多件事。</p>
+<p>例如浏览器：</p>
+<ul>
+<li>一个线程负责 UI 响应</li>
+<li>一个线程负责网络请求</li>
+<li>一个线程负责渲染页面</li>
+<li>一个线程负责 JavaScript 执行</li>
+<li>一个线程负责磁盘缓存</li>
+</ul>
+<p>再例如服务器：</p>
+<ul>
+<li>主线程监听端口</li>
+<li>工作线程处理客户端请求</li>
+<li>后台线程写日志或清理资源</li>
+</ul>
+<p>这时线程就很有用。</p>
+<p>线程让同一个进程内部可以有多个执行流。</p>
+<hr>
+<h2><span id="3-%E7%BA%BF%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88">3. 线程是什么</span></h2><p>线程英文是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Thread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以先这样理解：</p>
+<blockquote>
+<p>线程是进程中的一条执行流。</p>
+</blockquote>
+<p>一个进程至少有一个线程。</p>
+<p>这个线程通常叫：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">主线程<br></code></pre></td></tr></tbody></table></figure>
+
+<p>进程可以创建更多线程。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">进程 A<br> ├── 主线程<br> ├── 工作线程 1<br> ├── 工作线程 2<br> └── 后台线程<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些线程运行在同一个进程中，共享进程的大部分资源。</p>
+<hr>
+<h2><span id="4-%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%85%B3%E7%B3%BB">4. 进程和线程的关系</span></h2><p>可以把进程理解成资源容器，把线程理解成执行单位。</p>
+<p>简化理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">进程：资源分配的单位<br>线程：CPU 调度执行的单位<br></code></pre></td></tr></tbody></table></figure>
+
+<p>一个进程拥有：</p>
+<ul>
+<li>地址空间</li>
+<li>打开的文件</li>
+<li>权限信息</li>
+<li>环境变量</li>
+<li>当前工作目录</li>
+<li>代码和数据</li>
+</ul>
+<p>线程使用这些资源来执行代码。</p>
+<p>如果没有线程，进程里的代码就没有执行流。</p>
+<hr>
+<h2><span id="5-%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB">5. 进程和线程的区别</span></h2><table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>进程</th>
+<th>线程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>资源拥有</td>
+<td>拥有独立地址空间和资源</td>
+<td>共享所属进程资源</td>
+</tr>
+<tr>
+<td>创建成本</td>
+<td>较高</td>
+<td>较低</td>
+</tr>
+<tr>
+<td>切换成本</td>
+<td>较高</td>
+<td>较低</td>
+</tr>
+<tr>
+<td>隔离性</td>
+<td>强</td>
+<td>弱</td>
+</tr>
+<tr>
+<td>通信方式</td>
+<td>需要 IPC，如管道、socket、共享内存</td>
+<td>可直接共享变量</td>
+</tr>
+<tr>
+<td>崩溃影响</td>
+<td>一个进程崩溃通常不直接影响其他进程</td>
+<td>一个线程崩溃通常导致整个进程崩溃</td>
+</tr>
+<tr>
+<td>典型用途</td>
+<td>程序实例、服务隔离</td>
+<td>并发任务、后台工作</td>
+</tr>
+</tbody></table>
+<p>这张表很重要。</p>
+<p>安全分析中，你经常需要判断：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">某个行为发生在哪个进程？哪个线程？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="6-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%85%B1%E4%BA%AB%E4%BB%80%E4%B9%88">6. 多线程共享什么</span></h2><p>同一个进程中的多个线程通常共享：</p>
+<ul>
+<li>代码段</li>
+<li>全局变量</li>
+<li>堆</li>
+<li>打开的文件描述符或句柄</li>
+<li>当前工作目录</li>
+<li>环境变量</li>
+<li>进程权限</li>
+<li>地址空间</li>
+<li>动态库映射</li>
+</ul>
+<p>例如全局变量：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> counter = <span class="hljs-number">0</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果多个线程同时访问 <code>counter</code>，它们访问的是同一个变量。</p>
+<p>这既方便，也危险。</p>
+<p>方便在于线程间通信简单。</p>
+<p>危险在于如果没有同步，可能产生竞态条件。</p>
+<p>下一节会专门讲同步、竞争和死锁。</p>
+<hr>
+<h2><span id="7-%E6%AF%8F%E4%B8%AA%E7%BA%BF%E7%A8%8B%E7%A7%81%E6%9C%89%E4%BB%80%E4%B9%88">7. 每个线程私有什么</span></h2><p>虽然线程共享进程资源，但每个线程也有自己的东西。</p>
+<p>每个线程通常私有：</p>
+<ul>
+<li>线程 ID</li>
+<li>寄存器上下文</li>
+<li>指令指针 RIP/EIP</li>
+<li>栈指针 RSP/ESP</li>
+<li>自己的线程栈</li>
+<li>线程局部存储 TLS</li>
+<li>调度状态</li>
+<li>errno 等部分线程局部数据</li>
+</ul>
+<p>最重要的是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">每个线程有自己的栈和寄存器上下文。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这意味着不同线程可以同时执行不同函数，拥有各自的局部变量和调用栈。</p>
+<hr>
+<h2><span id="8-%E7%BA%BF%E7%A8%8B%E6%A0%88%E6%98%AF%E4%BB%80%E4%B9%88">8. 线程栈是什么</span></h2><p>上一节我们学过函数调用和栈帧。</p>
+<p>每个线程都有自己的调用栈。</p>
+<p>例如一个进程有三个线程：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">进程地址空间<br>+------------------------+<br>| 代码段                 | 共享<br>| 全局变量               | 共享<br>| 堆                     | 共享<br>| 线程 1 栈              | 私有<br>| 线程 2 栈              | 私有<br>| 线程 3 栈              | 私有<br>+------------------------+<br></code></pre></td></tr></tbody></table></figure>
+
+<p>线程 1 可以正在执行：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">main -&gt; handle_input<br></code></pre></td></tr></tbody></table></figure>
+
+<p>线程 2 可以正在执行：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">worker -&gt; process_task<br></code></pre></td></tr></tbody></table></figure>
+
+<p>线程 3 可以正在执行：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">logger -&gt; write_log<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们的调用栈互不相同。</p>
+<hr>
+<h2><span id="9-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%B9%E6%98%93%E5%87%BA%E9%97%AE%E9%A2%98">9. 多线程为什么容易出问题</span></h2><p>多线程强大，但复杂。</p>
+<p>主要原因是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">多个线程共享内存，并且执行顺序不确定。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">counter++;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>看起来是一句代码。</p>
+<p>但底层可能包含：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">读取 counter<br>加 1<br>写回 counter<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果两个线程同时执行，可能发生：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">线程 A 读取 counter = 0<br>线程 B 读取 counter = 0<br>线程 A 写回 1<br>线程 B 写回 1<br></code></pre></td></tr></tbody></table></figure>
+
+<p>结果本来应该是 2，实际却是 1。</p>
+<p>这就是竞态条件。</p>
+<p>下一节会深入讲。</p>
+<hr>
+<h2><span id="10-%E7%94%A8%E6%88%B7%E7%BA%A7%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B">10. 用户级线程和内核级线程</span></h2><p>线程可以从不同层次理解。</p>
+<h3><span id="101-%E7%94%A8%E6%88%B7%E7%BA%A7%E7%BA%BF%E7%A8%8B">10.1 用户级线程</span></h3><p>用户级线程由用户态库管理。</p>
+<p>优点：</p>
+<ul>
+<li>创建和切换快</li>
+<li>不一定每次进入内核</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>如果内核不知道这些线程，调度和阻塞处理会受限制</li>
+</ul>
+<hr>
+<h3><span id="102-%E5%86%85%E6%A0%B8%E7%BA%A7%E7%BA%BF%E7%A8%8B">10.2 内核级线程</span></h3><p>内核级线程由操作系统内核管理和调度。</p>
+<p>现代主流系统中的线程通常会映射到内核可调度实体。</p>
+<p>Linux 中，线程和进程在内核实现上关系很近。</p>
+<p>Linux 的线程创建底层常和 <code>clone</code> 系统调用有关。</p>
+<hr>
+<h2><span id="11-linux-%E4%B8%AD%E7%9A%84%E7%BA%BF%E7%A8%8B">11. Linux 中的线程</span></h2><p>Linux 下常用 pthread 编写多线程程序。</p>
+<p>pthread 是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">POSIX Threads<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见函数：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c">pthread_create<br>pthread_join<br>pthread_exit<br>pthread_self<br>pthread_mutex_lock<br>pthread_mutex_unlock<br></code></pre></td></tr></tbody></table></figure>
+
+<p>创建线程的典型模式：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">pthread_t</span> t;<br>pthread_create(&amp;t, <span class="hljs-literal">NULL</span>, worker, <span class="hljs-literal">NULL</span>);<br>pthread_join(t, <span class="hljs-literal">NULL</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>含义：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">创建一个线程执行 worker 函数<br>主线程等待这个线程结束<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="12-%E7%AC%AC%E4%B8%80%E4%B8%AA-pthread-%E7%A8%8B%E5%BA%8F">12. 第一个 pthread 程序</span></h2><p>创建 <code>thread_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"worker thread: pid=%d tid-like=%lu\n"</span>, getpid(), pthread_self());<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">pthread_t</span> t;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"main thread: pid=%d tid-like=%lu\n"</span>, getpid(), pthread_self());<br><br>    pthread_create(&amp;t, <span class="hljs-literal">NULL</span>, worker, <span class="hljs-literal">NULL</span>);<br>    pthread_join(t, <span class="hljs-literal">NULL</span>);<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc thread_demo.c -o thread_demo -pthread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./thread_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">main thread: pid=...<br>worker thread: pid=...<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p>两个线程的 <code>pid</code> 一样。</p>
+<p>因为它们属于同一个进程。</p>
+<hr>
+<h2><span id="13-pthread_create-%E5%8F%82%E6%95%B0%E8%A7%A3%E9%87%8A">13. <code>pthread_create</code> 参数解释</span></h2><p><code>pthread_create</code> 原型大致是：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">pthread_create</span><span class="hljs-params">(</span><br><span class="hljs-params">    <span class="hljs-type">pthread_t</span> *thread,</span><br><span class="hljs-params">    <span class="hljs-type">const</span> <span class="hljs-type">pthread_attr_t</span> *attr,</span><br><span class="hljs-params">    <span class="hljs-type">void</span> *(*start_routine)(<span class="hljs-type">void</span> *),</span><br><span class="hljs-params">    <span class="hljs-type">void</span> *arg</span><br><span class="hljs-params">)</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>参数含义：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>thread</td>
+<td>用于保存新线程 ID</td>
+</tr>
+<tr>
+<td>attr</td>
+<td>线程属性，NULL 表示默认属性</td>
+</tr>
+<tr>
+<td>start_routine</td>
+<td>新线程要执行的函数</td>
+</tr>
+<tr>
+<td>arg</td>
+<td>传给线程函数的参数</td>
+</tr>
+</tbody></table>
+<p>线程函数通常长这样：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>为什么参数和返回值都是 <code>void*</code>？</p>
+<p>因为这样可以传递任意类型指针。</p>
+<hr>
+<h2><span id="14-pthread_join-%E6%98%AF%E4%BB%80%E4%B9%88">14. <code>pthread_join</code> 是什么</span></h2><p><code>pthread_join</code> 用于等待线程结束。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">pthread_join(t, <span class="hljs-literal">NULL</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">主线程等待线程 t 执行结束<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果不 <code>join</code>，主线程可能先退出。</p>
+<p>进程一旦退出，其他线程通常也会被结束。</p>
+<p>所以创建线程后，经常需要 <code>pthread_join</code> 等待它完成。</p>
+<p>也可以创建 detached thread，但入门阶段先掌握 join 模式。</p>
+<hr>
+<h2><span id="15-%E7%BB%99%E7%BA%BF%E7%A8%8B%E4%BC%A0%E5%8F%82%E6%95%B0">15. 给线程传参数</span></h2><p>示例：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    <span class="hljs-type">int</span> id = *(<span class="hljs-type">int</span>*)arg;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"worker id=%d\n"</span>, id);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">pthread_t</span> t;<br>    <span class="hljs-type">int</span> id = <span class="hljs-number">1</span>;<br><br>    pthread_create(&amp;t, <span class="hljs-literal">NULL</span>, worker, &amp;id);<br>    pthread_join(t, <span class="hljs-literal">NULL</span>);<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里传给线程的是 <code>id</code> 的地址。</p>
+<p>注意：</p>
+<p>线程拿到的是指针。</p>
+<p>如果主线程中这个变量生命周期结束，或者多个线程共享同一个变量地址，可能导致问题。</p>
+<p>例如在循环里创建多个线程时，常见错误是把同一个循环变量地址传给所有线程。</p>
+<hr>
+<h2><span id="16-%E5%88%9B%E5%BB%BA%E5%A4%9A%E4%B8%AA%E7%BA%BF%E7%A8%8B">16. 创建多个线程</span></h2><p>创建 <code>multi_thread_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> N 4</span><br><br><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    <span class="hljs-type">int</span> id = *(<span class="hljs-type">int</span>*)arg;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"worker %d running\n"</span>, id);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">pthread_t</span> threads[N];<br>    <span class="hljs-type">int</span> ids[N];<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++) {<br>        ids[i] = i;<br>        pthread_create(&amp;threads[i], <span class="hljs-literal">NULL</span>, worker, &amp;ids[i]);<br>    }<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; N; i++) {<br>        pthread_join(threads[i], <span class="hljs-literal">NULL</span>);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc multi_thread_demo.c -o multi_thread_demo -pthread<br>./multi_thread_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能发现输出顺序不固定。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">worker 1 running<br>worker 3 running<br>worker 0 running<br>worker 2 running<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明线程调度顺序不由你直接控制。</p>
+<hr>
+<h2><span id="17-%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6%E9%A1%BA%E5%BA%8F%E4%B8%8D%E7%A1%AE%E5%AE%9A">17. 线程调度顺序不确定</span></h2><p>多线程程序中，线程执行顺序通常是不确定的。</p>
+<p>操作系统调度器会根据：</p>
+<ul>
+<li>CPU 核心数量</li>
+<li>时间片</li>
+<li>优先级</li>
+<li>I/O 等待</li>
+<li>系统负载</li>
+<li>调度策略</li>
+</ul>
+<p>决定哪个线程运行。</p>
+<p>所以不要写依赖特定线程执行顺序的代码。</p>
+<p>如果线程之间需要顺序或互斥，需要使用同步机制。</p>
+<p>下一节会讲：</p>
+<ul>
+<li>mutex</li>
+<li>semaphore</li>
+<li>condition variable</li>
+<li>deadlock</li>
+<li>race condition</li>
+</ul>
+<hr>
+<h2><span id="18-%E7%94%A8-ps-%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B">18. 用 <code>ps</code> 观察线程</span></h2><p>运行一个睡眠中的多线程程序。</p>
+<p>创建 <code>thread_sleep_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    <span class="hljs-type">int</span> id = *(<span class="hljs-type">int</span>*)arg;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"worker %d start\n"</span>, id);<br>    sleep(<span class="hljs-number">30</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">pthread_t</span> t1, t2;<br>    <span class="hljs-type">int</span> id1 = <span class="hljs-number">1</span>;<br>    <span class="hljs-type">int</span> id2 = <span class="hljs-number">2</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"pid=%d\n"</span>, getpid());<br><br>    pthread_create(&amp;t1, <span class="hljs-literal">NULL</span>, worker, &amp;id1);<br>    pthread_create(&amp;t2, <span class="hljs-literal">NULL</span>, worker, &amp;id2);<br><br>    sleep(<span class="hljs-number">30</span>);<br><br>    pthread_join(t1, <span class="hljs-literal">NULL</span>);<br>    pthread_join(t2, <span class="hljs-literal">NULL</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc thread_sleep_demo.c -o thread_sleep_demo -pthread<br>./thread_sleep_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>另开终端：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -T -p &lt;pid&gt;<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>-T</code> 可以显示线程。</p>
+<p>你会看到同一个进程下多个线程。</p>
+<hr>
+<h2><span id="19-%E7%94%A8-proc-%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B">19. 用 <code>/proc</code> 观察线程</span></h2><p>Linux 下可以查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span> /proc/&lt;pid&gt;/task<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里会列出该进程中的线程 ID。</p>
+<p>每个线程在 <code>/proc/&lt;pid&gt;/task/&lt;tid&gt;</code> 下都有自己的状态信息。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /proc/&lt;pid&gt;/task/&lt;tid&gt;/status<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可以看到：</p>
+<ul>
+<li>Name</li>
+<li>State</li>
+<li>Tgid</li>
+<li>Pid</li>
+<li>PPid</li>
+<li>Threads</li>
+</ul>
+<p>其中：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Tgid 通常是线程组 ID，也常对应进程 ID<br>Pid 在 task 中可能表示具体线程 ID<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Linux 中线程和进程在内核实现上非常接近，这也是为什么 <code>/proc/&lt;pid&gt;/task</code> 很重要。</p>
+<hr>
+<h2><span id="20-%E7%94%A8-strace-%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA">20. 用 <code>strace</code> 观察线程创建</span></h2><p>对 pthread 程序执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace -f ./thread_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">clone(...)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在 Linux 中，pthread 创建线程底层常使用 <code>clone</code> 系统调用。</p>
+<p><code>clone</code> 可以通过不同 flags 控制共享哪些资源。</p>
+<p>线程创建时会共享：</p>
+<ul>
+<li>地址空间</li>
+<li>文件描述符表</li>
+<li>信号处理等</li>
+</ul>
+<p>所以从系统调用角度看，线程和进程创建都可能和 <code>clone</code> 有关，只是 flags 不同。</p>
+<hr>
+<h2><span id="21-windows-%E4%B8%AD%E7%9A%84%E7%BA%BF%E7%A8%8B">21. Windows 中的线程</span></h2><p>Windows 中，进程也包含一个或多个线程。</p>
+<p>常见 API：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateThread<br>CreateRemoteThread<br>ExitThread<br>WaitForSingleObject<br>GetCurrentThreadId<br>SuspendThread<br>ResumeThread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 线程也有：</p>
+<ul>
+<li>Thread ID</li>
+<li>寄存器上下文</li>
+<li>栈</li>
+<li>TLS</li>
+<li>优先级</li>
+<li>状态</li>
+</ul>
+<p>进程启动时，Windows 会创建主线程。</p>
+<p>程序可以继续创建其他线程执行任务。</p>
+<hr>
+<h2><span id="22-windows-%E7%BA%BF%E7%A8%8B%E5%92%8C%E9%80%86%E5%90%91">22. Windows 线程和逆向</span></h2><p>Windows 逆向中，经常会看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateThread<br>_beginthreadex<br>CreateRemoteThread<br>QueueUserAPC<br>NtCreateThreadEx<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些都和线程执行有关。</p>
+<p>其中：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateRemoteThread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>尤其值得注意。</p>
+<p>因为它可以在另一个进程中创建线程。</p>
+<p>在恶意代码分析中，<code>CreateRemoteThread</code> 常和进程注入相关。</p>
+<p>当然，合法软件也可能使用远程线程技术，但需要结合上下文分析。</p>
+<hr>
+<h2><span id="23-windows-%E5%B7%A5%E5%85%B7%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B">23. Windows 工具观察线程</span></h2><p>可以用 Process Explorer：</p>
+<ol>
+<li>找到目标进程</li>
+<li>双击打开属性</li>
+<li>切换到 Threads 标签</li>
+<li>查看线程列表</li>
+</ol>
+<p>你可以看到：</p>
+<ul>
+<li>TID</li>
+<li>Start Address</li>
+<li>CPU 使用</li>
+<li>状态</li>
+<li>调用栈，若符号可用</li>
+</ul>
+<p>x64dbg 中也能查看线程窗口。</p>
+<p>当调试多线程程序时，你可以：</p>
+<ul>
+<li>切换当前线程</li>
+<li>暂停某个线程</li>
+<li>查看不同线程的寄存器</li>
+<li>查看不同线程的栈</li>
+</ul>
+<p>这对分析多线程恶意代码很重要。</p>
+<hr>
+<h2><span id="24-%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%85%B1%E4%BA%AB%E5%AE%9E%E9%AA%8C">24. 线程和全局变量共享实验</span></h2><p>创建 <code>thread_global_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_counter = <span class="hljs-number">0</span>;<br><br><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    global_counter += <span class="hljs-number">1</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"worker: global_counter=%d\n"</span>, global_counter);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">pthread_t</span> t1, t2;<br><br>    pthread_create(&amp;t1, <span class="hljs-literal">NULL</span>, worker, <span class="hljs-literal">NULL</span>);<br>    pthread_create(&amp;t2, <span class="hljs-literal">NULL</span>, worker, <span class="hljs-literal">NULL</span>);<br><br>    pthread_join(t1, <span class="hljs-literal">NULL</span>);<br>    pthread_join(t2, <span class="hljs-literal">NULL</span>);<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"main: global_counter=%d\n"</span>, global_counter);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc thread_global_demo.c -o thread_global_demo -pthread<br>./thread_global_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到多个线程都能访问同一个全局变量。</p>
+<p>但这个程序还没有正确同步。</p>
+<p>如果循环次数增加，就可能出现竞态问题。</p>
+<hr>
+<h2><span id="25-%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F">25. 线程和局部变量</span></h2><p>每个线程有自己的栈，所以线程函数中的局部变量通常在该线程自己的栈上。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    <span class="hljs-type">int</span> local_var = <span class="hljs-number">123</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"local_var addr=%p\n"</span>, &amp;local_var);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果多个线程运行这个函数，每个线程的 <code>local_var</code> 地址通常不同。</p>
+<p>实验：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;pthread.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">void</span>* <span class="hljs-title function_">worker</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span> {<br>    <span class="hljs-type">int</span> local_var = <span class="hljs-number">123</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"thread local_var addr=%p\n"</span>, &amp;local_var);<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">pthread_t</span> t1, t2;<br>    <span class="hljs-type">int</span> main_local = <span class="hljs-number">456</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"main local addr=%p\n"</span>, &amp;main_local);<br><br>    pthread_create(&amp;t1, <span class="hljs-literal">NULL</span>, worker, <span class="hljs-literal">NULL</span>);<br>    pthread_create(&amp;t2, <span class="hljs-literal">NULL</span>, worker, <span class="hljs-literal">NULL</span>);<br><br>    pthread_join(t1, <span class="hljs-literal">NULL</span>);<br>    pthread_join(t2, <span class="hljs-literal">NULL</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察不同线程局部变量地址。</p>
+<hr>
+<h2><span id="26-%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A0%86%E5%85%B1%E4%BA%AB">26. 线程和堆共享</span></h2><p>堆属于进程地址空间。</p>
+<p>所以多个线程共享同一个堆。</p>
+<p>一个线程 <code>malloc</code> 出来的内存，另一个线程理论上也可以访问，只要它拿到了指针。</p>
+<p>这很方便，但也很危险。</p>
+<p>如果一个线程释放了堆内存，另一个线程还继续使用这个指针，就可能产生：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Use-After-Free<br></code></pre></td></tr></tbody></table></figure>
+
+<p>多线程环境下，UAF 和竞态条件常常结合出现。</p>
+<p>这在真实漏洞中很常见。</p>
+<hr>
+<h2><span id="27-%E7%BA%BF%E7%A8%8B%E5%92%8C%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%85%B1%E4%BA%AB">27. 线程和文件描述符共享</span></h2><p>同一个进程内的线程共享文件描述符表。</p>
+<p>如果一个线程打开文件：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> fd = open(<span class="hljs-string">"test.txt"</span>, O_WRONLY);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>另一个线程如果能访问到 <code>fd</code> 变量，也可以写这个文件。</p>
+<p>如果多个线程同时写同一个文件描述符，输出可能交错。</p>
+<p>这也是为什么日志系统、多线程文件写入需要同步机制。</p>
+<hr>
+<h2><span id="28-%E7%BA%BF%E7%A8%8B%E5%92%8C%E4%BF%A1%E5%8F%B7%E7%9A%84%E5%A4%8D%E6%9D%82%E6%80%A7">28. 线程和信号的复杂性</span></h2><p>Linux 中信号和线程的关系比较复杂。</p>
+<p>例如：</p>
+<ul>
+<li>信号可能发送给进程</li>
+<li>也可能发送给指定线程</li>
+<li>每个线程有自己的信号掩码</li>
+<li>某些信号会导致整个进程终止</li>
+</ul>
+<p>入门阶段不需要深入信号细节。</p>
+<p>只需要知道：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">多线程程序中，异常、信号、崩溃可能影响整个进程。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果某个线程发生段错误，通常整个进程都会崩溃。</p>
+<hr>
+<h2><span id="29-%E7%BA%BF%E7%A8%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E8%BF%9B%E7%A8%8B%E8%BD%BB%E9%87%8F">29. 线程为什么比进程轻量</span></h2><p>线程比进程轻量，主要因为它们共享进程资源。</p>
+<p>创建新进程通常需要：</p>
+<ul>
+<li>创建新的地址空间</li>
+<li>建立独立资源结构</li>
+<li>复制或设置文件描述符</li>
+<li>设置更多进程级状态</li>
+</ul>
+<p>创建线程通常不需要新的独立地址空间。</p>
+<p>它只需要：</p>
+<ul>
+<li>创建线程控制结构</li>
+<li>分配线程栈</li>
+<li>设置寄存器上下文</li>
+<li>加入调度队列</li>
+</ul>
+<p>所以线程创建和切换通常比进程更轻。</p>
+<p>但代价是隔离性更弱，更容易互相影响。</p>
+<hr>
+<h2><span id="30-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E6%80%A7%E8%83%BD">30. 多线程和性能</span></h2><p>多线程不一定让程序更快。</p>
+<p>它适合：</p>
+<ul>
+<li>I/O 密集任务</li>
+<li>多核 CPU 上可并行计算的任务</li>
+<li>UI 和后台任务分离</li>
+<li>服务器并发请求处理</li>
+</ul>
+<p>但多线程也有成本：</p>
+<ul>
+<li>线程创建成本</li>
+<li>上下文切换成本</li>
+<li>锁竞争</li>
+<li>缓存一致性开销</li>
+<li>调试复杂度</li>
+<li>死锁和竞态风险</li>
+</ul>
+<p>所以不要为了“看起来高级”随便使用多线程。</p>
+<hr>
+<h2><span id="31-%E7%BA%BF%E7%A8%8B%E5%92%8C%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">31. 线程和逆向工程</span></h2><p>逆向多线程程序时，要注意：</p>
+<ul>
+<li>哪个线程创建了哪个线程</li>
+<li>线程入口函数在哪里</li>
+<li>每个线程负责什么任务</li>
+<li>是否有后台线程</li>
+<li>是否有定时线程</li>
+<li>是否有反调试线程</li>
+<li>是否有网络通信线程</li>
+<li>是否有监控或自保护线程</li>
+</ul>
+<p>有些程序主线程看起来很简单，真正逻辑在工作线程中。</p>
+<p>所以动态调试时，要观察线程列表。</p>
+<p>在 x64dbg 中，如果程序突然创建新线程，要关注线程入口地址。</p>
+<hr>
+<h2><span id="32-%E7%BA%BF%E7%A8%8B%E5%92%8C%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90">32. 线程和漏洞分析</span></h2><p>多线程程序容易出现并发漏洞。</p>
+<p>常见包括：</p>
+<ul>
+<li>竞态条件</li>
+<li>TOCTOU</li>
+<li>Use-After-Free</li>
+<li>Double Free</li>
+<li>数据竞争</li>
+<li>死锁</li>
+<li>锁顺序错误</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">线程 A 检查对象仍然有效<br>线程 B 释放对象<br>线程 A 继续使用对象<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这可能导致 UAF。</p>
+<p>又例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">线程 A 检查文件权限<br>线程 B 替换文件路径<br>线程 A 打开错误文件<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这可能导致 TOCTOU 问题。</p>
+<p>下一节会重点讲同步和竞态。</p>
+<hr>
+<h2><span id="33-%E7%BA%BF%E7%A8%8B%E5%92%8C%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90">33. 线程和恶意代码分析</span></h2><p>恶意代码经常创建线程。</p>
+<p>常见用途：</p>
+<ul>
+<li>主线程继续运行，后台线程执行恶意逻辑</li>
+<li>一个线程负责网络通信</li>
+<li>一个线程负责监控分析工具</li>
+<li>一个线程负责解密或解包</li>
+<li>一个线程负责持久化</li>
+<li>一个线程负责注入或执行 payload</li>
+<li>一个线程负责延迟执行</li>
+</ul>
+<p>如果只看主线程，可能漏掉关键行为。</p>
+<p>分析时要关注：</p>
+<ul>
+<li>线程创建 API</li>
+<li>线程入口地址</li>
+<li>线程开始后调用哪些 API</li>
+<li>是否创建远程线程</li>
+<li>是否有长时间 sleep</li>
+<li>是否有监控调试器的线程</li>
+</ul>
+<hr>
+<h2><span id="34-linux-%E5%AE%9E%E9%AA%8Cpthread-%E5%9F%BA%E7%A1%80">34. Linux 实验：pthread 基础</span></h2><p>写 <code>thread_demo.c</code> 并运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc thread_demo.c -o thread_demo -pthread<br>./thread_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>然后用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace -f ./thread_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察是否出现 <code>clone</code>。</p>
+<p>提交时记录：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 主线程输出<br>2. 工作线程输出<br>3. 两个线程 PID 是否相同<br>4. strace 中是否出现 clone<br>5. pthread_create 和 clone 的关系<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="35-linux-%E5%AE%9E%E9%AA%8C%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B%E5%88%97%E8%A1%A8">35. Linux 实验：观察线程列表</span></h2><p>运行 <code>thread_sleep_demo</code>。</p>
+<p>另开终端：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -T -p &lt;pid&gt;<br><span class="hljs-built_in">ls</span> /proc/&lt;pid&gt;/task<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 进程 PID<br>2. 看到几个线程<br>3. 每个线程的 TID<br>4. /proc/&lt;pid&gt;/task 中有哪些目录<br>5. 为什么同一进程下会有多个线程 ID<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="36-linux-%E5%AE%9E%E9%AA%8C%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B%E6%A0%88%E5%9C%B0%E5%9D%80">36. Linux 实验：观察线程栈地址</span></h2><p>运行局部变量地址实验。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 主线程局部变量地址<br>2. 线程 1 局部变量地址<br>3. 线程 2 局部变量地址<br>4. 这些地址是否相同<br>5. 这说明每个线程有什么私有资源<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="37-windows-%E5%AE%9E%E9%AA%8Cprocess-explorer-%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B">37. Windows 实验：Process Explorer 观察线程</span></h2><p>如果你有 Windows 环境：</p>
+<ol>
+<li>打开 Process Explorer</li>
+<li>选择一个进程，例如 notepad 或自己写的程序</li>
+<li>双击进入属性</li>
+<li>打开 Threads 标签</li>
+<li>查看线程列表</li>
+</ol>
+<p>记录：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 进程名<br>2. PID<br>3. 线程数量<br>4. 至少 3 个线程 ID<br>5. 线程 Start Address<br>6. 是否能看到线程 CPU 使用情况<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="38-windows-%E5%AE%9E%E9%AA%8Cx64dbg-%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B">38. Windows 实验：x64dbg 观察线程</span></h2><p>用 x64dbg 打开一个程序。</p>
+<p>练习：</p>
+<ol>
+<li>打开 Threads 窗口</li>
+<li>查看当前线程</li>
+<li>设置断点</li>
+<li>单步执行</li>
+<li>如果程序创建新线程，观察线程列表变化</li>
+<li>切换线程查看寄存器和栈</li>
+</ol>
+<p>重点：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">不同线程有不同 RIP/RSP，也就是不同执行位置和栈。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="39-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">39. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>线程是进程中的一条执行流。</li>
+<li>一个进程至少有一个线程，也可以有多个线程。</li>
+<li>进程更像资源容器，线程更像 CPU 调度执行单位。</li>
+<li>同一进程内线程共享地址空间、堆、全局变量、文件描述符等资源。</li>
+<li>每个线程有自己的线程 ID、寄存器上下文、指令位置和线程栈。</li>
+<li>多线程输出顺序和执行顺序通常不确定。</li>
+<li>Linux 下常用 pthread 创建线程，底层常和 <code>clone</code> 有关。</li>
+<li>Windows 下常见线程 API 包括 <code>CreateThread</code>、<code>CreateRemoteThread</code> 等。</li>
+<li>多线程程序容易出现竞态条件、UAF、死锁等问题。</li>
+<li>逆向和恶意代码分析时，要关注线程创建和线程入口函数。</li>
+</ol>
+<hr>
+<h2><span id="40-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">40. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1%E7%AC%AC%E4%B8%80%E4%B8%AA-pthread-%E7%A8%8B%E5%BA%8F">作业 1：第一个 pthread 程序</span></h3><p>写并运行 <code>thread_demo.c</code>。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 源代码<br>2. 主线程输出<br>3. 工作线程输出<br>4. 两个线程的 PID 是否相同<br>5. pthread_create 的作用是什么<br>6. pthread_join 的作用是什么<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2%E5%A4%9A%E4%B8%AA%E7%BA%BF%E7%A8%8B%E8%BE%93%E5%87%BA%E9%A1%BA%E5%BA%8F">作业 2：多个线程输出顺序</span></h3><p>写并运行 <code>multi_thread_demo.c</code>。</p>
+<p>运行 5 次。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 5 次运行输出<br>2. 输出顺序是否固定<br>3. 为什么线程执行顺序不确定<br>4. 如果需要固定顺序，应该使用什么机制<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3%E8%A7%82%E5%AF%9F%E7%BA%BF%E7%A8%8B%E5%88%97%E8%A1%A8">作业 3：观察线程列表</span></h3><p>运行 <code>thread_sleep_demo</code>。</p>
+<p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -T -p &lt;pid&gt;<br><span class="hljs-built_in">ls</span> /proc/&lt;pid&gt;/task<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 进程 PID<br>2. 线程数量<br>3. TID 列表<br>4. ps -T 的作用<br>5. /proc/&lt;pid&gt;/task 的作用<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-4%E7%BA%BF%E7%A8%8B%E5%85%B1%E4%BA%AB%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F">作业 4：线程共享全局变量</span></h3><p>运行 <code>thread_global_demo.c</code>。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 程序输出<br>2. 多个线程是否访问同一个 global_counter<br>3. 为什么这说明全局变量是共享的<br>4. 如果循环增加到大量次数，可能出现什么问题<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-5%E7%BA%BF%E7%A8%8B%E7%A7%81%E6%9C%89%E6%A0%88%E5%AE%9E%E9%AA%8C">作业 5：线程私有栈实验</span></h3><p>运行线程局部变量地址程序。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 主线程局部变量地址<br>2. 工作线程 1 局部变量地址<br>3. 工作线程 2 局部变量地址<br>4. 这些地址是否不同<br>5. 每个线程为什么需要自己的栈<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-6windows-%E7%BA%BF%E7%A8%8B%E8%A7%82%E5%AF%9F">作业 6：Windows 线程观察</span></h3><p>如果你有 Windows 环境，用 Process Explorer 或 x64dbg 观察线程。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 进程名<br>2. PID<br>3. 线程数量<br>4. 至少 3 个线程 ID<br>5. 是否能看到线程入口地址<br>6. 为什么线程入口地址对逆向分析有用<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="41-%E8%87%AA%E6%B5%8B%E9%A2%98">41. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>线程是什么？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>进程和线程有什么区别？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>同一个进程中的多个线程共享哪些资源？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p>每个线程通常私有哪些资源？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p>为什么每个线程需要自己的栈？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p><code>pthread_create</code> 和 <code>pthread_join</code> 分别做什么？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>为什么多线程程序执行顺序通常不确定？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>Windows 中 <code>CreateRemoteThread</code> 为什么在安全分析中值得关注？</p>
+<h3><span id="%E9%A2%98-9">题 9</span></h3><p>多线程程序中可能出现哪些安全问题？</p>
+<hr>
+<h2><span id="42-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">42. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>线程是进程中的一条执行流。一个进程至少有一个线程，也可以创建多个线程并发执行不同任务。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>进程拥有独立地址空间和资源，隔离性较强；线程属于某个进程，多个线程共享进程资源，但每个线程有自己的执行上下文和栈。线程创建和切换通常比进程更轻量。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>同一进程中的线程通常共享代码段、全局变量、堆、打开的文件描述符或句柄、当前工作目录、环境变量、权限信息、动态库映射和地址空间。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p>每个线程通常私有线程 ID、寄存器上下文、指令指针、栈指针、线程栈、线程局部存储和调度状态等。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p>因为不同线程可能同时执行不同函数调用链，需要各自保存局部变量、返回地址和调用栈信息，所以每个线程需要自己的栈。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p><code>pthread_create</code> 用于创建新线程，并让新线程从指定函数开始执行；<code>pthread_join</code> 用于等待指定线程结束并回收相关资源。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>因为线程由操作系统调度器根据 CPU、优先级、时间片、I/O 等因素决定运行顺序，程序不能假设线程按固定顺序执行。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>因为 <code>CreateRemoteThread</code> 可以在其他进程中创建线程，常见于进程注入等行为。它不一定恶意，但在异常上下文中值得重点分析。</p>
+<h3><span id="%E7%AD%94-9">答 9</span></h3><p>多线程程序可能出现竞态条件、TOCTOU、Use-After-Free、Double Free、数据竞争、死锁、锁顺序错误等问题。</p>
+<hr>
+<h2><span id="43-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">43. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">同步、竞争和死锁<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>什么是竞态条件</li>
+<li>为什么 <code>counter++</code> 不是绝对安全的</li>
+<li>mutex、semaphore、condition variable</li>
+<li>死锁四条件</li>
+<li>TOCTOU 漏洞基本思想</li>
+<li>如何用实验观察加锁前后的差异</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC13%E8%8A%82-%E7%BA%BF%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第13节-线程是什么&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第13节-线程是什么&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

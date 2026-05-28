@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第11节-ELF文件格式 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/16.jpg"
+				data-sizes="auto"
+				alt="第11节-ELF文件格式"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第11节-ELF文件格式</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5.6k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 25 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-11-%E8%8A%82elf-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F">第 11 节：ELF 文件格式</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 6 周<br>课程主题：可执行文件与程序装载<br>本节目标：理解 Linux 下 ELF 可执行文件的基本结构，掌握 ELF Header、Program Header、Section Header、<code>.text</code>、<code>.data</code>、<code>.bss</code>、<code>.rodata</code>、<code>.plt</code>、<code>.got</code> 等概念，并能使用 <code>readelf</code>、<code>objdump</code>、<code>file</code> 等工具观察 ELF 文件。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>ELF 是什么？</li>
+<li>Linux 为什么能识别一个文件是可执行文件？</li>
+<li>ELF Header 里保存了什么？</li>
+<li>Program Header 和 Section Header 有什么区别？</li>
+<li><code>.text</code>、<code>.data</code>、<code>.bss</code>、<code>.rodata</code> 分别放什么？</li>
+<li>动态链接和静态链接有什么区别？</li>
+<li><code>.plt</code> 和 <code>.got</code> 是什么？</li>
+<li>为什么逆向工程必须理解 ELF？</li>
+<li>为什么漏洞利用经常关注 ELF 保护机制和段权限？</li>
+<li>如何用 <code>readelf</code>、<code>objdump</code>、<code>nm</code>、<code>ldd</code> 查看 ELF 信息？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">C 源代码 -&gt; 编译链接 -&gt; ELF 文件 -&gt; 操作系统识别格式 -&gt; 装载到内存 -&gt; 程序运行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>前面你已经学习了程序如何运行、汇编、系统调用；这一节开始具体观察 Linux 可执行文件本身的结构。</p>
+<hr>
+<h2><span id="2-elf-%E6%98%AF%E4%BB%80%E4%B9%88">2. ELF 是什么</span></h2><p>ELF 全称是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Executable and Linkable Format<br></code></pre></td></tr></tbody></table></figure>
+
+<p>中文常译为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">可执行与可链接格式<br></code></pre></td></tr></tbody></table></figure>
+
+<p>ELF 是 Linux、Unix-like 系统中常见的二进制文件格式。</p>
+<p>常见 ELF 文件包括：</p>
+<ul>
+<li>可执行程序</li>
+<li>目标文件 <code>.o</code></li>
+<li>共享库 <code>.so</code></li>
+<li>core dump 文件</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">/bin/ls<br>/usr/bin/bash<br>libc.so.6<br>hello.o<br>core<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们都可能是 ELF 格式。</p>
+<hr>
+<h2><span id="3-elf-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8D%E8%A6%81">3. ELF 为什么重要</span></h2><p>ELF 很重要，因为它连接了几个关键领域。</p>
+<h3><span id="31-%E5%AF%B9%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">3.1 对操作系统</span></h3><p>操作系统需要根据 ELF 文件中的信息知道：</p>
+<ul>
+<li>这是不是可执行文件</li>
+<li>面向什么 CPU 架构</li>
+<li>程序入口点在哪里</li>
+<li>哪些内容需要加载到内存</li>
+<li>每个内存区域权限是什么</li>
+<li>是否需要动态链接器</li>
+<li>依赖哪些共享库</li>
+</ul>
+<hr>
+<h3><span id="32-%E5%AF%B9%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">3.2 对逆向工程</span></h3><p>逆向 ELF 程序时，你要看：</p>
+<ul>
+<li>入口点</li>
+<li>函数代码</li>
+<li>字符串</li>
+<li>符号表</li>
+<li>动态库依赖</li>
+<li>导入函数</li>
+<li>PLT/GOT</li>
+<li>段权限</li>
+</ul>
+<p>这些都来自 ELF 结构。</p>
+<hr>
+<h3><span id="33-%E5%AF%B9%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8">3.3 对漏洞利用</span></h3><p>漏洞利用中常关注：</p>
+<ul>
+<li>是否开启 PIE</li>
+<li>是否开启 NX</li>
+<li>是否有 Canary</li>
+<li>RELRO 状态</li>
+<li>GOT 是否可写</li>
+<li>libc 是否动态链接</li>
+<li>程序基址是否固定</li>
+<li>可执行段权限</li>
+</ul>
+<p>这些都和 ELF 装载、链接和保护机制有关。</p>
+<hr>
+<h2><span id="4-%E5%87%86%E5%A4%87%E4%B8%80%E4%B8%AA%E7%A4%BA%E4%BE%8B%E7%A8%8B%E5%BA%8F">4. 准备一个示例程序</span></h2><p>创建 <code>elf_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><span class="hljs-type">int</span> global_zero;<br><span class="hljs-type">const</span> <span class="hljs-type">char</span> *message = <span class="hljs-string">"hello elf"</span>;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">helper</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"helper: %s\n"</span>, message);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> local_var = <span class="hljs-number">456</span>;<br>    <span class="hljs-type">int</span> *heap_var = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));<br><br>    <span class="hljs-keyword">if</span> (heap_var == <span class="hljs-literal">NULL</span>) {<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br><br>    *heap_var = <span class="hljs-number">789</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_var=%d\n"</span>, global_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_zero=%d\n"</span>, global_zero);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"local_var=%d\n"</span>, local_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"heap_var=%d\n"</span>, *heap_var);<br><br>    helper();<br>    <span class="hljs-built_in">free</span>(heap_var);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 elf_demo.c -o elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>后面所有实验都可以围绕这个程序展开。</p>
+<hr>
+<h2><span id="5-%E7%94%A8-file-%E8%AF%86%E5%88%AB-elf">5. 用 <code>file</code> 识别 ELF</span></h2><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">elf_demo: ELF 64-bit LSB pie executable, x86-64, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID..., with debug_info, not stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逐段解释：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ELF</td>
+<td>文件格式是 ELF</td>
+</tr>
+<tr>
+<td>64-bit</td>
+<td>64 位程序</td>
+</tr>
+<tr>
+<td>LSB</td>
+<td>小端序</td>
+</tr>
+<tr>
+<td>pie executable</td>
+<td>位置无关可执行文件，支持地址随机化</td>
+</tr>
+<tr>
+<td>x86-64</td>
+<td>目标 CPU 架构</td>
+</tr>
+<tr>
+<td>dynamically linked</td>
+<td>动态链接</td>
+</tr>
+<tr>
+<td>interpreter</td>
+<td>动态链接器路径</td>
+</tr>
+<tr>
+<td>with debug_info</td>
+<td>包含调试信息</td>
+</tr>
+<tr>
+<td>not stripped</td>
+<td>没有去除符号</td>
+</tr>
+</tbody></table>
+<p>这一条命令能快速告诉你二进制的基本属性。</p>
+<p>逆向拿到陌生 Linux 文件时，第一步通常就是：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file target<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="6-elf-%E6%96%87%E4%BB%B6%E7%9A%84%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84">6. ELF 文件的整体结构</span></h2><p>一个 ELF 文件可以从两个角度看。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">链接视角：Section<br>装载视角：Segment<br></code></pre></td></tr></tbody></table></figure>
+
+<p>简化图：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs text">+----------------------+<br>| ELF Header           |<br>+----------------------+<br>| Program Header Table |<br>+----------------------+<br>| .text                |<br>| .rodata              |<br>| .data                |<br>| .bss                 |<br>| .plt                 |<br>| .got                 |<br>| .symtab              |<br>| .strtab              |<br>+----------------------+<br>| Section Header Table |<br>+----------------------+<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p>这个图只是简化。</p>
+<p>真实 ELF 中各部分位置和数量会根据编译选项、链接方式、是否 strip、是否 PIE 等发生变化。</p>
+<hr>
+<h2><span id="7-elf-header-%E6%98%AF%E4%BB%80%E4%B9%88">7. ELF Header 是什么</span></h2><p>ELF Header 是 ELF 文件开头的一段头部信息。</p>
+<p>它告诉系统：</p>
+<ul>
+<li>这是 ELF 文件</li>
+<li>32 位还是 64 位</li>
+<li>大端还是小端</li>
+<li>目标架构是什么</li>
+<li>文件类型是什么</li>
+<li>程序入口点在哪里</li>
+<li>Program Header Table 在哪里</li>
+<li>Section Header Table 在哪里</li>
+</ul>
+<p>查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -h elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">ELF Header:<br>  Magic:   7f 45 4c 46 ...<br>  Class:                             ELF64<br>  Data:                              2's complement, little endian<br>  Type:                              DYN (Position-Independent Executable file)<br>  Machine:                           Advanced Micro Devices X86-64<br>  Entry point address:               0x1080<br>  Start of program headers:          64 (bytes into file)<br>  Start of section headers:          ...<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="8-elf-magic-number">8. ELF Magic Number</span></h2><p>ELF 文件开头有魔数。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">7f 45 4c 46<br></code></pre></td></tr></tbody></table></figure>
+
+<p>其中：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">45 = 'E'<br>4c = 'L'<br>46 = 'F'<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以开头可以理解为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x7f 'E' 'L' 'F'<br></code></pre></td></tr></tbody></table></figure>
+
+<p>操作系统和工具可以通过这个魔数识别 ELF 文件。</p>
+<p>你可以用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">xxd -l 16 elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>查看前 16 字节。</p>
+<p>你会看到类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">00000000: 7f45 4c46 0201 0100 ...<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是 ELF 标识。</p>
+<hr>
+<h2><span id="9-entry-point-address-%E6%98%AF%E4%BB%80%E4%B9%88">9. Entry point address 是什么</span></h2><p><code>readelf -h</code> 中有一项：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Entry point address<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它表示程序入口点地址。</p>
+<p>注意：</p>
+<blockquote>
+<p>入口点通常不是 <code>main</code>。</p>
+</blockquote>
+<p>程序真正开始执行的位置通常是运行时启动代码。</p>
+<p>大致流程：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">ELF entry point<br> -&gt; 动态链接器/运行时初始化<br> -&gt; __libc_start_main<br> -&gt; main<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以你不能简单认为入口点就是业务逻辑开始处。</p>
+<p>逆向时，需要从入口点追踪到 <code>main</code>，或者让工具帮你识别 <code>main</code>。</p>
+<hr>
+<h2><span id="10-program-header-%E6%98%AF%E4%BB%80%E4%B9%88">10. Program Header 是什么</span></h2><p>Program Header Table 描述程序装载时需要的段。</p>
+<p>它是给操作系统加载器看的。</p>
+<p>查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -l elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到多个 Program Header，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">Type           Offset             VirtAddr           PhysAddr<br>               FileSiz            MemSiz              Flags  Align<br>LOAD           0x0000000000000000 0x0000000000000000 ... R<br>LOAD           0x0000000000001000 0x0000000000001000 ... R E<br>LOAD           0x0000000000002000 0x0000000000002000 ... R<br>LOAD           0x0000000000003000 0x0000000000004000 ... RW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>重点看：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Type</td>
+<td>段类型</td>
+</tr>
+<tr>
+<td>Offset</td>
+<td>文件中偏移</td>
+</tr>
+<tr>
+<td>VirtAddr</td>
+<td>加载到内存后的虚拟地址</td>
+</tr>
+<tr>
+<td>FileSiz</td>
+<td>文件中占用大小</td>
+</tr>
+<tr>
+<td>MemSiz</td>
+<td>内存中占用大小</td>
+</tr>
+<tr>
+<td>Flags</td>
+<td>权限，如 R/W/E</td>
+</tr>
+<tr>
+<td>Align</td>
+<td>对齐</td>
+</tr>
+</tbody></table>
+<hr>
+<h2><span id="11-load-segment">11. LOAD Segment</span></h2><p><code>LOAD</code> 类型表示这个段需要被加载到内存。</p>
+<p>常见权限：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">R    可读<br>R E  可读 + 可执行<br>RW   可读 + 可写<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">R E 段通常包含代码<br>RW 段通常包含可写数据<br>R 段可能包含只读数据<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这和内存保护有关。</p>
+<p>正常情况下：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">代码段应该可执行但不可写<br>数据段应该可写但不可执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是 W^X 思想的一部分：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Writable 和 Executable 尽量不要同时出现<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="12-section-header-%E6%98%AF%E4%BB%80%E4%B9%88">12. Section Header 是什么</span></h2><p>Section Header Table 描述 ELF 中的节。</p>
+<p>它更多是给链接器、调试器、逆向工具看的。</p>
+<p>查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -S elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到很多 section，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">.text<br>.rodata<br>.data<br>.bss<br>.plt<br>.got<br>.symtab<br>.strtab<br>.debug_info<br></code></pre></td></tr></tbody></table></figure>
+
+<p>节更细，段更粗。</p>
+<p>一个 Segment 可能包含多个 Section。</p>
+<p>可以这样理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Section：链接和分析视角，细粒度<br>Segment：装载和运行视角，粗粒度<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="13-program-header-%E5%92%8C-section-header-%E7%9A%84%E5%8C%BA%E5%88%AB">13. Program Header 和 Section Header 的区别</span></h2><p>这是 ELF 学习中的重点。</p>
+<table>
+<thead>
+<tr>
+<th>对比</th>
+<th>Program Header</th>
+<th>Section Header</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>面向对象</td>
+<td>操作系统加载器</td>
+<td>链接器、调试器、分析工具</td>
+</tr>
+<tr>
+<td>关注问题</td>
+<td>如何加载到内存</td>
+<td>文件内部如何组织内容</td>
+</tr>
+<tr>
+<td>单位</td>
+<td>Segment</td>
+<td>Section</td>
+</tr>
+<tr>
+<td>命令</td>
+<td><code>readelf -l</code></td>
+<td><code>readelf -S</code></td>
+</tr>
+<tr>
+<td>运行是否必须</td>
+<td>可执行装载通常需要</td>
+<td>运行时不一定必须</td>
+</tr>
+</tbody></table>
+<p>一个被 strip 的 ELF 仍然能运行，甚至 Section Header 也可能被去掉或破坏，但只要必要的 Program Header 和装载信息存在，系统仍可能执行它。</p>
+<p>逆向工具则非常依赖 Section 信息来帮助分析。</p>
+<hr>
+<h2><span id="14-text-%E8%8A%82">14. <code>.text</code> 节</span></h2><p><code>.text</code> 通常存放程序机器指令。</p>
+<p>例如：</p>
+<ul>
+<li><code>main</code></li>
+<li><code>helper</code></li>
+<li>编译器生成的代码</li>
+<li>运行时相关代码</li>
+</ul>
+<p>查看反汇编：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>只看 <code>.text</code>：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel -j .text elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>.text</code> 通常属于可执行段。</p>
+<p>权限一般是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">R E<br></code></pre></td></tr></tbody></table></figure>
+
+<p>即：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">可读、可执行、不可写<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="15-rodata-%E8%8A%82">15. <code>.rodata</code> 节</span></h2><p><code>.rodata</code> 是只读数据节。</p>
+<p>常见内容：</p>
+<ul>
+<li>字符串常量</li>
+<li>const 数据</li>
+<li>switch jump table 等只读表</li>
+</ul>
+<p>例如程序中的：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">const</span> <span class="hljs-type">char</span> *message = <span class="hljs-string">"hello elf"</span>;<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_var=%d\n"</span>, global_var);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些字符串通常会放到 <code>.rodata</code>。</p>
+<p>查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -s -j .rodata elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或者：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strings elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向中，<code>.rodata</code> 很重要，因为字符串常常是定位关键逻辑的入口。</p>
+<hr>
+<h2><span id="16-data-%E8%8A%82">16. <code>.data</code> 节</span></h2><p><code>.data</code> 存放已初始化的全局变量和静态变量。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>因为它有初始值，所以需要在文件中保存这个初始值。</p>
+<p>查看 section：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -S elf_demo | grep .data<br></code></pre></td></tr></tbody></table></figure>
+
+<p>查看符号：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nm elf_demo | grep global_var<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到 <code>global_var</code> 类型为 <code>D</code>，表示它在已初始化数据区。</p>
+<hr>
+<h2><span id="17-bss-%E8%8A%82">17. <code>.bss</code> 节</span></h2><p><code>.bss</code> 存放未初始化或初始化为 0 的全局变量和静态变量。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> global_zero;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它初始值为 0。</p>
+<p><code>.bss</code> 的特点是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">文件中通常不真正保存一大堆 0<br>只记录内存中需要预留多大空间<br>加载时由系统初始化为 0<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以 <code>.bss</code> 在文件中占用可能很小，但在内存中会占空间。</p>
+<p>这就是 Program Header 中 <code>FileSiz</code> 和 <code>MemSiz</code> 可能不同的原因之一。</p>
+<hr>
+<h2><span id="18-symtab-%E5%92%8C-strtab">18. <code>.symtab</code> 和 <code>.strtab</code></span></h2><p><code>.symtab</code> 是普通符号表。</p>
+<p><code>.strtab</code> 是普通字符串表，保存符号名。</p>
+<p>如果程序没有被 strip，你可以用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nm elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">main<br>helper<br>global_var<br>global_zero<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cp</span> elf_demo elf_demo_stripped<br>strip elf_demo_stripped<br>nm elf_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">no symbols<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明普通符号表被移除了。</p>
+<p>但程序仍然可以运行。</p>
+<hr>
+<h2><span id="19-dynsym-%E5%92%8C-dynstr">19. <code>.dynsym</code> 和 <code>.dynstr</code></span></h2><p>动态链接程序还需要动态符号表。</p>
+<p><code>.dynsym</code> 保存动态链接相关符号。</p>
+<p><code>.dynstr</code> 保存动态符号名字符串。</p>
+<p>查看动态符号：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf --dyn-syms elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -T elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">printf<br>malloc<br>free<br>__libc_start_main<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些动态符号用于运行时动态链接。</p>
+<p>即使程序被 strip，动态符号往往仍然保留一部分，因为动态链接器需要它们。</p>
+<hr>
+<h2><span id="20-%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E6%98%AF%E4%BB%80%E4%B9%88">20. 动态链接是什么</span></h2><p>动态链接表示程序运行时依赖共享库。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ldd elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">linux-vdso.so.1<br>libc.so.6<br>/lib64/ld-linux-x86-64.so.2<br></code></pre></td></tr></tbody></table></figure>
+
+<p>说明程序依赖 libc 和动态链接器。</p>
+<p>动态链接优点：</p>
+<ul>
+<li>可执行文件较小</li>
+<li>多个程序共享同一份库</li>
+<li>库可以单独更新</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>运行时需要依赖库存在</li>
+<li>分析时需要考虑外部库调用</li>
+<li>地址可能受 ASLR 影响</li>
+</ul>
+<hr>
+<h2><span id="21-%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E6%98%AF%E4%BB%80%E4%B9%88">21. 静态链接是什么</span></h2><p>静态链接会把库代码尽量打包进可执行文件。</p>
+<p>编译示例：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -static -O0 elf_demo.c -o elf_demo_static<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能会生成较大的文件。</p>
+<p>查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo_static<br>ldd elf_demo_static<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">not a dynamic executable<br></code></pre></td></tr></tbody></table></figure>
+
+<p>静态链接优点：</p>
+<ul>
+<li>依赖少</li>
+<li>部署方便</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>文件大</li>
+<li>逆向时库代码混入程序，函数更多</li>
+<li>安全更新不如动态库灵活</li>
+</ul>
+<hr>
+<h2><span id="22-plt-%E6%98%AF%E4%BB%80%E4%B9%88">22. <code>.plt</code> 是什么</span></h2><p><code>.plt</code> 全称：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Procedure Linkage Table<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以理解为动态函数调用跳板。</p>
+<p>当程序调用外部库函数，比如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编中可能看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">call printf@plt<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这表示程序不是直接调用 libc 中最终地址，而是先调用 PLT 跳板。</p>
+<p>PLT 会配合 GOT 和动态链接器找到真实函数地址。</p>
+<p>入门理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">PLT 是调用外部函数的中转站。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="23-got-%E6%98%AF%E4%BB%80%E4%B9%88">23. <code>.got</code> 是什么</span></h2><p><code>.got</code> 全称：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Global Offset Table<br></code></pre></td></tr></tbody></table></figure>
+
+<p>GOT 中保存一些运行时需要解析的地址。</p>
+<p>对于动态链接函数，GOT 可能保存最终解析出的 libc 函数地址。</p>
+<p>简化理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">PLT 负责跳转逻辑<br>GOT 保存目标地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这对漏洞利用很重要。</p>
+<p>早期或特定保护较弱情况下，如果攻击者能改写 GOT 表项，就可能把某个函数调用重定向到别的位置。</p>
+<p>例如把 <code>printf</code> 的 GOT 项改成 <code>system</code>。</p>
+<p>现代系统通过 RELRO 等机制增加 GOT 篡改难度。</p>
+<hr>
+<h2><span id="24-%E8%A7%82%E5%AF%9F-plt-%E5%92%8C-got">24. 观察 PLT 和 GOT</span></h2><p>查看 PLT：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel -j .plt elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也可以看反汇编中外部函数调用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel elf_demo | grep <span class="hljs-string">'@plt'</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">call printf@plt<br>call malloc@plt<br>call free@plt<br></code></pre></td></tr></tbody></table></figure>
+
+<p>查看重定位信息：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -r elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到和外部函数相关的重定位项。</p>
+<p>这些信息和动态链接密切相关。</p>
+<hr>
+<h2><span id="25-%E9%87%8D%E5%AE%9A%E4%BD%8D%E6%98%AF%E4%BB%80%E4%B9%88">25. 重定位是什么</span></h2><p>重定位可以理解为：</p>
+<blockquote>
+<p>某些地址在编译链接时还不能最终确定，需要在链接或加载时修正。</p>
+</blockquote>
+<p>例如动态库函数地址运行时才知道。</p>
+<p>因为 ASLR 会让 libc 每次加载地址不同。</p>
+<p>所以程序不能简单写死：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">printf 永远在某个固定地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>动态链接器需要在运行时解析地址，并把相关位置修正好。</p>
+<p>查看重定位：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -r elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">R_X86_64_JUMP_SLOT printf<br>R_X86_64_JUMP_SLOT malloc<br>R_X86_64_JUMP_SLOT free<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些通常和动态函数调用有关。</p>
+<hr>
+<h2><span id="26-pie-%E6%98%AF%E4%BB%80%E4%B9%88">26. PIE 是什么</span></h2><p>PIE 全称：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Position Independent Executable<br></code></pre></td></tr></tbody></table></figure>
+
+<p>中文可理解为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">位置无关可执行文件<br></code></pre></td></tr></tbody></table></figure>
+
+<p>启用 PIE 后，程序代码可以加载到随机基址。</p>
+<p>这配合 ASLR 提高漏洞利用难度。</p>
+<p>查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">pie executable<br></code></pre></td></tr></tbody></table></figure>
+
+<p>说明它是 PIE。</p>
+<p>编译非 PIE：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 -no-pie elf_demo.c -o elf_demo_no_pie<br></code></pre></td></tr></tbody></table></figure>
+
+<p>对比：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo elf_demo_no_pie<br></code></pre></td></tr></tbody></table></figure>
+
+<p>非 PIE 程序代码地址通常更固定。</p>
+<hr>
+<h2><span id="27-nx-%E6%98%AF%E4%BB%80%E4%B9%88">27. NX 是什么</span></h2><p>NX 表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">No eXecute<br></code></pre></td></tr></tbody></table></figure>
+
+<p>即某些内存区域不可执行。</p>
+<p>例如栈和堆通常不应该执行代码。</p>
+<p>查看 GNU_STACK：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -W -l elf_demo | grep GNU_STACK<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到权限类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">RW<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果没有 <code>E</code>，说明栈不可执行。</p>
+<p>NX 对缓冲区溢出利用影响很大。</p>
+<p>早期攻击可能把 shellcode 放在栈上执行。</p>
+<p>NX 开启后，栈上数据不能直接作为代码执行。</p>
+<hr>
+<h2><span id="28-relro-%E6%98%AF%E4%BB%80%E4%B9%88">28. RELRO 是什么</span></h2><p>RELRO 全称：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Relocation Read-Only<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它和重定位、GOT 保护有关。</p>
+<p>简化理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">RELRO 让某些重定位完成后的区域变成只读，降低 GOT 被篡改风险。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见状态：</p>
+<ul>
+<li>No RELRO</li>
+<li>Partial RELRO</li>
+<li>Full RELRO</li>
+</ul>
+<p>如果安装了 <code>checksec</code>，可以查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">checksec --file=elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果没有 checksec，可以先记住概念，后面漏洞防护章节会再讲。</p>
+<hr>
+<h2><span id="29-canary-%E5%92%8C-elf">29. Canary 和 ELF</span></h2><p>Stack Canary 是编译器插入的栈保护机制。</p>
+<p>它不只是 ELF 格式本身的字段，但会反映在二进制中。</p>
+<p>如果程序启用 Canary，可能会导入：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">__stack_chk_fail<br></code></pre></td></tr></tbody></table></figure>
+
+<p>查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf --dyn-syms elf_demo | grep stack_chk<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果看到 <code>__stack_chk_fail</code>，说明可能启用了栈保护。</p>
+<p>编译关闭 Canary：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 -fno-stack-protector elf_demo.c -o elf_demo_no_canary<br></code></pre></td></tr></tbody></table></figure>
+
+<p>后面漏洞防护章节会更深入分析。</p>
+<hr>
+<h2><span id="30-elf-%E5%92%8C%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">30. ELF 和逆向工程</span></h2><p>逆向 ELF 程序时，可以按这个顺序观察：</p>
+<ol>
+<li><code>file</code> 看文件类型</li>
+<li><code>readelf -h</code> 看 ELF Header</li>
+<li><code>readelf -l</code> 看装载段和权限</li>
+<li><code>readelf -S</code> 看节表</li>
+<li><code>strings</code> 看字符串</li>
+<li><code>nm</code> 看符号</li>
+<li><code>objdump -d</code> 看反汇编</li>
+<li><code>ldd</code> 看动态库依赖</li>
+<li><code>readelf -r</code> 看重定位</li>
+<li>Ghidra / IDA 深入分析函数逻辑</li>
+</ol>
+<p>这些工具不是互相替代，而是从不同角度观察同一个 ELF。</p>
+<hr>
+<h2><span id="31-elf-%E5%92%8C%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8">31. ELF 和漏洞利用</span></h2><p>漏洞利用中，ELF 信息能回答很多关键问题：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>相关信息</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>程序代码地址是否固定</td>
+<td>PIE</td>
+</tr>
+<tr>
+<td>栈是否可执行</td>
+<td>NX / GNU_STACK</td>
+</tr>
+<tr>
+<td>GOT 是否容易改写</td>
+<td>RELRO</td>
+</tr>
+<tr>
+<td>是否有栈保护</td>
+<td>Canary / <code>__stack_chk_fail</code></td>
+</tr>
+<tr>
+<td>是否动态链接 libc</td>
+<td><code>ldd</code> / dynamic section</td>
+</tr>
+<tr>
+<td>外部函数怎么调用</td>
+<td>PLT/GOT</td>
+</tr>
+<tr>
+<td>字符串在哪里</td>
+<td><code>.rodata</code></td>
+</tr>
+<tr>
+<td>函数名是否保留</td>
+<td><code>.symtab</code> / strip</td>
+</tr>
+</tbody></table>
+<p>所以做 Pwn 题或分析崩溃时，第一步经常是检查二进制保护和 ELF 结构。</p>
+<hr>
+<h2><span id="32-elf-%E5%92%8C%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90">32. ELF 和恶意代码分析</span></h2><p>Linux 恶意样本也可能是 ELF。</p>
+<p>分析时关注：</p>
+<ul>
+<li>是否静态链接</li>
+<li>是否 strip</li>
+<li>是否 UPX 加壳</li>
+<li>是否包含可疑字符串</li>
+<li>是否调用网络相关函数</li>
+<li>是否调用 <code>execve</code>、<code>fork</code>、<code>ptrace</code></li>
+<li>是否使用 <code>mprotect</code> 修改内存权限</li>
+<li>是否使用 <code>dlopen</code> / <code>dlsym</code> 动态解析函数</li>
+<li>是否有异常节名或异常权限</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">file sample<br>strings sample<br>readelf -S sample<br>readelf -l sample<br>objdump -T sample<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些命令能快速建立样本画像。</p>
+<hr>
+<h2><span id="33-linux-%E5%AE%9E%E9%AA%8C%E5%AE%8C%E6%95%B4%E8%A7%82%E5%AF%9F-elf">33. Linux 实验：完整观察 ELF</span></h2><p>围绕 <code>elf_demo</code> 执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo<br>readelf -h elf_demo<br>readelf -l elf_demo<br>readelf -S elf_demo<br>ldd elf_demo<br>nm elf_demo | grep -E <span class="hljs-string">'main|helper|global'</span><br>objdump -d -M intel -j .text elf_demo<br>objdump -s -j .rodata elf_demo<br>readelf -r elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你要记录：</p>
+<ul>
+<li>ELF 类型</li>
+<li>是否 64 位</li>
+<li>是否 PIE</li>
+<li>入口点地址</li>
+<li>LOAD 段权限</li>
+<li><code>.text</code>、<code>.rodata</code>、<code>.data</code>、<code>.bss</code> 是否存在</li>
+<li>动态库依赖</li>
+<li>是否能看到 <code>main</code> / <code>helper</code></li>
+<li>是否能看到字符串 <code>hello elf</code></li>
+<li>是否有 <code>printf@plt</code>、<code>malloc@plt</code>、<code>free@plt</code></li>
+</ul>
+<hr>
+<h2><span id="34-linux-%E5%AE%9E%E9%AA%8Cstrip-%E5%89%8D%E5%90%8E%E5%AF%B9%E6%AF%94">34. Linux 实验：strip 前后对比</span></h2><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cp</span> elf_demo elf_demo_stripped<br>strip elf_demo_stripped<br></code></pre></td></tr></tbody></table></figure>
+
+<p>对比：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo elf_demo_stripped<br>nm elf_demo | <span class="hljs-built_in">head</span><br>nm elf_demo_stripped<br>strings elf_demo_stripped | grep elf<br>objdump -d -M intel elf_demo_stripped | <span class="hljs-built_in">head</span> -50<br></code></pre></td></tr></tbody></table></figure>
+
+<p>思考：</p>
+<ul>
+<li>strip 后程序还能运行吗？</li>
+<li>strip 后 <code>nm</code> 是否还能看到普通符号？</li>
+<li>字符串是否还在？</li>
+<li>反汇编是否还能看到代码？</li>
+<li>逆向难度增加在哪里？</li>
+</ul>
+<hr>
+<h2><span id="35-linux-%E5%AE%9E%E9%AA%8Cpie-%E5%AF%B9%E5%9C%B0%E5%9D%80%E7%9A%84%E5%BD%B1%E5%93%8D">35. Linux 实验：PIE 对地址的影响</span></h2><p>编译两个版本：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 elf_demo.c -o elf_demo_pie<br>gcc -g -O0 -no-pie elf_demo.c -o elf_demo_no_pie<br></code></pre></td></tr></tbody></table></figure>
+
+<p>修改程序或用 GDB 打印 <code>main</code> 地址。</p>
+<p>也可以运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./elf_demo_pie<br></code></pre></td></tr></tbody></table></figure>
+
+<p>GDB 中：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>p/x main<br>quit<br></code></pre></td></tr></tbody></table></figure>
+
+<p>多运行几次。</p>
+<p>再对 <code>elf_demo_no_pie</code> 做同样操作。</p>
+<p>观察：</p>
+<ul>
+<li>PIE 版本 <code>main</code> 地址是否变化</li>
+<li>no-PIE 版本 <code>main</code> 地址是否更固定</li>
+<li>这和 ASLR 有什么关系</li>
+</ul>
+<hr>
+<h2><span id="36-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">36. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>ELF 是 Linux 常见的可执行、目标文件、共享库格式。</li>
+<li>ELF Header 描述文件基本属性和入口点等信息。</li>
+<li>Program Header 面向装载，描述哪些段加载到内存及其权限。</li>
+<li>Section Header 面向链接和分析，描述 <code>.text</code>、<code>.data</code>、<code>.bss</code> 等节。</li>
+<li><code>.text</code> 通常存放代码，<code>.rodata</code> 存放只读数据和字符串。</li>
+<li><code>.data</code> 存放已初始化全局变量，<code>.bss</code> 存放未初始化或零初始化全局变量。</li>
+<li>动态链接程序依赖共享库，通常通过 PLT/GOT 调用外部函数。</li>
+<li>PIE、NX、RELRO、Canary 等保护机制会影响漏洞利用难度。</li>
+<li><code>readelf</code>、<code>objdump</code>、<code>nm</code>、<code>ldd</code>、<code>strings</code> 是分析 ELF 的基础工具。</li>
+<li>理解 ELF 是 Linux 逆向、Pwn、恶意代码分析的重要基础。</li>
+</ol>
+<hr>
+<h2><span id="37-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">37. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1elf-header-%E5%88%86%E6%9E%90">作业 1：ELF Header 分析</span></h3><p>对 <code>elf_demo</code> 执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo<br>readelf -h elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 文件是否是 ELF<br>2. 32 位还是 64 位<br>3. 大端还是小端<br>4. 目标架构是什么<br>5. 文件类型是什么<br>6. Entry point address 是多少<br>7. 为什么入口点通常不是 main<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2program-header-%E5%92%8C%E6%9D%83%E9%99%90%E5%88%86%E6%9E%90">作业 2：Program Header 和权限分析</span></h3><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -l elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 有几个 LOAD 段<br>2. 每个 LOAD 段权限是什么<br>3. 哪个段可能包含代码<br>4. 哪个段可能包含可写数据<br>5. FileSiz 和 MemSiz 是否有不同，可能为什么<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3section-%E5%88%86%E6%9E%90">作业 3：Section 分析</span></h3><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -S elf_demo<br>objdump -s -j .rodata elf_demo<br>objdump -d -M intel -j .text elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 是否存在 .text<br>2. 是否存在 .rodata<br>3. 是否存在 .data<br>4. 是否存在 .bss<br>5. 在 .rodata 中找到哪些字符串<br>6. 在 .text 中找到哪些函数或 call<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-4%E7%AC%A6%E5%8F%B7%E5%92%8C-strip-%E5%AF%B9%E6%AF%94">作业 4：符号和 strip 对比</span></h3><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">nm elf_demo | grep -E <span class="hljs-string">'main|helper|global'</span><br><span class="hljs-built_in">cp</span> elf_demo elf_demo_stripped<br>strip elf_demo_stripped<br>nm elf_demo_stripped<br>strings elf_demo_stripped | grep elf<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. strip 前能看到哪些符号<br>2. strip 后 nm 输出有什么变化<br>3. strip 后字符串是否还在<br>4. strip 是否影响程序运行<br>5. strip 为什么会增加逆向难度<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-5pltgot-%E5%92%8C%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E8%A7%82%E5%AF%9F">作业 5：PLT/GOT 和动态链接观察</span></h3><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">ldd elf_demo<br>objdump -d -M intel elf_demo | grep <span class="hljs-string">'@plt'</span><br>readelf -r elf_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 程序依赖哪些动态库<br>2. 看到哪些 @plt 调用<br>3. readelf -r 中有哪些外部函数重定位<br>4. PLT 和 GOT 大致分别起什么作用<br>5. 为什么动态链接函数地址不能简单写死<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-6pie-%E5%AF%B9%E6%AF%94">作业 6：PIE 对比</span></h3><p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 elf_demo.c -o elf_demo_pie<br>gcc -g -O0 -no-pie elf_demo.c -o elf_demo_no_pie<br></code></pre></td></tr></tbody></table></figure>
+
+<p>对比：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file elf_demo_pie elf_demo_no_pie<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用 GDB 多次查看 <code>main</code> 地址。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 哪个是 PIE<br>2. 哪个不是 PIE<br>3. 多次运行 main 地址是否变化<br>4. PIE 和 ASLR 有什么关系<br>5. PIE 为什么会增加漏洞利用难度<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="38-%E8%87%AA%E6%B5%8B%E9%A2%98">38. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>ELF 的全称是什么？常见于哪些类型文件？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>ELF Header 中有哪些重要信息？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>Program Header 和 Section Header 有什么区别？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p><code>.text</code>、<code>.rodata</code>、<code>.data</code>、<code>.bss</code> 分别通常存放什么？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p>为什么 <code>.bss</code> 在文件中可能不真正保存大量 0？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>动态链接和静态链接有什么区别？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>PLT 和 GOT 的直觉作用是什么？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>PIE、NX、RELRO 分别大致和什么安全目标有关？</p>
+<h3><span id="%E9%A2%98-9">题 9</span></h3><p>为什么 strip 后程序还能运行，但逆向更难？</p>
+<hr>
+<h2><span id="39-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">39. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>ELF 全称是 Executable and Linkable Format。它常见于 Linux/Unix-like 系统中的可执行文件、目标文件 <code>.o</code>、共享库 <code>.so</code> 和 core dump 文件。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>ELF Header 包含魔数、32/64 位、大小端、目标架构、文件类型、入口点地址、Program Header Table 位置、Section Header Table 位置等信息。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>Program Header 面向操作系统加载器，描述哪些段要加载到内存及权限；Section Header 面向链接器、调试器和分析工具，描述文件内部各个节如 <code>.text</code>、<code>.data</code> 等。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p><code>.text</code> 通常存放机器指令；<code>.rodata</code> 存放只读数据和字符串常量；<code>.data</code> 存放已初始化全局/静态变量；<code>.bss</code> 存放未初始化或零初始化全局/静态变量。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p>因为 <code>.bss</code> 中的数据初始值为 0，文件中只需记录需要多少空间，加载时由系统把这块内存清零即可，不需要在文件中保存大量 0 字节。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>动态链接在运行时依赖共享库，文件较小且库可共享；静态链接把库代码打入可执行文件，依赖少但文件更大，库代码也会混入程序中。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>PLT 可以理解为调用外部函数的跳板；GOT 保存运行时解析出来的外部函数或全局地址。二者配合动态链接器完成外部函数调用。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>PIE 让程序基址可随机化，配合 ASLR 增加地址预测难度；NX 让栈/堆等数据区域不可执行；RELRO 保护重定位后的区域，降低 GOT 等位置被篡改的风险。</p>
+<h3><span id="%E7%AD%94-9">答 9</span></h3><p>因为 CPU 执行程序主要需要机器指令、入口点、装载信息和必要动态链接信息，不需要普通符号名和调试信息。strip 去掉这些人类友好的信息后，程序仍能运行，但函数名、变量名、调试信息缺失，逆向更困难。</p>
+<hr>
+<h2><span id="40-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">40. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">PE 文件格式与 Windows 装载<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>DOS Header</li>
+<li>PE Header</li>
+<li>Section Table</li>
+<li><code>.text</code>、<code>.rdata</code>、<code>.data</code>、<code>.rsrc</code></li>
+<li>Import Table 和 IAT</li>
+<li>DLL 加载</li>
+<li>PE 与 ELF 的对照</li>
+<li>如何用 PE-bear、Detect It Easy、Ghidra 和 x64dbg 分析 Windows 可执行文件</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC11%E8%8A%82-ELF%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第11节-ELF文件格式&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第11节-ELF文件格式&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

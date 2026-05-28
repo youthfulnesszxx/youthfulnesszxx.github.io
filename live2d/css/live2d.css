@@ -59,7 +59,32 @@
     cursor: pointer;
 }
 
+
 .hide-button:hover {
+    border: 1px solid #f4a7b9;
+    background: #f4f6f8;
+}
+
+.costume-button {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    display: none;
+    overflow: hidden;
+    width: 60px;
+    height: 20px;
+    border: 1px solid rgba(255,137,255,.4);
+    border-radius: 12px;
+    background: rgba(255,137,255,.2);
+    box-shadow: 0 3px 15px 2px rgba(255,137,255,.4);
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 20px;
+    color: #333;
+}
+
+.costume-button:hover {
     border: 1px solid #f4a7b9;
     background: #f4f6f8;
 }

@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第04节-x86-64汇编入门 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/9.jpg"
+				data-sizes="auto"
+				alt="第04节-x86-64汇编入门"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第04节-x86-64汇编入门</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5.4k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 24 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-4-%E8%8A%82x86-64-%E6%B1%87%E7%BC%96%E5%85%A5%E9%97%A8">第 4 节：x86-64 汇编入门</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 2 周<br>课程主题：C 语言、栈和汇编基础<br>本节目标：掌握 x86-64 汇编中最常见的寄存器、指令和调用约定，能初步读懂简单 C 程序对应的反汇编代码。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>汇编语言是什么？它和机器码、C 语言有什么关系？</li>
+<li>x86-64 中常见寄存器有哪些？</li>
+<li><code>rax</code>、<code>rsp</code>、<code>rbp</code>、<code>rip</code> 分别有什么作用？</li>
+<li><code>mov</code>、<code>add</code>、<code>sub</code>、<code>cmp</code>、<code>jmp</code>、<code>call</code>、<code>ret</code> 大致是什么意思？</li>
+<li>汇编中的 <code>[]</code> 表示什么？</li>
+<li>Linux x64 和 Windows x64 函数传参有什么区别？</li>
+<li>如何用 <code>objdump</code> 和 GDB 看一个程序的反汇编？</li>
+<li>为什么逆向工程和漏洞分析离不开汇编？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">C 代码 -&gt; 编译 -&gt; 机器指令 -&gt; 汇编表示 -&gt; 反汇编阅读 -&gt; 理解程序行为<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你不需要一节课就精通汇编，但要开始能看懂最常见的指令和寄存器。</p>
+<hr>
+<h2><span id="2-%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E6%98%AF%E4%BB%80%E4%B9%88">2. 汇编语言是什么</span></h2><p>CPU 真正执行的是机器码。</p>
+<p>机器码是二进制数据，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">55 48 89 e5 48 83 ec 10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些字节对人类来说很难直接阅读。</p>
+<p>汇编语言是机器指令的文本表示。</p>
+<p>例如上面的机器码可能对应：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br>mov rbp, rsp<br>sub rsp, 0x10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以可以这样理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">机器码：CPU 执行的字节<br>汇编：机器码的人类可读形式<br>C 语言：更高级的人类可读程序语言<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致关系：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">C 源代码 -&gt; 编译器 -&gt; 汇编/机器码 -&gt; CPU 执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向工程中的“反汇编”则是反过来：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">机器码 -&gt; 反汇编器 -&gt; 汇编代码<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见反汇编工具：</p>
+<ul>
+<li>objdump</li>
+<li>GDB</li>
+<li>IDA</li>
+<li>Ghidra</li>
+<li>x64dbg</li>
+<li>WinDbg</li>
+</ul>
+<hr>
+<h2><span id="3-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E8%A6%81%E5%AD%A6%E6%B1%87%E7%BC%96">3. 为什么网络安全要学汇编</span></h2><p>如果你只写普通应用程序，可能很少直接写汇编。</p>
+<p>但网络安全中，汇编非常重要。</p>
+<h3><span id="31-%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E9%9C%80%E8%A6%81%E6%B1%87%E7%BC%96">3.1 逆向工程需要汇编</span></h3><p>很多时候你拿不到源码，只能看到二进制程序。</p>
+<p>工具能给你：</p>
+<ul>
+<li>反汇编</li>
+<li>反编译伪代码</li>
+<li>字符串</li>
+<li>调用关系</li>
+</ul>
+<p>但最底层可靠的信息仍然是汇编。</p>
+<p>如果反编译结果看不懂或不准确，就要回到汇编。</p>
+<hr>
+<h3><span id="32-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E9%9C%80%E8%A6%81%E6%B1%87%E7%BC%96">3.2 漏洞分析需要汇编</span></h3><p>漏洞分析时你经常要看：</p>
+<ul>
+<li>崩溃地址</li>
+<li>当前执行到哪条指令</li>
+<li>哪个寄存器异常</li>
+<li>返回地址是否被覆盖</li>
+<li>栈上数据如何变化</li>
+<li>函数参数如何传入</li>
+</ul>
+<p>这些都需要汇编基础。</p>
+<hr>
+<h3><span id="33-%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E9%9C%80%E8%A6%81%E6%B1%87%E7%BC%96">3.3 恶意代码分析需要汇编</span></h3><p>恶意代码经常会：</p>
+<ul>
+<li>动态解析 API</li>
+<li>加密字符串</li>
+<li>使用反调试技巧</li>
+<li>修改内存权限</li>
+<li>跳转到动态生成代码</li>
+<li>混淆控制流</li>
+</ul>
+<p>这些行为经常需要看汇编才能确认。</p>
+<hr>
+<h2><span id="4-x86x64x86-64-%E6%98%AF%E4%BB%80%E4%B9%88">4. x86、x64、x86-64 是什么</span></h2><p>常见说法：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>x86</td>
+<td>通常指 32 位 Intel 架构</td>
+</tr>
+<tr>
+<td>x64</td>
+<td>通常指 64 位扩展架构</td>
+</tr>
+<tr>
+<td>x86-64</td>
+<td>64 位 x86 架构的正式说法之一</td>
+</tr>
+<tr>
+<td>AMD64</td>
+<td>x86-64 的另一种常见名称</td>
+</tr>
+</tbody></table>
+<p>本课程主要学习：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">x86-64<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也就是现代 PC 上最常见的 64 位架构之一。</p>
+<p>Linux、Windows 下的 64 位程序大多都运行在这个架构上。</p>
+<hr>
+<h2><span id="5-%E5%AF%84%E5%AD%98%E5%99%A8%E6%98%AF%E4%BB%80%E4%B9%88">5. 寄存器是什么</span></h2><p>寄存器是 CPU 内部非常小但非常快的存储位置。</p>
+<p>可以先理解为：</p>
+<blockquote>
+<p>CPU 自己随身携带的一组变量。</p>
+</blockquote>
+<p>程序执行时，CPU 经常把数据放到寄存器里进行计算。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, 1<br>add eax, 2<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思大致是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">把 1 放到 eax<br>给 eax 加 2<br></code></pre></td></tr></tbody></table></figure>
+
+<p>此时 <code>eax</code> 里就是 3。</p>
+<p>内存容量大但慢，寄存器容量小但快。</p>
+<p>所以 CPU 会频繁在寄存器和内存之间移动数据。</p>
+<hr>
+<h2><span id="6-x86-64-%E5%B8%B8%E8%A7%81%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8">6. x86-64 常见通用寄存器</span></h2><p>x86-64 中常见通用寄存器包括：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs text">rax<br>rbx<br>rcx<br>rdx<br>rsi<br>rdi<br>rbp<br>rsp<br>r8<br>r9<br>r10<br>r11<br>r12<br>r13<br>r14<br>r15<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们都是 64 位寄存器。</p>
+<p>其中最常见的几个：</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>常见用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rax</td>
+<td>返回值、算术结果</td>
+</tr>
+<tr>
+<td>rbx</td>
+<td>通用寄存器，部分调用约定下需保持</td>
+</tr>
+<tr>
+<td>rcx</td>
+<td>通用寄存器，Windows x64 第 1 参数</td>
+</tr>
+<tr>
+<td>rdx</td>
+<td>通用寄存器，常用于参数</td>
+</tr>
+<tr>
+<td>rsi</td>
+<td>Linux x64 第 2 参数，源地址相关操作</td>
+</tr>
+<tr>
+<td>rdi</td>
+<td>Linux x64 第 1 参数，目标地址相关操作</td>
+</tr>
+<tr>
+<td>rsp</td>
+<td>栈顶指针</td>
+</tr>
+<tr>
+<td>rbp</td>
+<td>栈帧基址</td>
+</tr>
+<tr>
+<td>rip</td>
+<td>指令指针，表示下一条执行指令地址</td>
+</tr>
+<tr>
+<td>r8/r9</td>
+<td>额外参数寄存器</td>
+</tr>
+</tbody></table>
+<p>注意：</p>
+<p><code>rip</code> 通常不归类为通用寄存器，但它极其重要。</p>
+<hr>
+<h2><span id="7-64-%E4%BD%8D32-%E4%BD%8D16-%E4%BD%8D8-%E4%BD%8D%E5%AF%84%E5%AD%98%E5%99%A8%E5%90%8D">7. 64 位、32 位、16 位、8 位寄存器名</span></h2><p>同一个物理寄存器可以用不同宽度访问。</p>
+<p>以 <code>rax</code> 为例：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rax</td>
+<td>64 位</td>
+</tr>
+<tr>
+<td>eax</td>
+<td>低 32 位</td>
+</tr>
+<tr>
+<td>ax</td>
+<td>低 16 位</td>
+</tr>
+<tr>
+<td>al</td>
+<td>低 8 位</td>
+</tr>
+</tbody></table>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov rax, 0x1122334455667788<br></code></pre></td></tr></tbody></table></figure>
+
+<p>此时：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">rax = 0x1122334455667788<br>eax = 0x55667788<br>ax  = 0x7788<br>al  = 0x88<br></code></pre></td></tr></tbody></table></figure>
+
+<p>其他寄存器也有类似命名：</p>
+<table>
+<thead>
+<tr>
+<th>64 位</th>
+<th>32 位</th>
+<th>16 位</th>
+<th>8 位</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rbx</td>
+<td>ebx</td>
+<td>bx</td>
+<td>bl</td>
+</tr>
+<tr>
+<td>rcx</td>
+<td>ecx</td>
+<td>cx</td>
+<td>cl</td>
+</tr>
+<tr>
+<td>rdx</td>
+<td>edx</td>
+<td>dx</td>
+<td>dl</td>
+</tr>
+<tr>
+<td>rsi</td>
+<td>esi</td>
+<td>si</td>
+<td>sil</td>
+</tr>
+<tr>
+<td>rdi</td>
+<td>edi</td>
+<td>di</td>
+<td>dil</td>
+</tr>
+<tr>
+<td>rbp</td>
+<td>ebp</td>
+<td>bp</td>
+<td>bpl</td>
+</tr>
+<tr>
+<td>rsp</td>
+<td>esp</td>
+<td>sp</td>
+<td>spl</td>
+</tr>
+</tbody></table>
+<p>一个重要细节：</p>
+<blockquote>
+<p>在 x86-64 中，写入 32 位寄存器通常会把对应 64 位寄存器的高 32 位清零。</p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, 1<br></code></pre></td></tr></tbody></table></figure>
+
+<p>执行后：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rax = 0x0000000000000001<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="8-rip%E6%8C%87%E4%BB%A4%E6%8C%87%E9%92%88">8. <code>rip</code>：指令指针</span></h2><p><code>rip</code> 是非常重要的寄存器。</p>
+<p>它保存：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CPU 下一条要执行的指令地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果 <code>rip</code> 是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x401136<br></code></pre></td></tr></tbody></table></figure>
+
+<p>说明 CPU 当前要从地址 <code>0x401136</code> 处取指令执行。</p>
+<p>程序的正常执行、跳转、函数调用、返回，本质上都在改变 <code>rip</code>。</p>
+<p>例如：</p>
+<ul>
+<li>顺序执行：<code>rip</code> 自动指向下一条指令</li>
+<li><code>jmp</code>：直接修改 <code>rip</code></li>
+<li><code>call</code>：保存返回地址后修改 <code>rip</code></li>
+<li><code>ret</code>：从栈中取返回地址放入 <code>rip</code></li>
+</ul>
+<p>漏洞分析中，如果你看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rip = 0x4141414141414141<br></code></pre></td></tr></tbody></table></figure>
+
+<p>通常说明程序控制流已经被异常数据影响。</p>
+<hr>
+<h2><span id="9-rsp-%E5%92%8C-rbp%E6%A0%88%E7%9B%B8%E5%85%B3%E5%AF%84%E5%AD%98%E5%99%A8">9. <code>rsp</code> 和 <code>rbp</code>：栈相关寄存器</span></h2><p>上一节讲过：</p>
+<ul>
+<li><code>rsp</code> 通常指向栈顶</li>
+<li><code>rbp</code> 常作为栈帧基址</li>
+</ul>
+<p>常见函数开头：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br>mov rbp, rsp<br>sub rsp, 0x10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见函数结尾：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">leave<br>ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在调试器里，你需要经常观察：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">rsp<br>rbp<br>rip<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这三个寄存器可以帮助你判断：</p>
+<ul>
+<li>当前执行到哪里</li>
+<li>当前栈顶在哪里</li>
+<li>当前栈帧在哪里</li>
+<li>函数返回时可能跳到哪里</li>
+</ul>
+<hr>
+<h2><span id="10-%E6%B1%87%E7%BC%96%E8%AF%AD%E6%B3%95intel-%E5%92%8C-att">10. 汇编语法：Intel 和 AT&amp;T</span></h2><p>x86 汇编常见两种语法风格：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Intel 语法<br>AT&amp;T 语法<br></code></pre></td></tr></tbody></table></figure>
+
+<p>本课程主要使用 Intel 语法。</p>
+<p>Intel 语法常见形式：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, 1<br>mov [rbp-4], eax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>AT&amp;T 语法常见形式：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">movl $1, %eax<br>movl %eax, -4(%rbp)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>两者区别之一是操作数顺序不同。</p>
+<p>Intel：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">目标在前，源在后<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, 1<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">把 1 放到 eax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果你用 <code>objdump</code>，默认可能看到 AT&amp;T 语法。</p>
+<p>可以加参数显示 Intel 语法：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel program<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="11-mov%E6%95%B0%E6%8D%AE%E7%A7%BB%E5%8A%A8">11. <code>mov</code>：数据移动</span></h2><p><code>mov</code> 是最常见的指令之一。</p>
+<p>它的作用是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">把数据从源位置复制到目标位置<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Intel 语法：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov 目标, 源<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, 1<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">eax = 1<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, ebx<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">eax = ebx<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov DWORD PTR [rbp-4], eax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">把 eax 的低 32 位写入 rbp-4 指向的内存位置<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p><code>mov</code> 不是“移动后源数据消失”，而是复制。</p>
+<hr>
+<h2><span id="12-%E8%AE%BF%E9%97%AE%E5%86%85%E5%AD%98">12. <code>[]</code>：访问内存</span></h2><p>在 Intel 汇编中，方括号 <code>[]</code> 表示访问内存。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, [rbp-4]<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">从地址 rbp-4 处读取数据到 eax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>而：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, rbp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">把 rbp 这个寄存器的值复制到 eax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>区别很大：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mov eax, rbp</code></td>
+<td>复制 rbp 的数值</td>
+</tr>
+<tr>
+<td><code>mov eax, [rbp]</code></td>
+<td>把 rbp 当地址，读取该地址处的内容</td>
+</tr>
+<tr>
+<td><code>mov eax, [rbp-4]</code></td>
+<td>读取 rbp-4 地址处的内容</td>
+</tr>
+</tbody></table>
+<p>这类似 C 语言中的：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">p   <span class="hljs-comment">// 指针变量的值，也就是地址</span><br>*p  <span class="hljs-comment">// 访问这个地址里的内容</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">[地址]<br></code></pre></td></tr></tbody></table></figure>
+
+<p>类似：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">*地址<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="13-add-%E5%92%8C-sub%E5%8A%A0%E5%87%8F">13. <code>add</code> 和 <code>sub</code>：加减</span></h2><p><code>add</code> 表示加法。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">add eax, 2<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">eax = eax + 2<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>sub</code> 表示减法。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">sub rsp, 0x20<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rsp = rsp - 0x20<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在函数开头经常看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">sub rsp, 0x20<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这通常表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">在栈上预留 0x20 字节空间<br></code></pre></td></tr></tbody></table></figure>
+
+<p>因为 x86-64 中栈通常向低地址增长，所以 <code>rsp</code> 减小表示栈空间扩大。</p>
+<hr>
+<h2><span id="14-push-%E5%92%8C-pop%E5%8E%8B%E6%A0%88%E5%92%8C%E5%87%BA%E6%A0%88">14. <code>push</code> 和 <code>pop</code>：压栈和出栈</span></h2><p><code>push</code> 把数据压入栈。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致做：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">rsp = rsp - 8<br>[rsp] = rbp<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>pop</code> 从栈中取出数据。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">pop rbp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致做：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">rbp = [rsp]<br>rsp = rsp + 8<br></code></pre></td></tr></tbody></table></figure>
+
+<p>64 位模式下一次 <code>push</code> / <code>pop</code> 通常处理 8 字节。</p>
+<p>函数开头常见：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用于保存调用者的 <code>rbp</code>。</p>
+<p>函数结尾常通过 <code>leave</code> 或 <code>pop rbp</code> 恢复。</p>
+<hr>
+<h2><span id="15-cmp-%E5%92%8C%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC">15. <code>cmp</code> 和条件跳转</span></h2><p><code>cmp</code> 用于比较。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">cmp eax, 10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它大致比较：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">eax 和 10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>但 <code>cmp</code> 本身不保存结果到普通寄存器，而是影响 CPU 的标志位。</p>
+<p>后面通常跟条件跳转。</p>
+<p>常见条件跳转：</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>je</td>
+<td>equal，相等则跳转</td>
+</tr>
+<tr>
+<td>jne</td>
+<td>not equal，不相等则跳转</td>
+</tr>
+<tr>
+<td>jg</td>
+<td>greater，大于则跳转</td>
+</tr>
+<tr>
+<td>jl</td>
+<td>less，小于则跳转</td>
+</tr>
+<tr>
+<td>jge</td>
+<td>greater or equal，大于等于则跳转</td>
+</tr>
+<tr>
+<td>jle</td>
+<td>less or equal，小于等于则跳转</td>
+</tr>
+<tr>
+<td>ja</td>
+<td>unsigned above，无符号大于</td>
+</tr>
+<tr>
+<td>jb</td>
+<td>unsigned below，无符号小于</td>
+</tr>
+</tbody></table>
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">cmp eax, 10<br>je equal_label<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">如果 eax == 10，就跳转到 equal_label<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="16-jmp%E6%97%A0%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC">16. <code>jmp</code>：无条件跳转</span></h2><p><code>jmp</code> 是无条件跳转。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">jmp 0x401200<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">直接跳到 0x401200 执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>C 语言中的 <code>if</code>、<code>for</code>、<code>while</code>、<code>switch</code> 编译后，通常都会变成比较和跳转。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (x == <span class="hljs-number">10</span>) {<br>    <span class="hljs-built_in">puts</span>(<span class="hljs-string">"yes"</span>);<br>} <span class="hljs-keyword">else</span> {<br>    <span class="hljs-built_in">puts</span>(<span class="hljs-string">"no"</span>);<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能变成：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs asm">cmp DWORD PTR [rbp-4], 10<br>jne else_label<br>call puts_yes<br>jmp end_label<br>else_label:<br>call puts_no<br>end_label:<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="17-call-%E5%92%8C-ret%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E5%92%8C%E8%BF%94%E5%9B%9E">17. <code>call</code> 和 <code>ret</code>：函数调用和返回</span></h2><p>上一节已经讲过。</p>
+<p><code>call</code> 大致做：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">保存返回地址<br>跳转到目标函数<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>ret</code> 大致做：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">从栈顶取出返回地址<br>跳转回调用者<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">call puts<br>ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向中看到 <code>call</code> 时，要问：</p>
+<ul>
+<li>调用了哪个函数？</li>
+<li>参数在哪里？</li>
+<li>返回值是否被使用？</li>
+<li>调用后程序如何继续？</li>
+</ul>
+<p>漏洞分析中看到 <code>ret</code> 时，要问：</p>
+<ul>
+<li>栈顶的返回地址是什么？</li>
+<li>返回地址是否被覆盖？</li>
+<li><code>rip</code> 会跳到哪里？</li>
+</ul>
+<hr>
+<h2><span id="18-lea%E5%8F%96%E6%9C%89%E6%95%88%E5%9C%B0%E5%9D%80">18. <code>lea</code>：取有效地址</span></h2><p><code>lea</code> 是 Load Effective Address。</p>
+<p>它经常让初学者困惑。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">lea rax, [rbp-0x10]<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思不是读取 <code>[rbp-0x10]</code> 里面的内容。</p>
+<p>而是计算地址：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rax = rbp - 0x10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也就是说，<code>lea</code> 取的是地址本身。</p>
+<p>它类似 C 语言中的：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">&amp;变量<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例子：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">lea rdi, [rip+0xe9b]<br>call puts<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见于把字符串地址传给 <code>puts</code>。</p>
+<hr>
+<h2><span id="19-linux-x64-%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A%E5%9B%9E%E9%A1%BE">19. Linux x64 调用约定回顾</span></h2><p>Linux x86-64 常用 System V AMD64 ABI。</p>
+<p>整数和指针参数通常这样传：</p>
+<table>
+<thead>
+<tr>
+<th>参数序号</th>
+<th>寄存器</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第 1 个</td>
+<td>rdi</td>
+</tr>
+<tr>
+<td>第 2 个</td>
+<td>rsi</td>
+</tr>
+<tr>
+<td>第 3 个</td>
+<td>rdx</td>
+</tr>
+<tr>
+<td>第 4 个</td>
+<td>rcx</td>
+</tr>
+<tr>
+<td>第 5 个</td>
+<td>r8</td>
+</tr>
+<tr>
+<td>第 6 个</td>
+<td>r9</td>
+</tr>
+</tbody></table>
+<p>返回值通常在：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如 C 代码：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> {<br>    <span class="hljs-keyword">return</span> a + b;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-keyword">return</span> add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov esi, 2<br>mov edi, 1<br>call add<br></code></pre></td></tr></tbody></table></figure>
+
+<p>表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">第 1 个参数 1 放入 edi/rdi<br>第 2 个参数 2 放入 esi/rsi<br>调用 add<br>返回值在 eax/rax<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="20-windows-x64-%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A%E5%9B%9E%E9%A1%BE">20. Windows x64 调用约定回顾</span></h2><p>Windows x64 前四个整数或指针参数通常这样传：</p>
+<table>
+<thead>
+<tr>
+<th>参数序号</th>
+<th>寄存器</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第 1 个</td>
+<td>rcx</td>
+</tr>
+<tr>
+<td>第 2 个</td>
+<td>rdx</td>
+</tr>
+<tr>
+<td>第 3 个</td>
+<td>r8</td>
+</tr>
+<tr>
+<td>第 4 个</td>
+<td>r9</td>
+</tr>
+</tbody></table>
+<p>返回值通常也在：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以同样的函数调用在 Windows 下可能是：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov edx, 2<br>mov ecx, 1<br>call add<br></code></pre></td></tr></tbody></table></figure>
+
+<p>表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">第 1 个参数 1 放入 ecx/rcx<br>第 2 个参数 2 放入 edx/rdx<br>调用 add<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows x64 还有 shadow space 等规则，入门阶段只需要先知道：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Linux 和 Windows 的前几个参数寄存器不同。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这对逆向非常关键。</p>
+<hr>
+<h2><span id="21-c-%E4%BB%A3%E7%A0%81%E5%A6%82%E4%BD%95%E5%AF%B9%E5%BA%94%E6%B1%87%E7%BC%96%E5%8A%A0%E6%B3%95%E5%87%BD%E6%95%B0">21. C 代码如何对应汇编：加法函数</span></h2><p>写一个程序 <code>add_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> {<br>    <span class="hljs-type">int</span> c = a + b;<br>    <span class="hljs-keyword">return</span> c;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> result = add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"result = %d\n"</span>, result);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 add_demo.c -o add_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel add_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到 <code>add</code> 类似：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br>mov rbp, rsp<br>mov DWORD PTR [rbp-0x14], edi<br>mov DWORD PTR [rbp-0x18], esi<br>mov edx, DWORD PTR [rbp-0x14]<br>mov eax, DWORD PTR [rbp-0x18]<br>add eax, edx<br>mov DWORD PTR [rbp-0x4], eax<br>mov eax, DWORD PTR [rbp-0x4]<br>pop rbp<br>ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致解释：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">保存 rbp<br>建立栈帧<br>把参数 a 保存到栈上<br>把参数 b 保存到栈上<br>取出 a 和 b<br>相加<br>把结果放入 eax<br>返回<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你看到的真实汇编可能略有不同，但核心思想类似。</p>
+<hr>
+<h2><span id="22-c-%E4%BB%A3%E7%A0%81%E5%A6%82%E4%BD%95%E5%AF%B9%E5%BA%94%E6%B1%87%E7%BC%96if-%E5%88%A4%E6%96%AD">22. C 代码如何对应汇编：if 判断</span></h2><p>写程序 <code>if_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">10</span>;<br><br>    <span class="hljs-keyword">if</span> (x == <span class="hljs-number">10</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"yes\n"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"no\n"</span>);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 if_demo.c -o if_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel if_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到类似：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asm">cmp DWORD PTR [rbp-0x4], 0xa<br>jne  &lt;else&gt;<br>call puts<br>jmp  &lt;end&gt;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>对应关系：</p>
+<table>
+<thead>
+<tr>
+<th>C 语言</th>
+<th>汇编</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>if (x == 10)</code></td>
+<td><code>cmp</code> + 条件跳转</td>
+</tr>
+<tr>
+<td>then 分支</td>
+<td>一段顺序代码</td>
+</tr>
+<tr>
+<td>else 分支</td>
+<td>另一段顺序代码</td>
+</tr>
+<tr>
+<td>分支结束</td>
+<td>跳到共同出口</td>
+</tr>
+</tbody></table>
+<p>逆向时，看到 <code>cmp</code> 和 <code>jcc</code>，通常要想到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">这里可能是 if、while、for 或 switch 的一部分。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="23-c-%E4%BB%A3%E7%A0%81%E5%A6%82%E4%BD%95%E5%AF%B9%E5%BA%94%E6%B1%87%E7%BC%96%E5%BE%AA%E7%8E%AF">23. C 代码如何对应汇编：循环</span></h2><p>写程序 <code>loop_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"i = %d\n"</span>, i);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 loop_demo.c -o loop_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编后，你通常会看到：</p>
+<ul>
+<li>初始化变量</li>
+<li>比较条件</li>
+<li>条件跳转</li>
+<li>循环体</li>
+<li>自增</li>
+<li>跳回比较处</li>
+</ul>
+<p>循环的底层本质就是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">比较 + 条件跳转 + 无条件跳转<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以汇编里并没有真正的 <code>for</code> 或 <code>while</code>。</p>
+<p>它们都会变成跳转结构。</p>
+<hr>
+<h2><span id="24-gdb-%E4%B8%AD%E6%9F%A5%E7%9C%8B%E6%B1%87%E7%BC%96">24. GDB 中查看汇编</span></h2><p>用 GDB 调试 <code>add_demo</code>：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./add_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常用命令：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>disassemble main<br>disassemble add<br>layout asm<br>info registers<br>stepi<br>nexti<br></code></pre></td></tr></tbody></table></figure>
+
+<p>解释：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>disassemble main</code></td>
+<td>反汇编 main 函数</td>
+</tr>
+<tr>
+<td><code>layout asm</code></td>
+<td>显示汇编窗口</td>
+</tr>
+<tr>
+<td><code>info registers</code></td>
+<td>查看寄存器</td>
+</tr>
+<tr>
+<td><code>stepi</code></td>
+<td>单步执行一条机器指令，进入函数</td>
+</tr>
+<tr>
+<td><code>nexti</code></td>
+<td>单步执行一条机器指令，不进入函数</td>
+</tr>
+</tbody></table>
+<p>如果 <code>layout asm</code> 显示不正常，可以直接用：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gdb">disassemble main<br>x/10i $rip<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>x/10i $rip</code> 表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">从当前 rip 开始显示 10 条指令<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="25-objdump-%E5%92%8C-gdb-%E7%9A%84%E5%8C%BA%E5%88%AB">25. objdump 和 GDB 的区别</span></h2><p><code>objdump</code> 用于静态查看文件中的反汇编。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel add_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它不运行程序，只分析文件。</p>
+<p>GDB 是动态调试器。</p>
+<p>它可以：</p>
+<ul>
+<li>运行程序</li>
+<li>下断点</li>
+<li>单步执行</li>
+<li>查看寄存器</li>
+<li>查看栈</li>
+<li>查看内存</li>
+<li>修改变量或寄存器</li>
+</ul>
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">objdump 更像静态看地图<br>GDB 更像开车实时导航<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向和漏洞分析中，两者经常配合使用。</p>
+<hr>
+<h2><span id="26-windows-%E5%AF%B9%E7%85%A7x64dbg-%E4%B8%AD%E7%9C%8B%E6%B1%87%E7%BC%96">26. Windows 对照：x64dbg 中看汇编</span></h2><p>Windows 下用 x64dbg 打开 exe 后，默认主窗口就是汇编视图。</p>
+<p>常见区域：</p>
+<ul>
+<li>左上：反汇编代码</li>
+<li>右上：寄存器</li>
+<li>左下：内存 Dump</li>
+<li>右下：栈</li>
+</ul>
+<p>你可以观察：</p>
+<ul>
+<li>当前 <code>RIP</code> 指向哪条指令</li>
+<li><code>RCX/RDX/R8/R9</code> 中是否有参数</li>
+<li><code>RAX</code> 中是否有返回值</li>
+<li><code>RSP</code> 指向的栈内容</li>
+<li><code>call</code> 调用了哪个函数</li>
+<li><code>ret</code> 返回到哪里</li>
+</ul>
+<p>如果你调试一个调用 <code>MessageBoxA</code> 的程序，可以观察：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rcx, rdx, r8, r9<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些寄存器中如何传入参数。</p>
+<hr>
+<h2><span id="27-%E6%B1%87%E7%BC%96%E9%98%85%E8%AF%BB%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95">27. 汇编阅读的基本方法</span></h2><p>初学者读汇编不要一行一行死抠。</p>
+<p>建议按层次阅读。</p>
+<h3><span id="271-%E5%85%88%E6%89%BE%E5%87%BD%E6%95%B0%E8%BE%B9%E7%95%8C">27.1 先找函数边界</span></h3><p>看：</p>
+<ul>
+<li>函数入口</li>
+<li>函数结尾</li>
+<li><code>call</code></li>
+<li><code>ret</code></li>
+</ul>
+<p>先知道哪里是一个函数。</p>
+<hr>
+<h3><span id="272-%E5%86%8D%E6%89%BE%E5%85%B3%E9%94%AE%E8%B0%83%E7%94%A8">27.2 再找关键调用</span></h3><p>重点看调用了什么函数：</p>
+<ul>
+<li><code>printf</code></li>
+<li><code>puts</code></li>
+<li><code>malloc</code></li>
+<li><code>free</code></li>
+<li><code>open</code></li>
+<li><code>read</code></li>
+<li><code>write</code></li>
+<li><code>CreateFileW</code></li>
+<li><code>VirtualAlloc</code></li>
+<li><code>CreateProcessW</code></li>
+</ul>
+<p>函数调用常常比普通算术指令更有语义价值。</p>
+<hr>
+<h3><span id="273-%E5%86%8D%E7%9C%8B%E5%8F%82%E6%95%B0">27.3 再看参数</span></h3><p>根据调用约定，看调用前寄存器里放了什么。</p>
+<p>Linux：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rdi, rsi, rdx, rcx, r8, r9<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rcx, rdx, r8, r9<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="274-%E5%86%8D%E7%9C%8B%E5%88%86%E6%94%AF">27.4 再看分支</span></h3><p>看 <code>cmp</code> 和跳转：</p>
+<ul>
+<li><code>je</code></li>
+<li><code>jne</code></li>
+<li><code>jg</code></li>
+<li><code>jl</code></li>
+<li><code>jmp</code></li>
+</ul>
+<p>这些通常对应条件判断和循环。</p>
+<hr>
+<h3><span id="275-%E6%9C%80%E5%90%8E%E7%9C%8B%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F">27.5 最后看局部变量</span></h3><p>看 <code>[rbp-...]</code> 或 <code>[rsp+...]</code>。</p>
+<p>它们通常是：</p>
+<ul>
+<li>局部变量</li>
+<li>临时数据</li>
+<li>保存的参数</li>
+<li>栈上的缓冲区</li>
+</ul>
+<hr>
+<h2><span id="28-%E4%BB%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">28. 从逆向工程角度看本节内容</span></h2><p>汇编是逆向工程的基础语言。</p>
+<p>你需要逐渐建立这些直觉：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov edi, 1<br>mov esi, 2<br>call add<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能是：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">cmp eax, 0<br>jne label<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能是：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (eax != <span class="hljs-number">0</span>) <span class="hljs-keyword">goto</span> label;<br></code></pre></td></tr></tbody></table></figure>
+
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">lea rdi, [rip+0xe9b]<br>call puts<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能是：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">puts</span>(<span class="hljs-string">"some string"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>逆向不是把每条汇编翻译成 C，而是恢复程序意图。</p>
+<hr>
+<h2><span id="29-%E4%BB%8E%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">29. 从漏洞分析角度看本节内容</span></h2><p>漏洞分析中，你常常要看崩溃现场。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">RIP: 0x4011a3<br>RSP: 0x7fffffffe280<br>RAX: 0x0<br></code></pre></td></tr></tbody></table></figure>
+
+<p>然后查看当前指令：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, DWORD PTR [rax]<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果 <code>rax = 0</code>，这就可能是空指针解引用。</p>
+<p>再例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>执行前栈顶是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x4141414141414141<br></code></pre></td></tr></tbody></table></figure>
+
+<p>那么 <code>ret</code> 后 <code>rip</code> 可能变成这个值，导致崩溃。</p>
+<p>所以汇编能帮助你判断：</p>
+<ul>
+<li>程序为什么崩溃</li>
+<li>哪个地址非法</li>
+<li>哪个寄存器异常</li>
+<li>输入如何影响控制流</li>
+<li>防护机制是否生效</li>
+</ul>
+<hr>
+<h2><span id="30-%E4%BB%8E%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">30. 从恶意代码分析角度看本节内容</span></h2><p>恶意代码经常故意隐藏高级语义。</p>
+<p>反编译结果可能很乱，但汇编仍然可靠。</p>
+<p>你需要关注：</p>
+<ul>
+<li>是否调用敏感 API</li>
+<li>参数指向哪里</li>
+<li>是否有异常跳转</li>
+<li>是否动态计算函数地址</li>
+<li>是否修改内存权限</li>
+<li>是否写入代码后跳转执行</li>
+</ul>
+<p>例如看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">call VirtualAlloc<br>call memcpy<br>call rax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能意味着：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">申请内存 -&gt; 写入数据 -&gt; 跳到该内存执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这在恶意代码分析中非常值得关注。</p>
+<hr>
+<h2><span id="31-%E6%9C%AC%E8%8A%82-linux-%E5%AE%9E%E9%AA%8C%E5%8F%8D%E6%B1%87%E7%BC%96-add-%E7%A8%8B%E5%BA%8F">31. 本节 Linux 实验：反汇编 add 程序</span></h2><p>创建 <code>add_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> {<br>    <span class="hljs-type">int</span> c = a + b;<br>    <span class="hljs-keyword">return</span> c;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> result = add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"result = %d\n"</span>, result);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 add_demo.c -o add_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d -M intel add_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>要求你找到：</p>
+<ul>
+<li><code>main</code></li>
+<li><code>add</code></li>
+<li><code>call add</code></li>
+<li><code>call printf</code></li>
+<li><code>ret</code></li>
+<li>参数传递相关的 <code>edi</code>、<code>esi</code></li>
+<li>返回值相关的 <code>eax</code></li>
+</ul>
+<hr>
+<h2><span id="32-%E6%9C%AC%E8%8A%82-linux-%E5%AE%9E%E9%AA%8Cgdb-%E5%8D%95%E6%AD%A5%E6%89%A7%E8%A1%8C%E6%B1%87%E7%BC%96">32. 本节 Linux 实验：GDB 单步执行汇编</span></h2><p>启动：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./add_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>disassemble main<br>x/10i $rip<br>info registers<br>stepi<br>info registers<br>stepi<br>info registers<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li>每执行一条指令，<code>rip</code> 如何变化</li>
+<li>调用 <code>add</code> 前，<code>edi</code> 和 <code>esi</code> 是什么</li>
+<li><code>add</code> 返回后，<code>eax</code> 是什么</li>
+<li>调用 <code>printf</code> 前，参数寄存器是什么</li>
+</ul>
+<hr>
+<h2><span id="33-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">33. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>汇编是机器码的人类可读形式。</li>
+<li>反汇编是把机器码转换成汇编表示。</li>
+<li>寄存器是 CPU 内部高速存储位置。</li>
+<li><code>rip</code> 表示下一条要执行的指令地址。</li>
+<li><code>rsp</code> 表示栈顶，<code>rbp</code> 常用作栈帧基址。</li>
+<li><code>mov</code> 用于复制数据。</li>
+<li><code>[]</code> 表示访问内存。</li>
+<li><code>add</code> / <code>sub</code> 用于加减。</li>
+<li><code>cmp</code> 通常配合条件跳转实现判断。</li>
+<li><code>jmp</code> 是无条件跳转。</li>
+<li><code>call</code> 和 <code>ret</code> 实现函数调用和返回。</li>
+<li>Linux x64 和 Windows x64 的参数寄存器不同。</li>
+<li>逆向、漏洞分析和恶意代码分析都离不开汇编基础。</li>
+</ol>
+<hr>
+<h2><span id="34-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">34. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1%E5%8F%8D%E6%B1%87%E7%BC%96-add-%E7%A8%8B%E5%BA%8F">作业 1：反汇编 add 程序</span></h3><p>完成 <code>add_demo.c</code>，执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 add_demo.c -o add_demo<br>objdump -d -M intel add_demo &gt; add_demo.asm<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. add 函数的反汇编<br>2. main 函数中调用 add 的位置<br>3. 参数 1 和 2 分别放入了哪个寄存器<br>4. add 的返回值从哪个寄存器返回<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2%E5%88%86%E6%9E%90-if-%E7%A8%8B%E5%BA%8F">作业 2：分析 if 程序</span></h3><p>写 <code>if_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">10</span>;<br><br>    <span class="hljs-keyword">if</span> (x == <span class="hljs-number">10</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"yes\n"</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"no\n"</span>);<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>反汇编后找到：</p>
+<ul>
+<li><code>cmp</code></li>
+<li>条件跳转指令</li>
+<li>then 分支</li>
+<li>else 分支</li>
+</ul>
+<p>回答：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1. if 判断对应哪条 cmp？<br>2. 条件不满足时跳到哪里？<br>3. then 分支执行完后是否有 jmp？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3gdb-%E5%8D%95%E6%AD%A5%E6%B1%87%E7%BC%96">作业 3：GDB 单步汇编</span></h3><p>用 GDB 执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>x/10i $rip<br>info registers<br>stepi<br>x/10i $rip<br>info registers<br></code></pre></td></tr></tbody></table></figure>
+
+<p>至少单步执行 10 条指令。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 单步执行前后的 rip 变化<br>2. 至少 3 条你能解释含义的汇编指令<br>3. 哪条指令是 call<br>4. call 执行后 rip 发生了什么变化<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="35-%E8%87%AA%E6%B5%8B%E9%A2%98">35. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>机器码和汇编语言有什么关系？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p><code>rax</code>、<code>rsp</code>、<code>rbp</code>、<code>rip</code> 分别常见用途是什么？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>Intel 语法中 <code>mov eax, 1</code> 是什么意思？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p><code>mov eax, [rbp-4]</code> 和 <code>mov eax, rbp</code> 有什么区别？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p><code>cmp</code> 指令通常和什么指令一起使用？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>Linux x64 前 6 个整数或指针参数通常放在哪些寄存器？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>Windows x64 前 4 个整数或指针参数通常放在哪些寄存器？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>为什么汇编对逆向工程很重要？</p>
+<hr>
+<h2><span id="36-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">36. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>机器码是 CPU 实际执行的二进制字节；汇编语言是机器码的人类可读文本表示。反汇编就是把机器码转换成汇编表示。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p><code>rax</code> 常用于返回值和计算结果；<code>rsp</code> 指向栈顶；<code>rbp</code> 常作为栈帧基址；<code>rip</code> 表示下一条要执行的指令地址。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>把立即数 1 复制到 <code>eax</code> 寄存器中。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p><code>mov eax, rbp</code> 是把 <code>rbp</code> 寄存器的值复制到 <code>eax</code>；<code>mov eax, [rbp-4]</code> 是把 <code>rbp-4</code> 当作地址，读取该地址处的内存内容到 <code>eax</code>。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p><code>cmp</code> 通常和条件跳转指令一起使用，例如 <code>je</code>、<code>jne</code>、<code>jg</code>、<code>jl</code> 等。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>Linux x64 System V ABI 中，前 6 个整数或指针参数通常依次放在 <code>rdi</code>、<code>rsi</code>、<code>rdx</code>、<code>rcx</code>、<code>r8</code>、<code>r9</code>。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>Windows x64 中，前 4 个整数或指针参数通常依次放在 <code>rcx</code>、<code>rdx</code>、<code>r8</code>、<code>r9</code>。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>因为逆向时经常没有源码，只能通过反汇编理解程序。函数调用、条件判断、循环、API 参数、崩溃现场和控制流都需要通过汇编分析。</p>
+<hr>
+<h2><span id="37-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">37. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">调试器的工作原理<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>调试器为什么能让程序暂停</li>
+<li>断点是什么</li>
+<li>单步执行是什么</li>
+<li>寄存器窗口和内存窗口怎么看</li>
+<li>Linux 的 <code>ptrace</code></li>
+<li>Windows Debug API</li>
+<li>恶意代码为什么会反调试</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC04%E8%8A%82-x86-64%E6%B1%87%E7%BC%96%E5%85%A5%E9%97%A8/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第04节-x86-64汇编入门&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第04节-x86-64汇编入门&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

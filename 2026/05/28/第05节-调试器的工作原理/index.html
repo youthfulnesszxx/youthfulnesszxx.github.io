@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第05节-调试器的工作原理 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/10.jpg"
+				data-sizes="auto"
+				alt="第05节-调试器的工作原理"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第05节-调试器的工作原理</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5.9k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 25 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-5-%E8%8A%82%E8%B0%83%E8%AF%95%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86">第 5 节：调试器的工作原理</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 3 周<br>课程主题：调试器和逆向入门<br>本节目标：理解调试器为什么能控制程序运行，掌握断点、单步、寄存器、内存、调用栈等基本概念，并初步了解 Linux <code>ptrace</code> 和 Windows Debug API。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>调试器是什么？</li>
+<li>调试器为什么能让程序暂停？</li>
+<li>断点是什么？软件断点和硬件断点有什么区别？</li>
+<li>单步执行是什么？</li>
+<li>为什么调试器能查看寄存器和内存？</li>
+<li>GDB、x64dbg、WinDbg 这类工具分别适合做什么？</li>
+<li>Linux 下的 <code>ptrace</code> 大致是什么？</li>
+<li>Windows 下 Debug API 大致是什么？</li>
+<li>恶意代码为什么经常检测调试器？</li>
+<li>调试器在逆向工程和漏洞分析中有什么作用？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">进程运行 -&gt; 调试器附加/启动 -&gt; 设置断点 -&gt; 程序暂停 -&gt; 查看现场 -&gt; 单步执行 -&gt; 分析行为<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你不需要现在就掌握所有高级调试技巧，但必须建立“程序运行现场”的概念。</p>
+<hr>
+<h2><span id="2-%E8%B0%83%E8%AF%95%E5%99%A8%E6%98%AF%E4%BB%80%E4%B9%88">2. 调试器是什么</span></h2><p>调试器是一类可以观察和控制程序运行的工具。</p>
+<p>它可以让你：</p>
+<ul>
+<li>启动一个程序</li>
+<li>附加到一个正在运行的程序</li>
+<li>让程序暂停</li>
+<li>设置断点</li>
+<li>单步执行指令</li>
+<li>查看寄存器</li>
+<li>查看内存</li>
+<li>查看调用栈</li>
+<li>查看线程</li>
+<li>修改寄存器或内存</li>
+<li>捕获崩溃现场</li>
+</ul>
+<p>常见调试器：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>平台</th>
+<th>常见用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GDB</td>
+<td>Linux / Unix</td>
+<td>C/C++ 调试、漏洞分析、Pwn 入门</td>
+</tr>
+<tr>
+<td>LLDB</td>
+<td>Linux / macOS</td>
+<td>C/C++/Swift 调试</td>
+</tr>
+<tr>
+<td>x64dbg</td>
+<td>Windows</td>
+<td>用户态 PE 程序动态调试、逆向工程</td>
+</tr>
+<tr>
+<td>WinDbg</td>
+<td>Windows</td>
+<td>用户态/内核态调试、崩溃分析</td>
+</tr>
+<tr>
+<td>IDA Debugger</td>
+<td>多平台</td>
+<td>静态 + 动态结合分析</td>
+</tr>
+<tr>
+<td>Ghidra Debugger</td>
+<td>多平台</td>
+<td>静态 + 动态结合分析</td>
+</tr>
+</tbody></table>
+<p>从操作系统角度看，调试器本质上是一个特殊的进程。</p>
+<p>它可以通过操作系统提供的调试接口控制另一个进程。</p>
+<hr>
+<h2><span id="3-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AD%A6%E8%B0%83%E8%AF%95%E5%99%A8">3. 为什么要学调试器</span></h2><p>对于网络安全方向来说，调试器非常重要。</p>
+<h3><span id="31-%E5%86%99%E7%A8%8B%E5%BA%8F%E6%97%B6%E7%94%A8%E8%B0%83%E8%AF%95%E5%99%A8">3.1 写程序时用调试器</span></h3><p>普通开发中，调试器可以帮助你找 bug。</p>
+<p>例如：</p>
+<ul>
+<li>变量为什么是错误值</li>
+<li>程序在哪里崩溃</li>
+<li>函数是否被调用</li>
+<li>条件分支是否走对</li>
+</ul>
+<hr>
+<h3><span id="32-%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E4%B8%AD%E7%94%A8%E8%B0%83%E8%AF%95%E5%99%A8">3.2 逆向工程中用调试器</span></h3><p>逆向时，你经常没有源码。</p>
+<p>调试器能让你直接观察二进制程序运行过程：</p>
+<ul>
+<li>程序入口点</li>
+<li>API 调用</li>
+<li>参数</li>
+<li>返回值</li>
+<li>解密后的字符串</li>
+<li>内存变化</li>
+<li>条件判断</li>
+<li>反调试逻辑</li>
+</ul>
+<p>静态分析回答：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序可能会做什么<br></code></pre></td></tr></tbody></table></figure>
+
+<p>动态调试回答：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序实际运行时做了什么<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="33-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E4%B8%AD%E7%94%A8%E8%B0%83%E8%AF%95%E5%99%A8">3.3 漏洞分析中用调试器</span></h3><p>漏洞分析中，调试器可以帮助你观察崩溃现场。</p>
+<p>你可以看到：</p>
+<ul>
+<li>崩溃发生在哪条指令</li>
+<li><code>rip</code> 是什么</li>
+<li><code>rsp</code> 指向哪里</li>
+<li>输入是否进入栈或堆</li>
+<li>哪个寄存器异常</li>
+<li>返回地址是否被覆盖</li>
+<li>防护机制是否触发</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">RIP = 0x4141414141414141<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这可能说明输入中的 <code>A</code> 影响了程序控制流。</p>
+<hr>
+<h3><span id="34-%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%AD%E7%94%A8%E8%B0%83%E8%AF%95%E5%99%A8">3.4 恶意代码分析中用调试器</span></h3><p>恶意代码分析中，调试器可以帮助你：</p>
+<ul>
+<li>跟踪解密函数</li>
+<li>观察 API 参数</li>
+<li>跳过无关逻辑</li>
+<li>捕获网络地址</li>
+<li>查看运行时配置</li>
+<li>分析反调试</li>
+<li>找到真实入口点</li>
+</ul>
+<p>很多恶意代码会把关键字符串加密，静态看不到。</p>
+<p>但运行时一定要解密使用。</p>
+<p>调试器可以在解密后暂停程序，直接查看内存。</p>
+<hr>
+<h2><span id="4-%E8%B0%83%E8%AF%95%E5%99%A8%E5%A6%82%E4%BD%95%E6%8E%A7%E5%88%B6%E7%A8%8B%E5%BA%8F">4. 调试器如何控制程序</span></h2><p>普通进程之间不能随便互相控制。</p>
+<p>操作系统提供了专门的调试机制。</p>
+<p>Linux 下常见机制是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">ptrace<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 下常见机制是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Debug API<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调试器通过这些接口告诉操作系统：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">我要调试这个进程<br></code></pre></td></tr></tbody></table></figure>
+
+<p>之后，操作系统允许调试器对被调试进程执行一些特殊操作，例如：</p>
+<ul>
+<li>读取寄存器</li>
+<li>修改寄存器</li>
+<li>读取内存</li>
+<li>修改内存</li>
+<li>暂停进程</li>
+<li>恢复进程</li>
+<li>捕获异常</li>
+<li>接收断点事件</li>
+</ul>
+<p>可以理解为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">调试器不是靠魔法控制程序，而是通过操作系统授权的调试接口控制程序。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="5-%E8%A2%AB%E8%B0%83%E8%AF%95%E7%A8%8B%E5%BA%8F%E5%92%8C%E8%B0%83%E8%AF%95%E5%99%A8%E7%9A%84%E5%85%B3%E7%B3%BB">5. 被调试程序和调试器的关系</span></h2><p>调试中通常有两个角色：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Debugger：调试器<br>Debuggee：被调试程序<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>gdb</code> 是调试器</li>
+<li><code>demo</code> 是被调试程序</li>
+</ul>
+<p>调试器可以：</p>
+<ol>
+<li>启动被调试程序</li>
+<li>在程序运行前设置断点</li>
+<li>让程序运行</li>
+<li>程序触发断点后暂停</li>
+<li>调试器读取现场</li>
+<li>用户决定继续、单步或退出</li>
+</ol>
+<hr>
+<h2><span id="6-%E4%BB%80%E4%B9%88%E6%98%AF%E6%96%AD%E7%82%B9">6. 什么是断点</span></h2><p>断点就是：</p>
+<blockquote>
+<p>让程序运行到某个位置时自动暂停。</p>
+</blockquote>
+<p>例如在 GDB 中：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序运行到 main 时暂停<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在 x64dbg 中，你可以在某条指令上按 F2 设置断点。</p>
+<p>程序运行到这条指令时会停下来。</p>
+<p>断点的作用是让你在关键位置观察程序状态。</p>
+<p>例如：</p>
+<ul>
+<li>函数刚进入时</li>
+<li>API 被调用前</li>
+<li>崩溃前</li>
+<li>字符串解密后</li>
+<li>判断密码是否正确前</li>
+<li>内存被写入前后</li>
+</ul>
+<hr>
+<h2><span id="7-%E8%BD%AF%E4%BB%B6%E6%96%AD%E7%82%B9%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86">7. 软件断点的基本原理</span></h2><p>最常见的断点是软件断点。</p>
+<p>在 x86/x86-64 中，软件断点常用指令：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">int3<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它的机器码是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0xCC<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调试器设置软件断点时，通常会：</p>
+<ol>
+<li>读取目标地址原来的 1 字节指令</li>
+<li>保存这个原始字节</li>
+<li>把目标地址处的字节改成 <code>0xCC</code></li>
+<li>程序运行到这里时执行 <code>int3</code></li>
+<li>CPU 触发断点异常</li>
+<li>操作系统通知调试器</li>
+<li>调试器暂停程序并恢复现场</li>
+</ol>
+<p>例如原来代码：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">55 48 89 e5<br></code></pre></td></tr></tbody></table></figure>
+
+<p>设置断点后可能变成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CC 48 89 e5<br></code></pre></td></tr></tbody></table></figure>
+
+<p>当程序执行到 <code>CC</code> 时，就会触发断点异常。</p>
+<p>这说明一个重要点：</p>
+<blockquote>
+<p>软件断点本质上会临时修改被调试程序的代码字节。</p>
+</blockquote>
+<p>这也是为什么某些反调试技术会检查代码中是否存在 <code>0xCC</code>。</p>
+<hr>
+<h2><span id="8-%E7%A1%AC%E4%BB%B6%E6%96%AD%E7%82%B9%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">8. 硬件断点的基本概念</span></h2><p>硬件断点不需要修改代码字节。</p>
+<p>x86/x86-64 CPU 提供了一组调试寄存器，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">DR0, DR1, DR2, DR3, DR6, DR7<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调试器可以利用这些寄存器设置断点。</p>
+<p>硬件断点可以用于：</p>
+<ul>
+<li>执行断点</li>
+<li>读内存断点</li>
+<li>写内存断点</li>
+<li>访问内存断点</li>
+</ul>
+<p>例如你想知道：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">谁修改了这个变量？<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以对变量地址设置硬件写入断点。</p>
+<p>当程序写这个地址时，CPU 会触发调试异常。</p>
+<p>硬件断点优点：</p>
+<ul>
+<li>不修改代码</li>
+<li>可监控内存访问</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>数量有限</li>
+<li>也可能被反调试检测</li>
+</ul>
+<hr>
+<h2><span id="9-%E5%8D%95%E6%AD%A5%E6%89%A7%E8%A1%8C%E6%98%AF%E4%BB%80%E4%B9%88">9. 单步执行是什么</span></h2><p>单步执行就是让程序一次只执行很小的一步。</p>
+<p>常见有两类：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">源码级单步<br>指令级单步<br></code></pre></td></tr></tbody></table></figure>
+
+<h3><span id="91-%E6%BA%90%E7%A0%81%E7%BA%A7%E5%8D%95%E6%AD%A5">9.1 源码级单步</span></h3><p>如果程序有调试符号，调试器可以按源代码行单步。</p>
+<p>例如 GDB：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gdb">step<br>next<br></code></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li><code>step</code>：进入函数</li>
+<li><code>next</code>：不进入函数，把函数调用当作一行执行完</li>
+</ul>
+<hr>
+<h3><span id="92-%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%8D%95%E6%AD%A5">9.2 指令级单步</span></h3><p>指令级单步是一次执行一条机器指令。</p>
+<p>GDB：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gdb">stepi<br>nexti<br></code></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li><code>stepi</code>：执行一条指令，如果是 <code>call</code> 会进入函数</li>
+<li><code>nexti</code>：执行一条指令，如果是 <code>call</code> 通常不进入函数</li>
+</ul>
+<p>x64dbg：</p>
+<ul>
+<li>F7：单步进入</li>
+<li>F8：单步跳过</li>
+</ul>
+<p>指令级单步是逆向和漏洞分析中非常常用的能力。</p>
+<hr>
+<h2><span id="10-step-into-%E5%92%8C-step-over">10. Step Into 和 Step Over</span></h2><p>调试器里常见两个概念：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Step Into<br>Step Over<br></code></pre></td></tr></tbody></table></figure>
+
+<h3><span id="101-step-into">10.1 Step Into</span></h3><p>遇到函数调用时进入函数内部。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">foo();<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Step Into 会进入 <code>foo</code>。</p>
+<p>适合：</p>
+<ul>
+<li>你想分析这个函数内部逻辑</li>
+<li>你不知道它做了什么</li>
+<li>它可能是关键函数</li>
+</ul>
+<hr>
+<h3><span id="102-step-over">10.2 Step Over</span></h3><p>遇到函数调用时不进入函数内部，而是让它直接执行完。</p>
+<p>适合：</p>
+<ul>
+<li>你不关心库函数内部</li>
+<li>你只想知道函数返回后结果</li>
+<li>避免进入大量系统库代码</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>一般不需要进入 <code>printf</code> 内部。</p>
+<hr>
+<h2><span id="11-continue-%E5%92%8C-run-until">11. Continue 和 Run Until</span></h2><h3><span id="111-continue">11.1 Continue</span></h3><p>继续运行程序直到下一个事件。</p>
+<p>GDB：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">continue<br></code></pre></td></tr></tbody></table></figure>
+
+<p>x64dbg：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">F9<br></code></pre></td></tr></tbody></table></figure>
+
+<p>事件可能是：</p>
+<ul>
+<li>命中断点</li>
+<li>程序崩溃</li>
+<li>程序退出</li>
+<li>收到信号或异常</li>
+</ul>
+<hr>
+<h3><span id="112-run-until">11.2 Run Until</span></h3><p>运行到某个指定位置。</p>
+<p>GDB：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">until<br></code></pre></td></tr></tbody></table></figure>
+
+<p>x64dbg 中可以右键选择运行到选中位置，或使用快捷操作。</p>
+<p>适合跳过循环或无关代码。</p>
+<hr>
+<h2><span id="12-%E5%AF%84%E5%AD%98%E5%99%A8%E7%AA%97%E5%8F%A3%E6%80%8E%E4%B9%88%E7%9C%8B">12. 寄存器窗口怎么看</span></h2><p>调试器中，寄存器窗口非常重要。</p>
+<p>x86-64 常重点看：</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>关注原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RIP</td>
+<td>当前执行位置</td>
+</tr>
+<tr>
+<td>RSP</td>
+<td>当前栈顶</td>
+</tr>
+<tr>
+<td>RBP</td>
+<td>当前栈帧基址</td>
+</tr>
+<tr>
+<td>RAX</td>
+<td>返回值、计算结果</td>
+</tr>
+<tr>
+<td>RDI/RSI/RDX/RCX/R8/R9</td>
+<td>Linux x64 参数相关</td>
+</tr>
+<tr>
+<td>RCX/RDX/R8/R9</td>
+<td>Windows x64 参数相关</td>
+</tr>
+<tr>
+<td>EFLAGS/RFLAGS</td>
+<td>条件跳转相关标志</td>
+</tr>
+</tbody></table>
+<p>例如你在 Linux 下停在某个函数入口：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">rdi = 0x7fffffffe3a0<br>rsi = 0x10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>根据调用约定，可以推测：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">第 1 个参数可能是 0x7fffffffe3a0<br>第 2 个参数可能是 0x10<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果第 1 个参数是字符串指针，可以用 GDB 查看：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">x/s $rdi<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="13-%E5%86%85%E5%AD%98%E7%AA%97%E5%8F%A3%E6%80%8E%E4%B9%88%E7%9C%8B">13. 内存窗口怎么看</span></h2><p>调试器可以查看进程内存。</p>
+<p>GDB 常用命令：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gdb">x/20gx $rsp<br>x/20i $rip<br>x/s $rdi<br>x/32bx $rsp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>含义：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>x/20gx $rsp</code></td>
+<td>从栈顶开始，以 8 字节十六进制显示 20 个单位</td>
+</tr>
+<tr>
+<td><code>x/20i $rip</code></td>
+<td>从当前指令开始显示 20 条汇编指令</td>
+</tr>
+<tr>
+<td><code>x/s $rdi</code></td>
+<td>把 rdi 指向的内存当字符串显示</td>
+</tr>
+<tr>
+<td><code>x/32bx $rsp</code></td>
+<td>从栈顶开始，以字节形式显示 32 个字节</td>
+</tr>
+</tbody></table>
+<p>x64dbg 中常见内存区域：</p>
+<ul>
+<li>Dump 窗口：查看原始内存</li>
+<li>Stack 窗口：查看栈</li>
+<li>CPU 窗口：查看当前指令</li>
+</ul>
+<p>内存窗口能帮助你判断：</p>
+<ul>
+<li>输入是否进入内存</li>
+<li>字符串是否被解密</li>
+<li>栈上是否有返回地址</li>
+<li>堆数据是否被修改</li>
+<li>指针指向哪里</li>
+</ul>
+<hr>
+<h2><span id="14-%E8%B0%83%E7%94%A8%E6%A0%88%E6%80%8E%E4%B9%88%E7%9C%8B">14. 调用栈怎么看</span></h2><p>调用栈表示当前函数是如何被调用到的。</p>
+<p>GDB：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">bt<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能输出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">#0  bar (z=11) at demo.c:4<br>#1  foo (x=10) at demo.c:9<br>#2  main () at demo.c:14<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">main 调用了 foo<br>foo 调用了 bar<br>当前停在 bar<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调用栈对分析崩溃非常有用。</p>
+<p>例如程序崩溃时，<code>bt</code> 可以告诉你：</p>
+<ul>
+<li>崩溃发生在哪个函数</li>
+<li>是谁调用了它</li>
+<li>调用链是否正常</li>
+<li>是否因为栈破坏导致调用栈异常</li>
+</ul>
+<hr>
+<h2><span id="15-%E8%B0%83%E8%AF%95%E7%AC%A6%E5%8F%B7%E6%98%AF%E4%BB%80%E4%B9%88">15. 调试符号是什么</span></h2><p>调试符号是编译时附加的信息。</p>
+<p>它可以告诉调试器：</p>
+<ul>
+<li>源文件名</li>
+<li>行号</li>
+<li>函数名</li>
+<li>变量名</li>
+<li>类型信息</li>
+</ul>
+<p>例如使用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g demo.c -o demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>-g</code> 会生成调试信息。</p>
+<p>有调试符号时，GDB 可以显示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">break main<br>print variable<br>list<br>bt<br></code></pre></td></tr></tbody></table></figure>
+
+<p>没有调试符号时，调试器仍然可以调试，但更多只能看到：</p>
+<ul>
+<li>地址</li>
+<li>汇编</li>
+<li>寄存器</li>
+<li>原始内存</li>
+</ul>
+<p>逆向工程中，真实程序经常没有完整符号。</p>
+<p>所以你既要会源码级调试，也要逐渐适应汇编级调试。</p>
+<hr>
+<h2><span id="16-linux-%E7%9A%84-ptrace-%E6%98%AF%E4%BB%80%E4%B9%88">16. Linux 的 <code>ptrace</code> 是什么</span></h2><p>Linux 下调试器常依赖 <code>ptrace</code>。</p>
+<p><code>ptrace</code> 是一个系统调用。</p>
+<p>它允许一个进程观察和控制另一个进程。</p>
+<p>GDB 调试程序时，大致会用 <code>ptrace</code> 做这些事：</p>
+<ul>
+<li>启动或附加到目标进程</li>
+<li>暂停目标进程</li>
+<li>读取寄存器</li>
+<li>修改寄存器</li>
+<li>读取目标进程内存</li>
+<li>修改目标进程内存</li>
+<li>让目标进程继续执行</li>
+<li>捕获信号和异常</li>
+</ul>
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">GDB 能调试程序，是因为 Linux 内核提供了 ptrace 这种机制。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>从安全角度看，<code>ptrace</code> 也受权限限制。</p>
+<p>普通用户通常不能随便调试其他用户的进程。</p>
+<hr>
+<h2><span id="17-windows-debug-api-%E6%98%AF%E4%BB%80%E4%B9%88">17. Windows Debug API 是什么</span></h2><p>Windows 提供了一组调试相关 API。</p>
+<p>常见包括：</p>
+<ul>
+<li><code>CreateProcess</code> 配合调试标志启动进程</li>
+<li><code>DebugActiveProcess</code> 附加到进程</li>
+<li><code>WaitForDebugEvent</code> 等待调试事件</li>
+<li><code>ContinueDebugEvent</code> 继续执行</li>
+<li><code>ReadProcessMemory</code> 读取进程内存</li>
+<li><code>WriteProcessMemory</code> 修改进程内存</li>
+<li><code>GetThreadContext</code> 读取线程寄存器上下文</li>
+<li><code>SetThreadContext</code> 修改线程寄存器上下文</li>
+</ul>
+<p>x64dbg、WinDbg 这类工具底层会使用这些机制。</p>
+<p>Windows 调试器可以接收到各种调试事件，例如：</p>
+<ul>
+<li>进程创建</li>
+<li>线程创建</li>
+<li>DLL 加载</li>
+<li>异常</li>
+<li>断点</li>
+<li>进程退出</li>
+</ul>
+<p>这也是为什么 x64dbg 中能看到 DLL 加载和异常事件。</p>
+<hr>
+<h2><span id="18-%E5%BC%82%E5%B8%B8%E5%92%8C%E5%B4%A9%E6%BA%83">18. 异常和崩溃</span></h2><p>程序崩溃通常和异常有关。</p>
+<p>常见异常包括：</p>
+<ul>
+<li>访问非法内存</li>
+<li>除零错误</li>
+<li>执行非法指令</li>
+<li>栈溢出</li>
+<li>断点异常</li>
+</ul>
+<p>Linux 下常见信号：</p>
+<table>
+<thead>
+<tr>
+<th>信号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SIGSEGV</td>
+<td>段错误，常见于非法内存访问</td>
+</tr>
+<tr>
+<td>SIGILL</td>
+<td>非法指令</td>
+</tr>
+<tr>
+<td>SIGFPE</td>
+<td>算术异常，例如除零</td>
+</tr>
+<tr>
+<td>SIGTRAP</td>
+<td>跟踪/断点陷阱</td>
+</tr>
+<tr>
+<td>SIGABRT</td>
+<td>程序主动中止</td>
+</tr>
+</tbody></table>
+<p>Windows 下常见异常：</p>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Access Violation</td>
+<td>访问违规</td>
+</tr>
+<tr>
+<td>Breakpoint Exception</td>
+<td>断点异常</td>
+</tr>
+<tr>
+<td>Illegal Instruction</td>
+<td>非法指令</td>
+</tr>
+<tr>
+<td>Stack Overflow</td>
+<td>栈溢出</td>
+</tr>
+</tbody></table>
+<p>调试器可以在异常发生时暂停程序，让你观察崩溃现场。</p>
+<hr>
+<h2><span id="19-%E5%8F%8D%E8%B0%83%E8%AF%95%E6%98%AF%E4%BB%80%E4%B9%88">19. 反调试是什么</span></h2><p>反调试是程序检测或干扰调试器的技术。</p>
+<p>恶意代码、加壳程序、商业保护软件中都可能出现反调试。</p>
+<p>常见反调试思路包括：</p>
+<ul>
+<li>检测是否被调试</li>
+<li>检查软件断点 <code>0xCC</code></li>
+<li>检查调试寄存器</li>
+<li>检测时间差</li>
+<li>使用异常干扰调试流程</li>
+<li>检查进程名或窗口名</li>
+<li>检查父进程</li>
+<li>调用系统 API 判断调试状态</li>
+</ul>
+<p>例如 Windows 中常见：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">IsDebuggerPresent<br>CheckRemoteDebuggerPresent<br>NtQueryInformationProcess<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Linux 中可能检查：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">/proc/self/status 中的 TracerPid<br>ptrace(PTRACE_TRACEME)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>本阶段只需要知道：</p>
+<blockquote>
+<p>恶意代码可能会判断自己是否处于调试器中，并根据结果改变行为。</p>
+</blockquote>
+<hr>
+<h2><span id="20-%E4%B8%8D%E8%A6%81%E6%8A%8A%E5%8F%8D%E8%B0%83%E8%AF%95%E7%90%86%E8%A7%A3%E6%88%90%E7%A5%9E%E7%A7%98%E6%8A%80%E6%9C%AF">20. 不要把反调试理解成神秘技术</span></h2><p>反调试不是魔法。</p>
+<p>它本质上还是在利用操作系统和调试机制的特征。</p>
+<p>例如：</p>
+<ul>
+<li>被调试时，系统中会有调试关系</li>
+<li>软件断点会修改代码字节为 <code>0xCC</code></li>
+<li>单步执行会影响时间</li>
+<li>调试器可能改变异常处理流程</li>
+<li>父进程可能是调试器</li>
+</ul>
+<p>所以学习反调试的正确方式是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">先理解调试器如何工作<br>再理解程序如何检测这些痕迹<br></code></pre></td></tr></tbody></table></figure>
+
+<p>不要一开始就背反调试技巧。</p>
+<hr>
+<h2><span id="21-linux-%E5%AE%9E%E9%AA%8Cgdb-%E5%9F%BA%E7%A1%80%E8%B0%83%E8%AF%95">21. Linux 实验：GDB 基础调试</span></h2><p>创建 <code>debug_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> {<br>    <span class="hljs-type">int</span> c = a + b;<br>    <span class="hljs-keyword">return</span> c;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">10</span>;<br>    <span class="hljs-type">int</span> y = <span class="hljs-number">20</span>;<br>    <span class="hljs-type">int</span> z = add(x, y);<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"z = %d\n"</span>, z);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 debug_demo.c -o debug_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>启动 GDB：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./debug_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>list<br>next<br>next<br>step<br>bt<br>info registers<br>print a<br>print b<br>finish<br>print z<br>continue<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li><code>break main</code> 如何让程序停在 main</li>
+<li><code>next</code> 和 <code>step</code> 的区别</li>
+<li><code>bt</code> 如何显示调用栈</li>
+<li><code>print</code> 如何查看变量</li>
+<li><code>finish</code> 如何执行到当前函数返回</li>
+</ul>
+<hr>
+<h2><span id="22-linux-%E5%AE%9E%E9%AA%8C%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%8D%95%E6%AD%A5">22. Linux 实验：指令级单步</span></h2><p>继续使用 <code>debug_demo</code>。</p>
+<p>在 GDB 中执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>disassemble main<br>x/10i $rip<br>info registers<br>stepi<br>x/10i $rip<br>info registers<br>nexti<br>x/10i $rip<br>info registers<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li>每次 <code>stepi</code> 后 <code>rip</code> 如何变化</li>
+<li>遇到 <code>call</code> 时 <code>stepi</code> 和 <code>nexti</code> 的区别</li>
+<li>调用 <code>add</code> 前参数寄存器是什么</li>
+<li><code>add</code> 返回后 <code>rax/eax</code> 是什么</li>
+</ul>
+<hr>
+<h2><span id="23-linux-%E5%AE%9E%E9%AA%8C%E8%A7%82%E5%AF%9F%E5%B4%A9%E6%BA%83%E7%8E%B0%E5%9C%BA">23. Linux 实验：观察崩溃现场</span></h2><p>创建 <code>crash_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> *p = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"before crash\n"</span>);<br>    *p = <span class="hljs-number">123</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"after crash\n"</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 crash_demo.c -o crash_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调试：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./crash_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>GDB 中执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gdb">run<br>bt<br>info registers<br>x/10i $rip<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Program received signal SIGSEGV<br></code></pre></td></tr></tbody></table></figure>
+
+<p>思考：</p>
+<ul>
+<li>程序为什么崩溃？</li>
+<li>崩溃时 <code>rip</code> 指向哪条指令？</li>
+<li>哪个寄存器或内存访问有问题？</li>
+<li><code>bt</code> 显示的调用栈是什么？</li>
+</ul>
+<hr>
+<h2><span id="24-windows-%E5%AE%9E%E9%AA%8Cx64dbg-%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8">24. Windows 实验：x64dbg 基础使用</span></h2><p>准备一个简单 Windows 程序，例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> {<br>    <span class="hljs-keyword">return</span> a + b;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> z = add(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"z = %d\n"</span>, z);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>用 x64dbg 打开 exe。</p>
+<p>练习：</p>
+<ol>
+<li>运行到入口点</li>
+<li>找到 <code>main</code> 附近</li>
+<li>设置断点</li>
+<li>使用 F7 单步进入</li>
+<li>使用 F8 单步跳过</li>
+<li>查看寄存器窗口</li>
+<li>查看栈窗口</li>
+<li>查看 Dump 内存窗口</li>
+<li>找到一次 <code>call</code></li>
+<li>观察 <code>RAX</code> 中的返回值</li>
+</ol>
+<p>重点关注：</p>
+<ul>
+<li><code>RIP</code> 当前在哪条指令</li>
+<li><code>RCX/RDX/R8/R9</code> 是否用于参数</li>
+<li><code>RSP</code> 指向的栈内容</li>
+<li><code>call</code> 前后程序如何变化</li>
+</ul>
+<hr>
+<h2><span id="25-%E4%BB%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">25. 从逆向工程角度看本节内容</span></h2><p>逆向工程中，调试器主要帮助你确认程序真实行为。</p>
+<p>例如静态分析时你看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序可能会解密字符串<br></code></pre></td></tr></tbody></table></figure>
+
+<p>动态调试时，你可以：</p>
+<ol>
+<li>在解密函数下断点</li>
+<li>运行程序</li>
+<li>等它解密完成</li>
+<li>查看内存</li>
+<li>直接看到明文字符串</li>
+</ol>
+<p>又比如你看到一个判断：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">cmp eax, 0<br>jne fail<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可以在这里下断点，观察：</p>
+<ul>
+<li><code>eax</code> 是多少</li>
+<li>为什么跳到失败分支</li>
+<li>修改输入后是否能改变分支</li>
+</ul>
+<p>调试器让你从“猜测程序逻辑”变成“观察程序逻辑”。</p>
+<hr>
+<h2><span id="26-%E4%BB%8E%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">26. 从漏洞分析角度看本节内容</span></h2><p>漏洞分析中，调试器最重要的价值是保存崩溃现场。</p>
+<p>崩溃现场包括：</p>
+<ul>
+<li>当前指令</li>
+<li>寄存器</li>
+<li>栈</li>
+<li>堆</li>
+<li>调用栈</li>
+<li>输入数据</li>
+<li>信号或异常类型</li>
+</ul>
+<p>例如栈溢出分析时，你会关注：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">输入是否出现在栈上<br>RIP 是否被输入影响<br>RSP 指向哪里<br>返回地址是否异常<br>程序是否触发 Canary 检测<br></code></pre></td></tr></tbody></table></figure>
+
+<p>堆漏洞分析时，你会关注：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">堆块地址<br>free 后是否继续使用<br>崩溃时访问了哪个地址<br>指针是否悬垂<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调试器不会自动告诉你漏洞原因，但它会提供现场证据。</p>
+<hr>
+<h2><span id="27-%E4%BB%8E%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">27. 从恶意代码分析角度看本节内容</span></h2><p>恶意代码分析中，调试器可以帮助你绕过静态混淆。</p>
+<p>例如：</p>
+<ul>
+<li>静态字符串是加密的</li>
+<li>API 是动态解析的</li>
+<li>控制流被混淆</li>
+<li>程序有多层解包逻辑</li>
+</ul>
+<p>动态调试可以观察运行时状态：</p>
+<ul>
+<li>解密后的字符串</li>
+<li>真实 API 地址</li>
+<li>真实网络地址</li>
+<li>真实配置内容</li>
+<li>解包后的代码</li>
+</ul>
+<p>但要注意：</p>
+<blockquote>
+<p>分析恶意样本必须在隔离、安全、授权的实验环境中进行。</p>
+</blockquote>
+<p>不要在自己的主力系统上随便运行不可信样本。</p>
+<hr>
+<h2><span id="28-%E8%B0%83%E8%AF%95%E6%97%B6%E7%9A%84%E5%AE%89%E5%85%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">28. 调试时的安全注意事项</span></h2><p>学习调试器时，建议遵守这些原则：</p>
+<ol>
+<li>只调试自己写的程序、教学样本或授权样本</li>
+<li>恶意代码样本必须放在隔离虚拟机中</li>
+<li>虚拟机尽量断网或使用受控网络</li>
+<li>不要在宿主机运行未知 exe</li>
+<li>不要调试系统关键进程做危险修改</li>
+<li>不要对未授权目标进行动态分析或攻击测试</li>
+<li>实验前保存快照</li>
+</ol>
+<p>调试器很强大，也可能造成破坏。</p>
+<p>例如修改内存、跳过逻辑、继续执行恶意代码，都可能影响系统状态。</p>
+<hr>
+<h2><span id="29-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">29. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>调试器可以观察和控制程序运行。</li>
+<li>调试器依赖操作系统提供的调试机制，不是魔法。</li>
+<li>Linux 下常见调试机制是 <code>ptrace</code>。</li>
+<li>Windows 下有 Debug API，例如 <code>DebugActiveProcess</code>、<code>ReadProcessMemory</code>、<code>GetThreadContext</code>。</li>
+<li>软件断点常通过 <code>int3</code> / <code>0xCC</code> 实现。</li>
+<li>硬件断点利用 CPU 调试寄存器，不需要修改代码字节。</li>
+<li>单步执行可以按源码行或机器指令逐步运行。</li>
+<li>寄存器、内存、调用栈是调试现场的核心信息。</li>
+<li>调试器是逆向工程、漏洞分析、恶意代码分析的重要工具。</li>
+<li>恶意代码可能使用反调试技术检测或干扰调试器。</li>
+</ol>
+<hr>
+<h2><span id="30-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">30. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1gdb-%E6%BA%90%E7%A0%81%E7%BA%A7%E8%B0%83%E8%AF%95">作业 1：GDB 源码级调试</span></h3><p>写 <code>debug_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> {<br>    <span class="hljs-type">int</span> c = a + b;<br>    <span class="hljs-keyword">return</span> c;<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">10</span>;<br>    <span class="hljs-type">int</span> y = <span class="hljs-number">20</span>;<br>    <span class="hljs-type">int</span> z = add(x, y);<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"z = %d\n"</span>, z);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 debug_demo.c -o debug_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>GDB 执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>next<br>step<br>bt<br>info registers<br>print x<br>print y<br>print z<br>continue<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 源代码<br>2. break main 后程序停在哪里<br>3. step 和 next 的区别<br>4. bt 输出<br>5. print x/y/z 的结果<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2gdb-%E6%8C%87%E4%BB%A4%E7%BA%A7%E8%B0%83%E8%AF%95">作业 2：GDB 指令级调试</span></h3><p>执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break main<br>run<br>disassemble main<br>x/10i $rip<br>info registers<br>stepi<br>stepi<br>nexti<br>info registers<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 至少 5 条你看到的汇编指令<br>2. stepi 前后 rip 如何变化<br>3. 是否遇到 call 指令<br>4. call 前参数寄存器是什么<br>5. 函数返回后 rax/eax 是什么<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3%E5%B4%A9%E6%BA%83%E7%8E%B0%E5%9C%BA%E5%88%86%E6%9E%90">作业 3：崩溃现场分析</span></h3><p>写 <code>crash_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> *p = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"before crash\n"</span>);<br>    *p = <span class="hljs-number">123</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"after crash\n"</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调试：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 crash_demo.c -o crash_demo<br>gdb ./crash_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>GDB 中：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gdb">run<br>bt<br>info registers<br>x/10i $rip<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 程序收到什么信号<br>2. 崩溃发生在哪一行<br>3. 崩溃时 rip 指向哪条指令<br>4. 为什么这是非法内存访问<br>5. 调用栈是什么<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-4x64dbg-%E5%9F%BA%E7%A1%80%E8%A7%82%E5%AF%9F">作业 4：x64dbg 基础观察</span></h3><p>如果你有 Windows 环境：</p>
+<ol>
+<li>编译一个简单 exe</li>
+<li>用 x64dbg 打开</li>
+<li>在 <code>main</code> 或关键函数附近下断点</li>
+<li>使用 F7 / F8 单步</li>
+<li>查看寄存器、栈、Dump 窗口</li>
+</ol>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 程序名称<br>2. 断点位置<br>3. RIP 当前地址<br>4. 一次 call 前后的寄存器变化<br>5. RSP 指向的栈内容截图或记录<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="31-%E8%87%AA%E6%B5%8B%E9%A2%98">31. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>调试器的主要作用是什么？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>软件断点常用哪个机器码字节实现？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>为什么软件断点可能被反调试检测到？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p><code>step</code> 和 <code>next</code> 有什么区别？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p><code>stepi</code> 和 <code>nexti</code> 有什么区别？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>GDB 中 <code>bt</code> 命令用来做什么？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>Linux 下 GDB 常依赖哪个系统调用控制被调试进程？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>Windows 下读取目标进程内存常见 API 是什么？</p>
+<h3><span id="%E9%A2%98-9">题 9</span></h3><p>恶意代码为什么要反调试？</p>
+<hr>
+<h2><span id="32-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">32. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>调试器用于观察和控制程序运行，包括设置断点、单步执行、查看寄存器、查看内存、查看调用栈和分析崩溃现场。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>x86/x86-64 中软件断点常用 <code>int3</code> 指令实现，它的机器码字节是 <code>0xCC</code>。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>因为软件断点通常会把目标代码位置的原始字节临时改成 <code>0xCC</code>。程序可以扫描自身代码，检查是否出现异常的 <code>0xCC</code> 字节。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p><code>step</code> 会进入函数调用内部；<code>next</code> 会把函数调用当作一行执行完，不进入函数内部。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p><code>stepi</code> 按机器指令单步执行，遇到 <code>call</code> 会进入函数；<code>nexti</code> 也是指令级单步，但通常会跳过函数调用，不进入函数内部。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p><code>bt</code> 用于查看调用栈，显示当前函数是通过哪些函数调用到达的。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>Linux 下 GDB 常依赖 <code>ptrace</code> 系统调用控制被调试进程。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>Windows 下读取目标进程内存常见 API 是 <code>ReadProcessMemory</code>。</p>
+<h3><span id="%E7%AD%94-9">答 9</span></h3><p>恶意代码反调试是为了发现自己是否在分析环境中运行，从而隐藏真实行为、干扰分析人员、延迟执行或直接退出。</p>
+<hr>
+<h2><span id="33-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">33. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">从逆向视角看程序结构<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>源代码视角和二进制视角的区别</li>
+<li>符号表是什么</li>
+<li>strip 后为什么函数名消失</li>
+<li>反汇编和反编译的区别</li>
+<li>Ghidra / IDA 的基本使用思路</li>
+<li>字符串、交叉引用和函数调用图为什么重要</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC05%E8%8A%82-%E8%B0%83%E8%AF%95%E5%99%A8%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第05节-调试器的工作原理&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第05节-调试器的工作原理&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

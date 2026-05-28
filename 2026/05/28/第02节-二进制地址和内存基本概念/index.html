@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第02节-二进制地址和内存基本概念 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/7.jpg"
+				data-sizes="auto"
+				alt="第02节-二进制地址和内存基本概念"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第02节-二进制地址和内存基本概念</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5.4k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 23 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-2-%E8%8A%82%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9C%B0%E5%9D%80%E5%92%8C%E5%86%85%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">第 2 节：二进制、地址和内存基本概念</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 1 周<br>课程主题：计算机如何运行程序<br>本节目标：理解二进制、十六进制、字节、地址、指针和基本内存区域，为后续学习汇编、逆向、漏洞分析打基础。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>为什么计算机内部用二进制表示数据？</li>
+<li>十六进制为什么在逆向和调试中很常见？</li>
+<li>字节、位、地址之间是什么关系？</li>
+<li>内存为什么可以理解成一个巨大的字节数组？</li>
+<li>指针变量里面到底存的是什么？</li>
+<li>栈、堆、全局区、代码区分别大概放什么？</li>
+<li>为什么同一个程序多次运行，某些地址会变化？</li>
+<li>为什么网络安全和逆向工程必须理解地址？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">数据 -&gt; 二进制 -&gt; 字节 -&gt; 内存 -&gt; 地址 -&gt; 指针 -&gt; 程序内存布局<br></code></pre></td></tr></tbody></table></figure>
+
+<p>后面学习栈溢出、堆漏洞、反汇编、调试器、系统调用时，都会依赖这条线。</p>
+<hr>
+<h2><span id="2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%BF%E7%94%A8%E4%BA%8C%E8%BF%9B%E5%88%B6">2. 为什么计算机使用二进制</span></h2><p>计算机底层硬件主要处理电信号。</p>
+<p>对硬件来说，最容易稳定区分的是两种状态：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">高电平 / 低电平<br>有电 / 没电<br>真 / 假<br>1 / 0<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以计算机内部使用二进制。</p>
+<p>二进制只有两个数字：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0 和 1<br></code></pre></td></tr></tbody></table></figure>
+
+<p>一个二进制位叫做：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">bit<br></code></pre></td></tr></tbody></table></figure>
+
+<p>8 个 bit 组成 1 个字节：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">1 byte = 8 bits<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">01000001<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这是 8 个 bit，也就是 1 个 byte。</p>
+<p>如果按 ASCII 编码解释，它表示字符：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">A<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="3-%E6%95%B0%E6%8D%AE%E6%9C%AC%E8%BA%AB%E6%B2%A1%E6%9C%89%E6%84%8F%E4%B9%89%E8%A7%A3%E9%87%8A%E6%96%B9%E5%BC%8F%E5%86%B3%E5%AE%9A%E6%84%8F%E4%B9%89">3. 数据本身没有意义，解释方式决定意义</span></h2><p>同样一段二进制数据，可以被解释成不同含义。</p>
+<p>例如一个字节：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">01000001<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以解释为：</p>
+<table>
+<thead>
+<tr>
+<th>解释方式</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>无符号整数</td>
+<td>65</td>
+</tr>
+<tr>
+<td>ASCII 字符</td>
+<td>‘A’</td>
+</tr>
+<tr>
+<td>十六进制</td>
+<td>0x41</td>
+</tr>
+<tr>
+<td>二进制位模式</td>
+<td>01000001</td>
+</tr>
+</tbody></table>
+<p>这说明一个重要结论：</p>
+<blockquote>
+<p>内存里存的本质上只是字节。它到底是整数、字符、指针、机器指令，取决于程序如何解释它。</p>
+</blockquote>
+<p>逆向工程中经常会遇到这个问题。</p>
+<p>你看到一串字节：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">48 89 e5<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它可以被当作普通数据，也可以被反汇编器解释成机器指令。</p>
+<p>所以逆向分析不是“看到字节就知道答案”，而是要结合上下文判断：</p>
+<ul>
+<li>这段数据在哪里？</li>
+<li>它在 <code>.text</code> 段还是 <code>.data</code> 段？</li>
+<li>CPU 会不会执行它？</li>
+<li>程序有没有把它当字符串使用？</li>
+<li>是否有指针指向它？</li>
+</ul>
+<hr>
+<h2><span id="4-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E5%BE%88%E9%87%8D%E8%A6%81">4. 为什么十六进制很重要</span></h2><p>二进制太长，不适合人阅读。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">1111111111111111<br></code></pre></td></tr></tbody></table></figure>
+
+<p>很难一眼看懂。</p>
+<p>十六进制用 16 个符号表示数字：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0 1 2 3 4 5 6 7 8 9 A B C D E F<br></code></pre></td></tr></tbody></table></figure>
+
+<p>一个十六进制位正好对应 4 个二进制位。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1111 = F<br>0000 = 0<br>1010 = A<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">11111111 = 0xFF<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在 C、汇编、调试器中，十六进制通常加 <code>0x</code> 前缀。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">0x10 = 十进制 16<br>0x20 = 十进制 32<br>0x100 = 十进制 256<br>0x401000 = 一个常见的程序地址形式<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="5-%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E4%B8%AD%E4%B8%BA%E4%BB%80%E4%B9%88%E5%B8%B8%E8%A7%81%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6">5. 网络安全中为什么常见十六进制</span></h2><p>在安全和逆向方向，十六进制非常常见。</p>
+<p>原因是：</p>
+<ol>
+<li>内存地址通常用十六进制表示</li>
+<li>机器指令字节通常用十六进制表示</li>
+<li>文件格式字段通常用十六进制查看</li>
+<li>shellcode、payload、哈希、网络包都经常显示为十六进制</li>
+<li>调试器中的寄存器值通常是十六进制</li>
+</ol>
+<p>例如调试器里可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">RIP = 0x0000000000401136<br>RSP = 0x00007fffffffe2a0<br>RAX = 0x0000000000000000<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些都是十六进制。</p>
+<p>如果你对十六进制不熟，逆向和漏洞分析会非常吃力。</p>
+<hr>
+<h2><span id="6-%E5%AD%97%E8%8A%82%E5%AD%97%E5%8F%8C%E5%AD%97%E5%9B%9B%E5%AD%97">6. 字节、字、双字、四字</span></h2><p>在底层开发和逆向中，经常看到这些单位。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>英文</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>位</td>
+<td>bit</td>
+<td>1 个二进制位</td>
+</tr>
+<tr>
+<td>字节</td>
+<td>byte</td>
+<td>8 bit</td>
+</tr>
+<tr>
+<td>字</td>
+<td>word</td>
+<td>通常 2 byte</td>
+</tr>
+<tr>
+<td>双字</td>
+<td>dword</td>
+<td>4 byte</td>
+</tr>
+<tr>
+<td>四字</td>
+<td>qword</td>
+<td>8 byte</td>
+</tr>
+</tbody></table>
+<p>在 x64dbg、IDA、Ghidra、汇编资料中，常见：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">byte ptr<br>word ptr<br>dword ptr<br>qword ptr<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致意思是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">按多大单位读写内存<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov eax, dword ptr [rbp-4]<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以理解为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">从 rbp-4 这个地址开始，读取 4 个字节到 eax<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="7-%E5%86%85%E5%AD%98%E5%8F%AF%E4%BB%A5%E5%85%88%E7%90%86%E8%A7%A3%E6%88%90%E4%B8%80%E4%B8%AA%E5%B7%A8%E5%A4%A7%E7%9A%84%E5%AD%97%E8%8A%82%E6%95%B0%E7%BB%84">7. 内存可以先理解成一个巨大的字节数组</span></h2><p>为了入门，可以把内存想象成一个很大的数组：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">地址        内容<br>0x1000      41<br>0x1001      42<br>0x1002      43<br>0x1003      00<br>0x1004      7F<br>0x1005      10<br>...<br></code></pre></td></tr></tbody></table></figure>
+
+<p>每一个位置有一个地址。</p>
+<p>每一个地址通常对应一个字节。</p>
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">内存地址 = 某个字节在内存中的编号<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">0x1000 这个地址里存了 0x41<br>0x1001 这个地址里存了 0x42<br>0x1002 这个地址里存了 0x43<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果按 ASCII 字符解释：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">0x41 = 'A'<br>0x42 = 'B'<br>0x43 = 'C'<br></code></pre></td></tr></tbody></table></figure>
+
+<p>那么这段内存可以解释成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">ABC<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="8-%E5%9C%B0%E5%9D%80%E6%98%AF%E4%BB%80%E4%B9%88">8. 地址是什么</span></h2><p>地址可以理解为：</p>
+<blockquote>
+<p>内存中某个位置的编号。</p>
+</blockquote>
+<p>就像现实中的门牌号。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x7fffffffe2a0<br></code></pre></td></tr></tbody></table></figure>
+
+<p>表示进程虚拟地址空间中的某个位置。</p>
+<p>这里要特别注意：</p>
+<blockquote>
+<p>你在程序中看到的地址，通常是虚拟地址，不是物理内存条上的真实物理地址。</p>
+</blockquote>
+<p>现代操作系统会给每个进程提供独立的虚拟地址空间。</p>
+<p>这意味着：</p>
+<ul>
+<li>进程 A 可以有地址 <code>0x400000</code></li>
+<li>进程 B 也可以有地址 <code>0x400000</code></li>
+<li>但它们映射到的实际物理内存不一定相同</li>
+</ul>
+<p>这就是虚拟内存的基础。</p>
+<p>现在你只需要先记住：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序里看到的地址，大多数情况下是虚拟地址。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>虚拟内存会在后面专门讲。</p>
+<hr>
+<h2><span id="9-%E5%8F%98%E9%87%8F%E5%92%8C%E5%9C%B0%E5%9D%80">9. 变量和地址</span></h2><p>看下面这个 C 程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">123</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"x = %d\n"</span>, x);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"&amp;x = %p\n"</span>, &amp;x);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>其中：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> x = <span class="hljs-number">123</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>表示定义一个整数变量 <code>x</code>。</p>
+<p>变量 <code>x</code> 的值是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">123<br></code></pre></td></tr></tbody></table></figure>
+
+<p>而：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">&amp;x<br></code></pre></td></tr></tbody></table></figure>
+
+<p>表示变量 <code>x</code> 所在的地址。</p>
+<p>也就是说：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">x  = 变量里的值<br>&amp;x = 变量所在的位置<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能输出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">x = 123<br>&amp;x = 0x7ffc4d2c6a8c<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里的 <code>0x7ffc4d2c6a8c</code> 就是变量 <code>x</code> 在这次运行中的地址。</p>
+<hr>
+<h2><span id="10-%E6%8C%87%E9%92%88%E6%98%AF%E4%BB%80%E4%B9%88">10. 指针是什么</span></h2><p>指针是 C 语言里非常重要的概念。</p>
+<p>可以先简单理解成：</p>
+<blockquote>
+<p>指针变量里存的是地址。</p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> x = <span class="hljs-number">123</span>;<br><span class="hljs-type">int</span> *p = &amp;x;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">x 是 int 变量，里面存 123<br>p 是 int* 指针变量，里面存 x 的地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果画出来：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">变量名      内容<br>x           123<br>p           &amp;x，也就是 x 的地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>代码：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"x = %d\n"</span>, x);<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">"&amp;x = %p\n"</span>, &amp;x);<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">"p = %p\n"</span>, p);<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">"*p = %d\n"</span>, *p);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>其中：</p>
+<ul>
+<li><code>p</code> 表示指针变量本身的值，也就是一个地址</li>
+<li><code>*p</code> 表示访问这个地址指向的内容</li>
+</ul>
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">p  = 地址<br>*p = 地址里的值<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="11-%E6%8C%87%E9%92%88%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8D%B1%E9%99%A9">11. 指针为什么危险</span></h2><p>指针强大，但也危险。</p>
+<p>因为指针可以让程序直接访问某个地址。</p>
+<p>如果指针是正确的，程序正常运行。</p>
+<p>如果指针是错误的，可能出现：</p>
+<ul>
+<li>程序崩溃</li>
+<li>读到错误数据</li>
+<li>写坏其他变量</li>
+<li>破坏栈或堆</li>
+<li>形成安全漏洞</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> *p = <span class="hljs-literal">NULL</span>;<br>*p = <span class="hljs-number">123</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里 <code>p</code> 是空指针。</p>
+<p>对空指针解引用通常会导致程序崩溃。</p>
+<p>再比如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> arr[<span class="hljs-number">3</span>] = {<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>};<br>arr[<span class="hljs-number">10</span>] = <span class="hljs-number">999</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是越界写。</p>
+<p>它可能写到数组之外的内存，破坏其他数据。</p>
+<p>很多 C/C++ 漏洞都和错误的指针或边界检查有关。</p>
+<hr>
+<h2><span id="12-%E5%86%85%E5%AD%98%E9%87%8C%E7%9A%84%E6%95%B0%E6%8D%AE%E5%92%8C%E5%A4%A7%E5%B0%8F%E7%AB%AF">12. 内存里的数据和大小端</span></h2><p>多字节数据在内存中有存储顺序问题。</p>
+<p>例如一个 4 字节整数：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x12345678<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它在内存中可能按下面方式存：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">地址低 -&gt; 地址高<br>78 56 34 12<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这叫小端序。</p>
+<p>x86 和 x86-64 通常使用小端序。</p>
+<p>所以在调试器里，如果你看到内存：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">78 56 34 12<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它作为 32 位整数解释时，可能是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x12345678<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这对逆向和漏洞分析很重要。</p>
+<p>例如你想在内存里找地址：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x401236<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它在内存中可能显示为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">36 12 40 00 00 00 00 00<br></code></pre></td></tr></tbody></table></figure>
+
+<p>因为是小端序。</p>
+<hr>
+<h2><span id="13-%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F">13. 程序的基本内存区域</span></h2><p>一个运行中的程序，也就是一个进程，通常会有不同的内存区域。</p>
+<p>先从入门角度理解四个区域：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">代码区<br>全局区<br>堆<br>栈<br></code></pre></td></tr></tbody></table></figure>
+
+<p>不同系统和编译选项下细节会不同，但大方向一致。</p>
+<hr>
+<h3><span id="131-%E4%BB%A3%E7%A0%81%E5%8C%BA">13.1 代码区</span></h3><p>代码区存放程序的机器指令。</p>
+<p>例如你写的：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译后会变成机器指令，这些指令通常位于代码区。</p>
+<p>在 ELF 中常对应：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">.text<br></code></pre></td></tr></tbody></table></figure>
+
+<p>代码区通常是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">可读 + 可执行<br>通常不可写<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这是安全设计。</p>
+<p>如果代码区可以随便写，程序就很容易被篡改。</p>
+<hr>
+<h3><span id="132-%E5%85%A8%E5%B1%80%E5%8C%BA">13.2 全局区</span></h3><p>全局变量和静态变量通常放在全局区。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><span class="hljs-type">static</span> <span class="hljs-type">int</span> static_var = <span class="hljs-number">456</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>已初始化的全局变量常在：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">.data<br></code></pre></td></tr></tbody></table></figure>
+
+<p>未初始化或初始化为 0 的全局变量常在：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">.bss<br></code></pre></td></tr></tbody></table></figure>
+
+<p>字符串常量可能在：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">.rodata<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">char</span> *s = <span class="hljs-string">"hello"</span>;<br></code></pre></td></tr></tbody></table></figure>
+
+<p>字符串 <code>hello</code> 本身通常在只读数据区域。</p>
+<hr>
+<h3><span id="133-%E5%A0%86">13.3 堆</span></h3><p>堆用于动态内存分配。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> *p = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>malloc</code> 申请的内存通常来自堆。</p>
+<p>堆的特点：</p>
+<ul>
+<li>程序运行时动态申请</li>
+<li>需要手动释放</li>
+<li>生命周期由程序员控制</li>
+<li>容易出现内存泄漏、UAF、double free 等漏洞</li>
+</ul>
+<p>堆漏洞是二进制安全中非常重要的一类漏洞。</p>
+<hr>
+<h3><span id="134-%E6%A0%88">13.4 栈</span></h3><p>栈主要用于函数调用。</p>
+<p>栈里常见内容包括：</p>
+<ul>
+<li>函数参数</li>
+<li>局部变量</li>
+<li>返回地址</li>
+<li>保存的寄存器</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">123</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>局部变量 <code>x</code> 通常在栈上。</p>
+<p>函数调用结束后，这个栈帧会被回收。</p>
+<p>栈是理解缓冲区溢出的关键。</p>
+<p>如果一个局部数组被写越界，就可能覆盖栈上的其他内容，甚至影响返回地址。</p>
+<hr>
+<h2><span id="14-%E7%94%A8%E7%A8%8B%E5%BA%8F%E8%A7%82%E5%AF%9F%E4%B8%8D%E5%90%8C%E5%8C%BA%E5%9F%9F%E7%9A%84%E5%9C%B0%E5%9D%80">14. 用程序观察不同区域的地址</span></h2><p>写一个程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><span class="hljs-type">int</span> global_zero;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"foo addr:        %p\n"</span>, foo);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> local_var = <span class="hljs-number">456</span>;<br>    <span class="hljs-type">int</span> *heap_var = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));<br>    <span class="hljs-type">char</span> *str = <span class="hljs-string">"hello memory"</span>;<br><br>    *heap_var = <span class="hljs-number">789</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"main addr:       %p\n"</span>, main);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"foo addr:        %p\n"</span>, foo);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_var addr: %p\n"</span>, &amp;global_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_zero addr:%p\n"</span>, &amp;global_zero);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"local_var addr:  %p\n"</span>, &amp;local_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"heap_var addr:   %p\n"</span>, heap_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"str literal addr:%p\n"</span>, str);<br><br>    <span class="hljs-built_in">free</span>(heap_var);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc addr_demo.c -o addr_demo<br>./addr_demo<br>./addr_demo<br>./addr_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到不同类型对象的地址。</p>
+<p>重点观察：</p>
+<ul>
+<li><code>main</code> 和 <code>foo</code> 的地址</li>
+<li>全局变量地址</li>
+<li>局部变量地址</li>
+<li>malloc 出来的堆地址</li>
+<li>字符串常量地址</li>
+<li>多次运行后哪些地址变化</li>
+</ul>
+<hr>
+<h2><span id="15-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%A4%9A%E6%AC%A1%E8%BF%90%E8%A1%8C%E5%9C%B0%E5%9D%80%E4%BC%9A%E5%8F%98%E5%8C%96">15. 为什么多次运行地址会变化</span></h2><p>现代操作系统通常启用 ASLR。</p>
+<p>ASLR 全称是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Address Space Layout Randomization<br></code></pre></td></tr></tbody></table></figure>
+
+<p>中文常译为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">地址空间布局随机化<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它的作用是让程序每次运行时，某些内存区域的地址发生变化。</p>
+<p>目的：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">增加漏洞利用难度<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果攻击者无法预测：</p>
+<ul>
+<li>栈在哪里</li>
+<li>堆在哪里</li>
+<li>libc 在哪里</li>
+<li>程序代码在哪里</li>
+</ul>
+<p>利用漏洞就会更困难。</p>
+<p>Linux 下可以查看 ASLR 状态：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /proc/sys/kernel/randomize_va_space<br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见值：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>关闭 ASLR</td>
+</tr>
+<tr>
+<td>1</td>
+<td>部分随机化</td>
+</tr>
+<tr>
+<td>2</td>
+<td>完整随机化</td>
+</tr>
+</tbody></table>
+<p>不建议随便修改系统配置。学习阶段先观察即可。</p>
+<hr>
+<h2><span id="16-%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%9A%84%E5%8C%BA%E5%88%AB">16. 虚拟地址和物理地址的区别</span></h2><p>你在 C 程序里打印出来的地址，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x7ffd1e45a2bc<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这通常是虚拟地址。</p>
+<p>虚拟地址由操作系统和 CPU 的 MMU 共同转换到物理地址。</p>
+<p>简化理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">程序看到虚拟地址<br>操作系统维护映射关系<br>硬件 MMU 完成地址转换<br>最终访问物理内存<br></code></pre></td></tr></tbody></table></figure>
+
+<p>为什么要这样设计？</p>
+<ol>
+<li>每个进程拥有独立地址空间</li>
+<li>防止一个进程随便访问另一个进程</li>
+<li>支持内存保护</li>
+<li>支持按需加载和换页</li>
+<li>支持共享库映射</li>
+</ol>
+<p>后面虚拟内存章节会深入讲页表、缺页异常和地址映射。</p>
+<hr>
+<h2><span id="17-linux-%E4%B8%8B%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80">17. Linux 下查看进程内存布局</span></h2><p>Linux 提供 <code>/proc</code> 文件系统，可以观察进程信息。</p>
+<p>查看当前 shell 的内存映射：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /proc/$$/maps<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果你想查看某个程序运行时的内存，可以让它先暂停。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"pid = %d\n"</span>, getpid());<br>    getchar();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>运行后它会等待输入。</p>
+<p>另开一个终端：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /proc/&lt;pid&gt;/maps<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">55b1a5f1d000-55b1a5f1e000 r--p ... /home/user/addr_demo<br>55b1a5f1e000-55b1a5f1f000 r-xp ... /home/user/addr_demo<br>55b1a5f1f000-55b1a5f20000 r--p ... /home/user/addr_demo<br>...<br>[heap]<br>...<br>[stack]<br></code></pre></td></tr></tbody></table></figure>
+
+<p>重点观察：</p>
+<ul>
+<li>哪些区域可读 <code>r</code></li>
+<li>哪些区域可写 <code>w</code></li>
+<li>哪些区域可执行 <code>x</code></li>
+<li>哪个是堆 <code>[heap]</code></li>
+<li>哪个是栈 <code>[stack]</code></li>
+<li>哪些是共享库</li>
+</ul>
+<hr>
+<h2><span id="18-windows-%E4%B8%8B%E5%A6%82%E4%BD%95%E8%A7%82%E5%AF%9F%E5%9C%B0%E5%9D%80%E5%92%8C%E5%86%85%E5%AD%98">18. Windows 下如何观察地址和内存</span></h2><p>Windows 下可以用：</p>
+<ul>
+<li>x64dbg</li>
+<li>Process Explorer</li>
+<li>Process Hacker</li>
+<li>WinDbg</li>
+</ul>
+<p>在 x64dbg 中，你可以看到：</p>
+<ul>
+<li>CPU 指令窗口</li>
+<li>寄存器窗口</li>
+<li>栈窗口</li>
+<li>内存 Dump 窗口</li>
+<li>模块列表</li>
+</ul>
+<p>在 Process Explorer 中，可以观察：</p>
+<ul>
+<li>进程 PID</li>
+<li>线程</li>
+<li>DLL 模块</li>
+<li>内存占用</li>
+<li>句柄</li>
+</ul>
+<p>Windows 程序中常见地址也通常是虚拟地址。</p>
+<p>PE 文件被加载到进程地址空间后，会有一个基址，例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">ImageBase = 0x140000000<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果开启 ASLR，实际加载地址可能每次变化。</p>
+<hr>
+<h2><span id="19-%E5%9C%B0%E5%9D%80%E5%92%8C%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E7%9A%84%E5%85%B3%E7%B3%BB">19. 地址和逆向工程的关系</span></h2><p>逆向工程中几乎所有分析都离不开地址。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">入口点地址<br>函数地址<br>字符串地址<br>跳转目标地址<br>API 地址<br>栈地址<br>堆地址<br>返回地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>当你在 Ghidra 或 IDA 里看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">00401136  call puts<br>0040113b  mov eax, 0<br>00401140  ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>左边的 <code>00401136</code> 就是指令地址。</p>
+<p>当你在 x64dbg 里下断点，本质上就是告诉调试器：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序执行到某个地址时暂停<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">breakpoint at 0x401136<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以地址是逆向分析的坐标系。</p>
+<p>没有地址，调试器、反汇编器、内存窗口都无法组织信息。</p>
+<hr>
+<h2><span id="20-%E5%9C%B0%E5%9D%80%E5%92%8C%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E7%9A%84%E5%85%B3%E7%B3%BB">20. 地址和漏洞分析的关系</span></h2><p>漏洞分析中也离不开地址。</p>
+<p>例如栈溢出中，你关心：</p>
+<ul>
+<li>缓冲区起始地址</li>
+<li>返回地址在栈上的位置</li>
+<li>输入覆盖到了哪里</li>
+<li>崩溃时 RIP 变成了什么</li>
+<li>payload 位于哪个地址</li>
+</ul>
+<p>堆漏洞中，你关心：</p>
+<ul>
+<li>堆块地址</li>
+<li>堆元数据</li>
+<li>free 后的指针</li>
+<li>被覆盖的函数指针</li>
+</ul>
+<p>权限或内核漏洞中，你可能关心：</p>
+<ul>
+<li>用户态地址</li>
+<li>内核态地址</li>
+<li>指针是否经过检查</li>
+<li>地址是否可读写</li>
+</ul>
+<p>现代防护机制也和地址紧密相关：</p>
+<table>
+<thead>
+<tr>
+<th>防护</th>
+<th>和地址的关系</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ASLR</td>
+<td>随机化地址</td>
+</tr>
+<tr>
+<td>DEP / NX</td>
+<td>控制某些地址区域是否可执行</td>
+</tr>
+<tr>
+<td>Canary</td>
+<td>检测栈上关键位置是否被覆盖</td>
+</tr>
+<tr>
+<td>PIE</td>
+<td>让程序代码基址可随机化</td>
+</tr>
+<tr>
+<td>CFG</td>
+<td>限制间接调用能跳到哪些地址</td>
+</tr>
+</tbody></table>
+<hr>
+<h2><span id="21-%E5%9C%B0%E5%9D%80%E5%92%8C%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E7%9A%84%E5%85%B3%E7%B3%BB">21. 地址和恶意代码分析的关系</span></h2><p>恶意代码分析中，地址同样重要。</p>
+<p>你可能需要观察：</p>
+<ul>
+<li>解密后的字符串在内存哪里</li>
+<li>配置数据被写到哪里</li>
+<li>是否申请了可执行内存</li>
+<li>是否把代码写入其他进程内存</li>
+<li>是否跳转到动态生成的代码</li>
+<li>是否修改 IAT 或函数入口</li>
+</ul>
+<p>例如，一个程序调用 Windows API：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">VirtualAlloc<br>WriteProcessMemory<br>CreateRemoteThread<br></code></pre></td></tr></tbody></table></figure>
+
+<p>从地址角度看，它可能做了：</p>
+<ol>
+<li>分配一块内存</li>
+<li>向某个地址写入数据</li>
+<li>让线程从某个地址开始执行</li>
+</ol>
+<p>这就是理解进程注入等技术的基础。</p>
+<p>本课程不会引导你做未授权攻击，但会帮助你理解这些行为为什么可疑、如何分析。</p>
+<hr>
+<h2><span id="22-%E6%9C%AC%E8%8A%82-linux-%E5%AE%9E%E9%AA%8C%E6%89%93%E5%8D%B0%E4%B8%8D%E5%90%8C%E5%AF%B9%E8%B1%A1%E5%9C%B0%E5%9D%80">22. 本节 Linux 实验：打印不同对象地址</span></h2><p>创建 <code>addr_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><span class="hljs-type">int</span> global_zero;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"inside foo\n"</span>);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> local_var = <span class="hljs-number">456</span>;<br>    <span class="hljs-type">int</span> *heap_var = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));<br>    <span class="hljs-type">char</span> *str = <span class="hljs-string">"hello memory"</span>;<br><br>    *heap_var = <span class="hljs-number">789</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"main addr:        %p\n"</span>, main);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"foo addr:         %p\n"</span>, foo);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_var addr:  %p\n"</span>, &amp;global_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_zero addr: %p\n"</span>, &amp;global_zero);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"local_var addr:   %p\n"</span>, &amp;local_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"heap_var value:   %p\n"</span>, heap_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"heap_var addr:    %p\n"</span>, &amp;heap_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"str value:        %p\n"</span>, str);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"str addr:         %p\n"</span>, &amp;str);<br><br>    <span class="hljs-built_in">free</span>(heap_var);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc addr_demo.c -o addr_demo<br>./addr_demo<br>./addr_demo<br>./addr_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>记录每次输出。</p>
+<p>思考：</p>
+<ol>
+<li>哪些地址比较接近？</li>
+<li>哪些地址每次运行都会变化？</li>
+<li>局部变量和堆变量地址是否在相近区域？</li>
+<li><code>heap_var value</code> 和 <code>heap_var addr</code> 有什么区别？</li>
+<li><code>str value</code> 和 <code>str addr</code> 有什么区别？</li>
+</ol>
+<hr>
+<h2><span id="23-%E6%9C%AC%E8%8A%82-linux-%E5%AE%9E%E9%AA%8C%E6%9F%A5%E7%9C%8B%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84">23. 本节 Linux 实验：查看内存映射</span></h2><p>创建 <code>maps_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_var = <span class="hljs-number">123</span>;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> local_var = <span class="hljs-number">456</span>;<br>    <span class="hljs-type">void</span> *heap = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">100</span>);<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"pid = %d\n"</span>, getpid());<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"main = %p\n"</span>, main);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"global_var = %p\n"</span>, &amp;global_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"local_var = %p\n"</span>, &amp;local_var);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"heap = %p\n"</span>, heap);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"press Enter to exit...\n"</span>);<br>    getchar();<br><br>    <span class="hljs-built_in">free</span>(heap);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc maps_demo.c -o maps_demo<br>./maps_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>程序会打印 PID 并等待输入。</p>
+<p>另开终端：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /proc/&lt;pid&gt;/maps<br></code></pre></td></tr></tbody></table></figure>
+
+<p>把 <code>&lt;pid&gt;</code> 换成程序输出的 PID。</p>
+<p>观察：</p>
+<ul>
+<li>程序自身映射区域</li>
+<li><code>[heap]</code></li>
+<li><code>[stack]</code></li>
+<li>libc 映射</li>
+<li>权限位 <code>rwx</code></li>
+</ul>
+<hr>
+<h2><span id="24-windows-%E5%AF%B9%E7%85%A7%E5%AE%9E%E9%AA%8C">24. Windows 对照实验</span></h2><p>如果你有 Windows 环境，可以写同样的 C 程序，编译成 exe。</p>
+<p>使用 x64dbg：</p>
+<ol>
+<li>打开程序</li>
+<li>运行到 <code>main</code> 附近</li>
+<li>查看寄存器</li>
+<li>查看栈窗口</li>
+<li>查看内存 Dump</li>
+<li>查看模块基址</li>
+</ol>
+<p>使用 Process Explorer：</p>
+<ol>
+<li>找到进程</li>
+<li>查看 DLL 模块</li>
+<li>查看内存信息</li>
+<li>观察程序多次运行时模块地址是否变化</li>
+</ol>
+<p>思考：</p>
+<ul>
+<li>Windows 下地址是不是也会变化？</li>
+<li>exe 和 DLL 是否都有加载基址？</li>
+<li>栈和堆是否也存在？</li>
+</ul>
+<hr>
+<h2><span id="25-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">25. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>计算机底层用二进制表示数据。</li>
+<li>8 个 bit 组成 1 个 byte。</li>
+<li>十六进制适合表示地址、机器码和二进制数据。</li>
+<li>内存可以先理解成一个巨大的字节数组。</li>
+<li>地址是内存位置的编号。</li>
+<li>C 语言里的指针变量存的是地址。</li>
+<li><code>p</code> 是地址，<code>*p</code> 是访问地址里的值。</li>
+<li>程序运行时通常有代码区、全局区、堆、栈等区域。</li>
+<li>程序中看到的地址通常是虚拟地址。</li>
+<li>ASLR 会让某些地址在每次运行时变化。</li>
+<li>地址是逆向工程和漏洞分析的坐标系。</li>
+</ol>
+<hr>
+<h2><span id="26-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">26. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1%E6%89%93%E5%8D%B0%E5%9C%B0%E5%9D%80%E5%B9%B6%E5%88%86%E6%9E%90">作业 1：打印地址并分析</span></h3><p>写 <code>addr_demo.c</code>，打印：</p>
+<ul>
+<li>函数地址</li>
+<li>全局变量地址</li>
+<li>局部变量地址</li>
+<li>malloc 返回的地址</li>
+<li>指针变量自己的地址</li>
+<li>字符串常量地址</li>
+</ul>
+<p>运行 3 次，记录输出。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 源代码<br>2. 三次运行结果<br>3. 哪些地址发生变化<br>4. 哪些地址比较接近<br>5. 你对栈、堆、代码区、全局区的初步理解<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2%E5%8C%BA%E5%88%86%E6%8C%87%E9%92%88%E7%9A%84%E5%80%BC%E5%92%8C%E6%8C%87%E9%92%88%E8%87%AA%E5%B7%B1%E7%9A%84%E5%9C%B0%E5%9D%80">作业 2：区分指针的值和指针自己的地址</span></h3><p>写程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">123</span>;<br>    <span class="hljs-type">int</span> *p = &amp;x;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"x = %d\n"</span>, x);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"&amp;x = %p\n"</span>, &amp;x);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"p = %p\n"</span>, p);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"&amp;p = %p\n"</span>, &amp;p);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"*p = %d\n"</span>, *p);<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>回答：</p>
+<ol>
+<li><code>p</code> 和 <code>&amp;p</code> 一样吗？</li>
+<li><code>p</code> 和 <code>&amp;x</code> 一样吗？</li>
+<li><code>*p</code> 是什么意思？</li>
+<li>指针变量本身是否也需要内存保存？</li>
+</ol>
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3%E6%9F%A5%E7%9C%8B-procmaps">作业 3：查看 <code>/proc/&lt;pid&gt;/maps</code></span></h3><p>运行 <code>maps_demo.c</code>，查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /proc/&lt;pid&gt;/maps<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 程序 PID<br>2. main 地址<br>3. heap 地址<br>4. stack 地址<br>5. maps 中对应区域<br>6. 哪些区域可执行，哪些区域可写<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="27-%E8%87%AA%E6%B5%8B%E9%A2%98">27. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>1 byte 等于多少 bit？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>为什么十六进制比二进制更适合人阅读？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>内存地址可以如何理解？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p><code>int *p = &amp;x;</code> 中，<code>p</code>、<code>&amp;p</code>、<code>*p</code> 分别是什么意思？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p>栈和堆有什么初步区别？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>为什么程序多次运行时地址可能变化？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>为什么逆向工程离不开地址？</p>
+<hr>
+<h2><span id="28-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">28. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>1 byte 等于 8 bit。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>因为二进制太长，十六进制一位可以表示 4 个二进制位，更紧凑，适合表示地址、机器码和内存数据。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>内存地址可以理解为内存中某个字节位置的编号。程序中看到的地址通常是虚拟地址。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p><code>p</code> 是指针变量的值，也就是 <code>x</code> 的地址；<code>&amp;p</code> 是指针变量 <code>p</code> 自己所在的地址；<code>*p</code> 是访问 <code>p</code> 指向的地址里的内容，也就是 <code>x</code> 的值。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p>栈主要用于函数调用、局部变量和返回地址，通常由编译器和运行时自动管理；堆用于动态内存分配，例如 <code>malloc</code>，需要程序员手动释放。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>因为现代操作系统通常启用 ASLR，让栈、堆、共享库、程序基址等地址随机化，以提高漏洞利用难度。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>因为逆向分析中的入口点、函数、字符串、跳转目标、API、栈、堆、返回地址都需要通过地址定位。地址是二进制分析的坐标系。</p>
+<hr>
+<h2><span id="29-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">29. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">函数调用和栈帧<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会进一步理解：</p>
+<ul>
+<li>函数调用时栈发生了什么</li>
+<li>返回地址是什么</li>
+<li>局部变量如何放在栈上</li>
+<li>为什么缓冲区溢出可能影响程序控制流</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC02%E8%8A%82-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%9C%B0%E5%9D%80%E5%92%8C%E5%86%85%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第02节-二进制地址和内存基本概念&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第02节-二进制地址和内存基本概念&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

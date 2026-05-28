@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第01节-从源代码到程序运行 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/4.jpg"
+				data-sizes="auto"
+				alt="第01节-从源代码到程序运行"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第01节-从源代码到程序运行</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 21 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-1-%E8%8A%82%E4%BB%8E%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C">第 1 节：从源代码到程序运行</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 1 周<br>课程主题：计算机如何运行程序<br>本节目标：理解一个 C 程序从源代码变成正在运行的进程，中间经历了哪些阶段，操作系统在其中承担什么职责。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>什么是操作系统？</li>
+<li>程序为什么不能“自己运行”？</li>
+<li>源代码、可执行文件、进程之间有什么区别？</li>
+<li>编译、汇编、链接、加载分别在做什么？</li>
+<li>操作系统为什么要把程序和硬件隔离开？</li>
+<li>为什么网络安全、逆向工程、漏洞分析都必须理解程序运行过程？</li>
+</ol>
+<p>本节课不要求你立刻理解所有底层细节，但你要建立一条主线：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">源代码 -&gt; 编译 -&gt; 汇编 -&gt; 链接 -&gt; 可执行文件 -&gt; 加载 -&gt; 进程 -&gt; 系统调用 -&gt; 内核 -&gt; 硬件<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这条线后面会反复出现。</p>
+<hr>
+<h2><span id="2-%E4%BB%80%E4%B9%88%E6%98%AF%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">2. 什么是操作系统</span></h2><p>操作系统可以先粗略理解成：</p>
+<blockquote>
+<p>操作系统是运行在硬件之上的基础软件，它负责管理硬件资源，并为普通程序提供统一、安全、方便的运行环境。</p>
+</blockquote>
+<p>如果没有操作系统，一个普通程序想要完成最简单的事情，比如打印一行文字，理论上就要自己处理：</p>
+<ul>
+<li>CPU 如何执行指令</li>
+<li>内存如何分配</li>
+<li>屏幕或终端如何输出</li>
+<li>文件如何读写</li>
+<li>键盘输入如何接收</li>
+<li>多个程序如何同时运行</li>
+<li>程序之间如何互不干扰</li>
+<li>用户权限如何控制</li>
+</ul>
+<p>这显然太复杂。</p>
+<p>所以操作系统替应用程序管理底层资源。</p>
+<p>常见操作系统包括：</p>
+<ul>
+<li>Linux</li>
+<li>Windows</li>
+<li>macOS</li>
+<li>Android</li>
+<li>iOS</li>
+</ul>
+<p>它们的内部实现不同，但核心职责类似。</p>
+<hr>
+<h2><span id="3-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%BB%E8%A6%81%E7%AE%A1%E7%90%86%E4%BB%80%E4%B9%88">3. 操作系统主要管理什么</span></h2><p>从学习操作系统的角度，可以先抓住五类资源。</p>
+<h3><span id="31-cpu">3.1 CPU</span></h3><p>CPU 是执行指令的硬件。</p>
+<p>操作系统要决定：</p>
+<ul>
+<li>哪个程序先运行</li>
+<li>每个程序运行多久</li>
+<li>程序阻塞时切换到谁</li>
+<li>多个线程如何调度</li>
+</ul>
+<p>这部分对应后面的：</p>
+<ul>
+<li>进程</li>
+<li>线程</li>
+<li>调度</li>
+<li>上下文切换</li>
+</ul>
+<hr>
+<h3><span id="32-%E5%86%85%E5%AD%98">3.2 内存</span></h3><p>程序运行时需要内存。</p>
+<p>操作系统要决定：</p>
+<ul>
+<li>给每个进程分配多少内存</li>
+<li>每个进程能访问哪些地址</li>
+<li>不同进程之间如何隔离</li>
+<li>程序访问非法地址时如何处理</li>
+</ul>
+<p>这部分对应后面的：</p>
+<ul>
+<li>虚拟内存</li>
+<li>页表</li>
+<li>栈</li>
+<li>堆</li>
+<li>ASLR</li>
+<li>DEP / NX</li>
+<li>内存漏洞</li>
+</ul>
+<hr>
+<h3><span id="33-%E6%96%87%E4%BB%B6">3.3 文件</span></h3><p>程序经常要读写文件。</p>
+<p>操作系统要提供：</p>
+<ul>
+<li>文件创建</li>
+<li>文件读取</li>
+<li>文件写入</li>
+<li>文件删除</li>
+<li>文件权限控制</li>
+<li>目录管理</li>
+</ul>
+<p>这部分对应后面的：</p>
+<ul>
+<li>文件系统</li>
+<li>文件描述符</li>
+<li>Windows Handle</li>
+<li>恶意代码文件行为分析</li>
+</ul>
+<hr>
+<h3><span id="34-%E8%AE%BE%E5%A4%87%E5%92%8C-io">3.4 设备和 I/O</span></h3><p>键盘、鼠标、硬盘、网卡、显示器都属于设备。</p>
+<p>普通程序一般不直接控制硬件，而是通过操作系统提供的接口访问设备。</p>
+<p>这部分对应后面的：</p>
+<ul>
+<li>驱动程序</li>
+<li>I/O</li>
+<li>中断</li>
+<li>内核</li>
+</ul>
+<hr>
+<h3><span id="35-%E6%9D%83%E9%99%90%E5%92%8C%E5%AE%89%E5%85%A8%E8%BE%B9%E7%95%8C">3.5 权限和安全边界</span></h3><p>操作系统还要控制：</p>
+<ul>
+<li>谁能访问某个文件</li>
+<li>谁能监听某个端口</li>
+<li>谁能安装驱动</li>
+<li>哪个进程能调试另一个进程</li>
+<li>普通用户和管理员/root 的区别</li>
+</ul>
+<p>这部分对应后面的：</p>
+<ul>
+<li>用户权限</li>
+<li>root / Administrator</li>
+<li>Token</li>
+<li>ACL</li>
+<li>UAC</li>
+<li>setuid</li>
+<li>提权漏洞</li>
+</ul>
+<hr>
+<h2><span id="4-%E7%A8%8B%E5%BA%8F%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB">4. 程序、可执行文件、进程的区别</span></h2><p>这三个词很容易混淆。</p>
+<h3><span id="41-%E6%BA%90%E4%BB%A3%E7%A0%81">4.1 源代码</span></h3><p>源代码是人写的文本，比如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello os\n"</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它是给人看的，CPU 不能直接执行 C 语言源代码。</p>
+<hr>
+<h3><span id="42-%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6">4.2 可执行文件</span></h3><p>源代码经过编译、链接之后，会变成可执行文件。</p>
+<p>Linux 下可能是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 下可能是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">hello.exe<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可执行文件本质上是一个有特定格式的二进制文件。</p>
+<p>Linux 常见格式是 ELF：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Executable and Linkable Format<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 常见格式是 PE：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Portable Executable<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可执行文件里通常包含：</p>
+<ul>
+<li>机器指令</li>
+<li>字符串</li>
+<li>全局变量初始值</li>
+<li>动态库依赖信息</li>
+<li>程序入口点</li>
+<li>段和节信息</li>
+</ul>
+<hr>
+<h3><span id="43-%E8%BF%9B%E7%A8%8B">4.3 进程</span></h3><p>进程是正在运行的程序实例。</p>
+<p>一个可执行文件放在磁盘上时，它只是文件。</p>
+<p>当你运行它时，操作系统会把它加载到内存，创建运行环境，这时它才成为进程。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>此时操作系统会创建一个进程。</p>
+<p>同一个可执行文件可以运行多次，所以可以产生多个进程。</p>
+<p>比如你打开三个记事本：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">notepad.exe 文件只有一个<br>notepad.exe 进程可以有三个<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">源代码：人写的程序文本<br>可执行文件：编译链接后的磁盘文件<br>进程：操作系统创建的运行中程序实例<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="5-%E4%BB%8E-c-%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6">5. 从 C 源代码到可执行文件</span></h2><p>以这个程序为例：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello os\n"</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>使用 gcc 编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc hello.c -o hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>表面上只执行了一条命令，但内部大致经历了四步。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">预处理 -&gt; 编译 -&gt; 汇编 -&gt; 链接<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="6-%E7%AC%AC%E4%B8%80%E6%AD%A5%E9%A2%84%E5%A4%84%E7%90%86">6. 第一步：预处理</span></h2><p>预处理主要处理 <code>#</code> 开头的内容。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>它的意思不是“运行时导入 stdio.h”，而是在编译前把相关声明展开进来。</p>
+<p>预处理会处理：</p>
+<ul>
+<li><code>#include</code></li>
+<li><code>#define</code></li>
+<li>条件编译，比如 <code>#ifdef</code></li>
+<li>去除注释</li>
+</ul>
+<p>你可以用下面命令观察预处理结果：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -E hello.c -o hello.i<br></code></pre></td></tr></tbody></table></figure>
+
+<p>生成的 <code>hello.i</code> 仍然是 C 代码，但会比原文件大很多。</p>
+<hr>
+<h2><span id="7-%E7%AC%AC%E4%BA%8C%E6%AD%A5%E7%BC%96%E8%AF%91">7. 第二步：编译</span></h2><p>编译是把 C 代码转换成汇编代码。</p>
+<p>命令：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -S hello.c -o hello.s<br></code></pre></td></tr></tbody></table></figure>
+
+<p>生成的 <code>hello.s</code> 是汇编代码。</p>
+<p>汇编代码已经很接近 CPU 能理解的指令，但仍然是文本形式。</p>
+<p>你可能会看到类似内容：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">call    puts<br>mov     eax, 0<br>ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这一步非常重要，因为逆向工程中经常看到的就是汇编指令。</p>
+<p>你写的 C 代码：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello os\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>最终会变成若干条机器相关的指令。</p>
+<hr>
+<h2><span id="8-%E7%AC%AC%E4%B8%89%E6%AD%A5%E6%B1%87%E7%BC%96">8. 第三步：汇编</span></h2><p>汇编是把汇编代码转换成目标文件。</p>
+<p>命令：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -c hello.c -o hello.o<br></code></pre></td></tr></tbody></table></figure>
+
+<p>目标文件 <code>hello.o</code> 已经是二进制文件，但它通常还不能直接运行。</p>
+<p>为什么？</p>
+<p>因为它里面可能还有一些外部符号没有解决。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello os\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>printf</code> 不是你自己写的函数，它来自 C 标准库。</p>
+<p>此时目标文件可能只知道：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">这里要调用 printf，但 printf 的最终地址还没确定<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="9-%E7%AC%AC%E5%9B%9B%E6%AD%A5%E9%93%BE%E6%8E%A5">9. 第四步：链接</span></h2><p>链接负责把多个目标文件和库组合成最终可执行文件。</p>
+<p>普通编译命令：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc hello.c -o hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>最后一步会链接 C 标准库。</p>
+<p>链接要解决的问题包括：</p>
+<ul>
+<li><code>printf</code> 在哪里？</li>
+<li>程序入口点在哪里？</li>
+<li>需要哪些动态库？</li>
+<li>各个函数和变量最终放到什么位置？</li>
+</ul>
+<p>链接分两种：</p>
+<h3><span id="91-%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5">9.1 静态链接</span></h3><p>把需要的库代码直接打进可执行文件。</p>
+<p>优点：</p>
+<ul>
+<li>依赖少</li>
+<li>部署方便</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>文件大</li>
+<li>多个程序无法共享同一份库代码</li>
+</ul>
+<hr>
+<h3><span id="92-%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5">9.2 动态链接</span></h3><p>可执行文件不包含完整库代码，只记录运行时需要哪些动态库。</p>
+<p>Linux 常见动态库：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">libc.so<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 常见动态库：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">kernel32.dll<br>user32.dll<br>ntdll.dll<br>msvcrt.dll<br></code></pre></td></tr></tbody></table></figure>
+
+<p>动态链接是逆向工程中的重点，因为导入函数能反映程序行为。</p>
+<p>例如 Windows 程序导入了：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateFileW<br>WriteFile<br>RegSetValueExW<br>CreateProcessW<br>connect<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你大致可以猜测它可能有：</p>
+<ul>
+<li>文件操作</li>
+<li>注册表操作</li>
+<li>创建进程</li>
+<li>网络连接</li>
+</ul>
+<p>这就是恶意代码分析常用的入口。</p>
+<hr>
+<h2><span id="10-%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E9%87%8C%E6%9C%89%E4%BB%80%E4%B9%88">10. 可执行文件里有什么</span></h2><p>一个可执行文件不是简单的“机器指令堆在一起”。</p>
+<p>它有格式。</p>
+<p>Linux ELF 文件通常包含：</p>
+<ul>
+<li>ELF Header</li>
+<li>Program Header</li>
+<li>Section Header</li>
+<li><code>.text</code></li>
+<li><code>.data</code></li>
+<li><code>.bss</code></li>
+<li><code>.rodata</code></li>
+<li><code>.plt</code></li>
+<li><code>.got</code></li>
+<li>动态库信息</li>
+<li>符号表</li>
+</ul>
+<p>Windows PE 文件通常包含：</p>
+<ul>
+<li>DOS Header</li>
+<li>PE Header</li>
+<li>Section Table</li>
+<li><code>.text</code></li>
+<li><code>.rdata</code></li>
+<li><code>.data</code></li>
+<li><code>.rsrc</code></li>
+<li>Import Table</li>
+<li>Export Table</li>
+<li>IAT</li>
+</ul>
+<p>现在你不需要完全掌握这些结构，只要先知道：</p>
+<blockquote>
+<p>操作系统不是随便运行一个文件，而是识别可执行文件格式，根据里面的元信息把程序加载起来。</p>
+</blockquote>
+<hr>
+<h2><span id="11-%E4%BB%8E%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E5%88%B0%E8%BF%9B%E7%A8%8B">11. 从可执行文件到进程</span></h2><p>当你执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>操作系统大致做了这些事：</p>
+<ol>
+<li>检查文件是否存在</li>
+<li>检查当前用户是否有执行权限</li>
+<li>识别文件格式，比如 ELF</li>
+<li>读取可执行文件头部</li>
+<li>创建新的进程结构</li>
+<li>为进程创建虚拟地址空间</li>
+<li>把程序代码和数据映射到内存</li>
+<li>加载动态链接器和共享库</li>
+<li>初始化栈</li>
+<li>设置参数和环境变量</li>
+<li>设置程序入口点</li>
+<li>把 CPU 控制权交给程序入口</li>
+</ol>
+<p>这时程序开始运行。</p>
+<p>注意：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序运行不是 CPU 直接从磁盘读 hello 文件执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>而是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">操作系统把可执行文件映射到进程地址空间，再让 CPU 从入口点开始执行<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="12-%E7%94%A8%E6%88%B7%E6%80%81%E5%92%8C%E5%86%85%E6%A0%B8%E6%80%81%E7%9A%84%E5%88%9D%E6%AD%A5%E6%A6%82%E5%BF%B5">12. 用户态和内核态的初步概念</span></h2><p>操作系统通常会把执行环境分成至少两类：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">用户态：普通程序运行的地方<br>内核态：操作系统内核运行的地方<br></code></pre></td></tr></tbody></table></figure>
+
+<p>普通程序运行在用户态。</p>
+<p>用户态程序不能直接：</p>
+<ul>
+<li>操作硬盘</li>
+<li>控制网卡</li>
+<li>修改页表</li>
+<li>随意访问其他进程内存</li>
+<li>执行特权指令</li>
+</ul>
+<p>如果普通程序想读文件、写屏幕、发网络包，需要请求操作系统帮忙。</p>
+<p>这种请求就叫：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">系统调用 syscall<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如 Linux 中：</p>
+<ul>
+<li><code>read</code></li>
+<li><code>write</code></li>
+<li><code>open</code></li>
+<li><code>close</code></li>
+<li><code>fork</code></li>
+<li><code>execve</code></li>
+<li><code>mmap</code></li>
+<li><code>socket</code></li>
+<li><code>connect</code></li>
+</ul>
+<p>Windows 中更常见的是先调用 Win32 API，例如：</p>
+<ul>
+<li><code>CreateFileW</code></li>
+<li><code>ReadFile</code></li>
+<li><code>WriteFile</code></li>
+<li><code>CreateProcessW</code></li>
+<li><code>VirtualAlloc</code></li>
+<li><code>CreateThread</code></li>
+</ul>
+<p>这些 API 底层可能继续调用更底层的 Native API 和系统调用。</p>
+<hr>
+<h2><span id="13-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%8C%BA%E5%88%86%E7%94%A8%E6%88%B7%E6%80%81%E5%92%8C%E5%86%85%E6%A0%B8%E6%80%81">13. 为什么要区分用户态和内核态</span></h2><p>如果所有程序都能直接控制硬件，会有严重问题。</p>
+<h3><span id="131-%E7%A8%B3%E5%AE%9A%E6%80%A7%E9%97%AE%E9%A2%98">13.1 稳定性问题</span></h3><p>一个普通程序如果写错代码，可能直接破坏整个系统。</p>
+<p>比如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">程序 A 错误修改了磁盘控制器<br>程序 B 的文件也被破坏<br>整个系统崩溃<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="132-%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98">13.2 安全问题</span></h3><p>如果普通程序能随便访问内存，它就可以读取其他程序的数据。</p>
+<p>例如：</p>
+<ul>
+<li>浏览器密码</li>
+<li>聊天记录</li>
+<li>SSH 私钥</li>
+<li>其他进程的敏感信息</li>
+</ul>
+<p>所以操作系统必须隔离进程。</p>
+<hr>
+<h3><span id="133-%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98">13.3 权限问题</span></h3><p>普通用户程序不应该随便：</p>
+<ul>
+<li>删除系统文件</li>
+<li>安装驱动</li>
+<li>监听低端口</li>
+<li>修改其他用户文件</li>
+<li>注入系统进程</li>
+</ul>
+<p>这就是权限边界。</p>
+<p>很多漏洞的本质，就是程序错误地跨越了权限边界。</p>
+<hr>
+<h2><span id="14-printf-%E8%83%8C%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88">14. <code>printf</code> 背后发生了什么</span></h2><p>我们写：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello os\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能以为它只是“打印文字”。</p>
+<p>但从系统角度，它大致经历了：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">main<br> -&gt; printf / puts<br> -&gt; C 标准库<br> -&gt; write 系统调用<br> -&gt; 内核<br> -&gt; 终端设备 / 控制台<br> -&gt; 屏幕显示<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也就是说，你看到的一行输出，背后经过了库函数和系统调用。</p>
+<p>这就是为什么我们要学：</p>
+<ul>
+<li>C 库</li>
+<li>系统调用</li>
+<li>用户态 / 内核态</li>
+<li>文件描述符</li>
+<li>终端设备</li>
+</ul>
+<hr>
+<h2><span id="15-linux-%E5%AE%9E%E9%AA%8C%E8%A7%82%E5%AF%9F-hello-%E7%A8%8B%E5%BA%8F">15. Linux 实验：观察 hello 程序</span></h2><h3><span id="151-%E5%88%9B%E5%BB%BA%E6%BA%90%E6%96%87%E4%BB%B6">15.1 创建源文件</span></h3><p>创建 <code>hello.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello os\n"</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="152-%E7%BC%96%E8%AF%91">15.2 编译</span></h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc hello.c -o hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果没有报错，会生成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">hello<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="153-%E8%BF%90%E8%A1%8C">15.3 运行</span></h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>输出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">hello os<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="154-%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B">15.4 查看文件类型</span></h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">file hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到类似输出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">hello: ELF 64-bit LSB pie executable, x86-64, dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, ...<br></code></pre></td></tr></tbody></table></figure>
+
+<p>重点关注：</p>
+<ul>
+<li><code>ELF</code></li>
+<li><code>64-bit</code></li>
+<li><code>x86-64</code></li>
+<li><code>dynamically linked</code></li>
+<li><code>pie executable</code></li>
+</ul>
+<p>解释：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ELF</td>
+<td>Linux 常见可执行文件格式</td>
+</tr>
+<tr>
+<td>64-bit</td>
+<td>64 位程序</td>
+</tr>
+<tr>
+<td>x86-64</td>
+<td>面向 x86-64 架构</td>
+</tr>
+<tr>
+<td>dynamically linked</td>
+<td>动态链接</td>
+</tr>
+<tr>
+<td>PIE</td>
+<td>地址可随机化的可执行文件</td>
+</tr>
+</tbody></table>
+<hr>
+<h3><span id="155-%E6%9F%A5%E7%9C%8B%E5%8A%A8%E6%80%81%E5%BA%93%E4%BE%9D%E8%B5%96">15.5 查看动态库依赖</span></h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ldd hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">linux-vdso.so.1<br>libc.so.6<br>/lib64/ld-linux-x86-64.so.2<br></code></pre></td></tr></tbody></table></figure>
+
+<p>说明这个程序依赖 C 标准库。</p>
+<p><code>printf</code> 就来自 libc。</p>
+<hr>
+<h3><span id="156-%E6%9F%A5%E7%9C%8B-elf-%E5%A4%B4">15.6 查看 ELF 头</span></h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">readelf -h hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>重点看：</p>
+<ul>
+<li>Class</li>
+<li>Machine</li>
+<li>Type</li>
+<li>Entry point address</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">Class:                             ELF64<br>Machine:                           Advanced Micro Devices X86-64<br>Type:                              DYN<br>Entry point address:               0x1050<br></code></pre></td></tr></tbody></table></figure>
+
+<p>入口点不是 <code>main</code>。</p>
+<p>这是一个重要结论：</p>
+<blockquote>
+<p>程序最开始执行的位置通常不是 main，而是运行时启动代码。启动代码完成初始化后才调用 main。</p>
+</blockquote>
+<hr>
+<h3><span id="157-%E8%A7%82%E5%AF%9F%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8">15.7 观察系统调用</span></h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace ./hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会看到很多输出。</p>
+<p>重点找：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">write(1, "hello os\n", 9)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明最终输出文字时，程序调用了 <code>write</code> 系统调用。</p>
+<p><code>1</code> 是标准输出文件描述符。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">0 -&gt; 标准输入 stdin<br>1 -&gt; 标准输出 stdout<br>2 -&gt; 标准错误 stderr<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="16-windows-%E5%AF%B9%E7%85%A7helloexe-%E8%83%8C%E5%90%8E%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88">16. Windows 对照：hello.exe 背后发生了什么</span></h2><p>Windows 下你可以写类似程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"hello os\n"</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">hello.exe<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 下它通常是 PE 文件。</p>
+<p>你可以用 PE-bear 或 Detect It Easy 查看：</p>
+<ul>
+<li>PE Header</li>
+<li>入口点</li>
+<li>Section</li>
+<li>Import Table</li>
+<li>依赖 DLL</li>
+</ul>
+<p>如果使用 Process Monitor 观察运行过程，可以看到它可能访问：</p>
+<ul>
+<li>exe 文件本身</li>
+<li>DLL 文件</li>
+<li>控制台相关对象</li>
+<li>注册表配置</li>
+</ul>
+<p>如果用 x64dbg 打开，可以看到程序不是直接进入 <code>main</code>，而是先经过运行时启动代码。</p>
+<p>这和 Linux 是类似的。</p>
+<hr>
+<h2><span id="17-%E4%BB%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">17. 从逆向工程角度看本节内容</span></h2><p>逆向工程不是凭空读汇编。</p>
+<p>你要知道一个程序运行前后经历了什么。</p>
+<p>拿到一个二进制程序时，逆向分析常见入口包括：</p>
+<ol>
+<li>它是什么文件格式？</li>
+<li>是 ELF 还是 PE？</li>
+<li>是 32 位还是 64 位？</li>
+<li>入口点在哪里？</li>
+<li>是否动态链接？</li>
+<li>导入了哪些库和 API？</li>
+<li>字符串在哪里？</li>
+<li>main 函数在哪里？</li>
+<li>程序运行时调用了哪些系统 API？</li>
+<li>它有什么文件、网络、进程行为？</li>
+</ol>
+<p>本节课对应逆向里的基础能力：</p>
+<ul>
+<li>识别文件格式</li>
+<li>理解入口点</li>
+<li>理解动态链接</li>
+<li>理解 API 和系统调用</li>
+<li>理解程序不是从源码运行，而是从二进制入口运行</li>
+</ul>
+<hr>
+<h2><span id="18-%E4%BB%8E%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">18. 从漏洞分析角度看本节内容</span></h2><p>漏洞不是孤立存在的。</p>
+<p>一个漏洞能不能被利用，取决于很多操作系统机制。</p>
+<p>例如：</p>
+<ul>
+<li>程序如何加载到内存</li>
+<li>栈和堆在哪里</li>
+<li>地址是否随机化</li>
+<li>内存是否可执行</li>
+<li>程序权限是什么</li>
+<li>系统调用能做什么</li>
+<li>输入从哪里进入程序</li>
+</ul>
+<p>本节课虽然还没有讲漏洞细节，但你已经建立了基本路线：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">输入进入程序 -&gt; 程序处理输入 -&gt; 内存状态变化 -&gt; 控制流可能受影响 -&gt; 系统保护机制决定后果<br></code></pre></td></tr></tbody></table></figure>
+
+<p>后面学习缓冲区溢出、UAF、ROP、提权漏洞时，都会回到这条路线。</p>
+<hr>
+<h2><span id="19-%E4%BB%8E%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">19. 从恶意代码分析角度看本节内容</span></h2><p>恶意代码也是普通程序。</p>
+<p>它同样需要：</p>
+<ul>
+<li>被操作系统加载</li>
+<li>调用 API</li>
+<li>创建进程或线程</li>
+<li>读写文件</li>
+<li>访问网络</li>
+<li>分配内存</li>
+<li>使用权限</li>
+</ul>
+<p>所以分析恶意代码时，经常先看：</p>
+<ul>
+<li>它是什么格式？</li>
+<li>导入了哪些 API？</li>
+<li>是否动态加载函数？</li>
+<li>运行时创建了哪些文件？</li>
+<li>是否连接网络？</li>
+<li>是否创建子进程？</li>
+<li>是否申请可执行内存？</li>
+</ul>
+<p>这些都建立在操作系统知识上。</p>
+<hr>
+<h2><span id="20-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">20. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>操作系统负责管理硬件资源，并为程序提供运行环境。</li>
+<li>源代码不能直接运行，必须经过编译、汇编、链接。</li>
+<li>可执行文件是磁盘上的二进制文件，进程是运行中的程序实例。</li>
+<li>Linux 常见可执行文件格式是 ELF，Windows 常见格式是 PE。</li>
+<li>程序运行时，操作系统会创建进程、分配虚拟内存、加载代码和库。</li>
+<li>普通程序运行在用户态，需要通过系统调用请求内核服务。</li>
+<li><code>printf</code> 背后最终会走到系统调用，例如 Linux 的 <code>write</code>。</li>
+<li>逆向工程、漏洞分析、恶意代码分析都离不开程序加载和运行机制。</li>
+</ol>
+<hr>
+<h2><span id="21-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">21. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1%E7%BC%96%E8%AF%91%E5%B9%B6%E8%A7%82%E5%AF%9F-hello-%E7%A8%8B%E5%BA%8F">作业 1：编译并观察 hello 程序</span></h3><p>要求：</p>
+<ol>
+<li>写 <code>hello.c</code></li>
+<li>编译为 <code>hello</code></li>
+<li>执行：</li>
+</ol>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc hello.c -o hello<br>file hello<br>ldd hello<br>readelf -h hello<br>strace ./hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交记录：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 源代码<br>2. 编译命令<br>3. file 输出<br>4. ldd 输出<br>5. readelf -h 中的 Entry point address<br>6. strace 中的 write 系统调用<br>7. 用自己的话解释：程序从源代码到运行经历了什么<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2%E6%8B%86%E5%88%86%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B">作业 2：拆分编译过程</span></h3><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -E hello.c -o hello.i<br>gcc -S hello.c -o hello.s<br>gcc -c hello.c -o hello.o<br>gcc hello.o -o hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">file hello.i<br>file hello.s<br>file hello.o<br>file hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>回答：</p>
+<ol>
+<li>哪些是文本文件？</li>
+<li>哪些是二进制文件？</li>
+<li><code>hello.o</code> 为什么通常不能直接运行？</li>
+<li><code>hello</code> 和 <code>hello.o</code> 有什么区别？</li>
+</ol>
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3windows-pe-%E5%AF%B9%E7%85%A7">作业 3：Windows PE 对照</span></h3><p>如果你有 Windows 环境：</p>
+<ol>
+<li>编译一个 <code>hello.exe</code></li>
+<li>用 Detect It Easy 查看文件类型</li>
+<li>用 PE-bear 查看入口点和导入表</li>
+<li>用 Process Monitor 观察运行时行为</li>
+</ol>
+<p>记录：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 文件格式<br>2. 程序入口点<br>3. 导入了哪些 DLL<br>4. 导入了哪些函数<br>5. 是否观察到文件或注册表访问<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="22-%E8%87%AA%E6%B5%8B%E9%A2%98">22. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>源代码、可执行文件、进程三者有什么区别？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>为什么 C 程序需要链接？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>为什么 <code>main</code> 通常不是程序真正开始执行的第一条代码？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p>用户态程序为什么不能直接访问硬件？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p>Linux 下 <code>printf("hello")</code> 最终大概率会触发哪个系统调用？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p>为什么导入 API 对逆向分析有帮助？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>为什么操作系统要区分用户态和内核态？</p>
+<hr>
+<h2><span id="23-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">23. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>源代码是人写的文本；可执行文件是编译链接后的二进制文件；进程是操作系统加载并正在运行的程序实例。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>因为程序中可能引用外部函数或库，例如 <code>printf</code>。链接负责把目标文件和库组合起来，并解决符号引用、入口点、动态库依赖等问题。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>因为程序运行前需要初始化运行时环境，例如设置栈、初始化 libc、处理参数和环境变量等。启动代码完成这些工作后才调用 <code>main</code>。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p>为了稳定性、安全性和权限控制。否则普通程序可以破坏系统、访问其他进程内存或绕过权限限制。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p>通常会触发 <code>write</code> 系统调用，把内容写到标准输出。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>导入 API 能反映程序可能具备的行为。例如导入文件、网络、进程、注册表相关 API，说明程序可能执行对应操作。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>内核态拥有高权限，可以管理硬件和系统资源；用户态权限受限。区分二者可以防止普通程序破坏系统或越权访问资源。</p>
+<hr>
+<h2><span id="24-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">24. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">二进制、地址和内存基本概念<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会开始理解：</p>
+<ul>
+<li>地址是什么</li>
+<li>指针为什么重要</li>
+<li>栈、堆、全局区、代码区分别是什么</li>
+<li>为什么逆向和漏洞分析离不开内存地址</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC01%E8%8A%82-%E4%BB%8E%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第01节-从源代码到程序运行&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第01节-从源代码到程序运行&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

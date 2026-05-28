@@ -151,8 +151,8 @@ article h2::after { background: var(--theme-color) !important; }
 		</a>
 	</div>
 	<div class="kira-count">
-		<div><span>文章</span>19</div>
-		<div><span>标签</span>3</div>
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
 		<div><span>分类</span>0</div>
 	</div>
 	<div class="kira-list">
@@ -296,7 +296,7 @@ article h2::after { background: var(--theme-color) !important; }
 			
 	<div class="kira-widget-wrap">
 		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
-			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 20px;">python菜鸟</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
 		</div>
 		
 	</div>
@@ -309,7 +309,7 @@ article h2::after { background: var(--theme-color) !important; }
 			文章归档
 		</h3>
 		<div class="kira-widget">
-			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">19</span></li></ul>
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
 		</div>
 	</div>
 
@@ -506,6 +506,7 @@ article h2::after { background: var(--theme-color) !important; }
     <div class="message" style="opacity:0"></div>
     <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
     <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
 </div>
 <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script>
@@ -515,7 +516,74 @@ article h2::after { background: var(--theme-color) !important; }
 <script src="/live2d/js/live2d.js"></script>
 <script src="/live2d/js/message.js"></script>
 <script>
-    loadlive2d("live2d", "/live2d/model/tia/model.json");
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
 </script>
 <script>
   (function() {
@@ -601,5 +669,5 @@ article h2::after { background: var(--theme-color) !important; }
 </div>
 
 		</div>
-	<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+	</body>
 </html>

@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第03节-函数调用和栈帧 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/8.jpg"
+				data-sizes="auto"
+				alt="第03节-函数调用和栈帧"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第03节-函数调用和栈帧</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 21 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-3-%E8%8A%82%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E5%92%8C%E6%A0%88%E5%B8%A7">第 3 节：函数调用和栈帧</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 2 周<br>课程主题：C 语言、栈和汇编基础<br>本节目标：理解函数调用时 CPU、寄存器和栈大致发生了什么，掌握栈帧、返回地址、局部变量的基本概念，为后续学习汇编、调试器和栈溢出打基础。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>函数调用时，程序为什么能跳到另一个函数执行？</li>
+<li>函数执行完后，CPU 怎么知道回到哪里？</li>
+<li>栈是什么？为什么函数调用离不开栈？</li>
+<li>栈帧是什么？</li>
+<li>局部变量通常放在哪里？</li>
+<li>返回地址是什么？</li>
+<li><code>call</code> 和 <code>ret</code> 大致做了什么？</li>
+<li>为什么缓冲区溢出可能影响程序控制流？</li>
+<li>GDB 中如何观察调用栈、寄存器和栈内存？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">函数调用 -&gt; 参数传递 -&gt; call -&gt; 返回地址入栈 -&gt; 新函数栈帧 -&gt; 局部变量 -&gt; ret -&gt; 回到调用者<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果你以后学漏洞利用、逆向工程、恶意代码调试，这一节是非常核心的基础。</p>
+<hr>
+<h2><span id="2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%90%86%E8%A7%A3%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8">2. 为什么要理解函数调用</span></h2><p>在 C 语言里，函数调用看起来很简单：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">foo(<span class="hljs-number">10</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>但从 CPU 和内存角度看，它背后至少涉及：</p>
+<ul>
+<li>跳转到函数代码地址</li>
+<li>保存返回位置</li>
+<li>传递参数</li>
+<li>分配局部变量空间</li>
+<li>执行函数体</li>
+<li>返回调用者</li>
+<li>恢复调用者继续执行</li>
+</ul>
+<p>逆向工程中，你看到的不是：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">foo(<span class="hljs-number">10</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>而可能是：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov edi, 10<br>call 0x401136<br></code></pre></td></tr></tbody></table></figure>
+
+<p>漏洞分析中，你关心的也不是“函数调用语法”，而是：</p>
+<ul>
+<li>参数放在哪里</li>
+<li>局部变量放在哪里</li>
+<li>返回地址放在哪里</li>
+<li>输入是否能覆盖返回地址</li>
+<li>崩溃时 <code>rip</code> 为什么变成异常值</li>
+</ul>
+<p>所以理解函数调用，是从 C 语言走向汇编、逆向和漏洞分析的关键一步。</p>
+<hr>
+<h2><span id="3-%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E4%BE%8B%E5%AD%90">3. 一个简单的函数调用例子</span></h2><p>先看这个程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> {<br>    <span class="hljs-type">int</span> y = x + <span class="hljs-number">1</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"y = %d\n"</span>, y);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    foo(<span class="hljs-number">10</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>从 C 语言视角看：</p>
+<ol>
+<li>程序进入 <code>main</code></li>
+<li><code>main</code> 调用 <code>foo(10)</code></li>
+<li><code>foo</code> 中计算 <code>y = 11</code></li>
+<li>打印 <code>y = 11</code></li>
+<li><code>foo</code> 返回</li>
+<li><code>main</code> 返回</li>
+<li>程序结束</li>
+</ol>
+<p>但是从底层视角看，还要问：</p>
+<ul>
+<li><code>foo</code> 的代码在哪里？</li>
+<li><code>10</code> 这个参数怎么传过去？</li>
+<li><code>y</code> 存在哪里？</li>
+<li><code>foo</code> 执行完怎么回到 <code>main</code>？</li>
+</ul>
+<p>这些问题都和栈、寄存器、调用约定有关。</p>
+<hr>
+<h2><span id="4-%E6%A0%88%E6%98%AF%E4%BB%80%E4%B9%88">4. 栈是什么</span></h2><p>栈是一种后进先出的数据结构。</p>
+<p>英文是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">stack<br></code></pre></td></tr></tbody></table></figure>
+
+<p>后进先出可以理解为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Last In, First Out<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也就是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">最后放进去的，最先拿出来<br></code></pre></td></tr></tbody></table></figure>
+
+<p>现实类比：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">一摞盘子<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你最后放上去的盘子，通常最先拿下来。</p>
+<p>在程序运行中，栈常用于管理函数调用。</p>
+<p>每调用一个函数，就在栈上创建一块区域，用来保存这个函数运行所需的信息。</p>
+<p>函数返回时，这块区域被释放。</p>
+<hr>
+<h2><span id="5-%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E6%A0%88">5. 程序运行时的栈</span></h2><p>每个线程通常都有自己的栈。</p>
+<p>也就是说：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">一个进程可以有多个线程<br>每个线程有自己的栈<br></code></pre></td></tr></tbody></table></figure>
+
+<p>栈里常见内容包括：</p>
+<ul>
+<li>函数返回地址</li>
+<li>上一个栈帧的信息</li>
+<li>局部变量</li>
+<li>临时数据</li>
+<li>部分函数参数</li>
+<li>保存的寄存器</li>
+</ul>
+<p>在 x86-64 Linux 中，栈通常从高地址向低地址增长。</p>
+<p>也就是说：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">push 数据时，栈顶地址变小<br>pop 数据时，栈顶地址变大<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以粗略画成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs text">高地址<br>+----------------+<br>| 调用者栈帧     |<br>+----------------+<br>| 返回地址       |<br>+----------------+<br>| 当前函数栈帧   |<br>| 局部变量       |<br>| 临时数据       |<br>+----------------+<br>低地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p>不同架构、系统、编译器优化选项会影响具体布局。</p>
+<p>但“函数调用会使用栈保存上下文”这个思想非常重要。</p>
+<hr>
+<h2><span id="6-%E4%BB%80%E4%B9%88%E6%98%AF%E6%A0%88%E5%B8%A7">6. 什么是栈帧</span></h2><p>栈帧英文是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">stack frame<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可以理解为：</p>
+<blockquote>
+<p>一个函数在栈上拥有的那一块工作区域。</p>
+</blockquote>
+<p>每次函数调用，通常都会有一个对应的栈帧。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">main() -&gt; foo() -&gt; bar()<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调用过程中，栈上可能依次出现：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">main 的栈帧<br>foo 的栈帧<br>bar 的栈帧<br></code></pre></td></tr></tbody></table></figure>
+
+<p>当前正在执行 <code>bar</code> 时，调用链大致是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">main 调用了 foo<br>foo 调用了 bar<br>bar 正在执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>GDB 中的 <code>bt</code> 命令看到的就是调用栈，也就是当前函数调用链。</p>
+<hr>
+<h2><span id="7-%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80%E6%98%AF%E4%BB%80%E4%B9%88">7. 返回地址是什么</span></h2><p>函数调用有一个关键问题：</p>
+<blockquote>
+<p>被调用函数执行完以后，CPU 怎么知道回到调用者的哪一行继续执行？</p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    foo(<span class="hljs-number">10</span>);<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"after foo\n"</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>执行 <code>foo(10)</code> 时，CPU 会跳到 <code>foo</code> 的代码处执行。</p>
+<p>但 <code>foo</code> 执行完以后，需要回到：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">"after foo\n"</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这个位置。</p>
+<p>所以在调用 <code>foo</code> 时，程序需要保存一个位置：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">foo 返回后应该继续执行的地址<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这个位置就是返回地址。</p>
+<p>在常见 x86-64 调用中，<code>call</code> 指令会把返回地址压入栈中，然后跳转到目标函数。</p>
+<hr>
+<h2><span id="8-call-%E6%8C%87%E4%BB%A4%E5%A4%A7%E8%87%B4%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88">8. <code>call</code> 指令大致做了什么</span></h2><p>汇编中的 <code>call</code> 可以先理解成做了两件事：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 把下一条指令的地址压入栈，作为返回地址<br>2. 跳转到被调用函数的地址执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs asm">call foo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致等价于：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">push 返回地址<br>jump foo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这不是完全等价的真实机器实现，但作为入门理解足够。</p>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">0x401150: call 0x401136<br>0x401155: mov eax, 0<br></code></pre></td></tr></tbody></table></figure>
+
+<p>当执行 <code>call 0x401136</code> 时：</p>
+<ul>
+<li>返回地址是 <code>0x401155</code></li>
+<li>CPU 跳到 <code>0x401136</code> 执行</li>
+<li><code>foo</code> 执行完后应该回到 <code>0x401155</code></li>
+</ul>
+<hr>
+<h2><span id="9-ret-%E6%8C%87%E4%BB%A4%E5%A4%A7%E8%87%B4%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88">9. <code>ret</code> 指令大致做了什么</span></h2><p><code>ret</code> 用于函数返回。</p>
+<p>它大致做：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 从栈顶取出返回地址<br>2. 跳转到这个地址继续执行<br></code></pre></td></tr></tbody></table></figure>
+
+<p>也就是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">pop rip<br></code></pre></td></tr></tbody></table></figure>
+
+<p>其中 <code>rip</code> 是 x86-64 中的指令指针寄存器，表示 CPU 下一条要执行的指令地址。</p>
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">call 负责保存返回地址并跳过去<br>ret 负责取出返回地址并跳回来<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这也是为什么返回地址对漏洞分析非常重要。</p>
+<p>如果栈上的返回地址被错误覆盖，<code>ret</code> 就可能跳到错误位置。</p>
+<hr>
+<h2><span id="10-rsp-%E5%92%8C-rbp">10. <code>rsp</code> 和 <code>rbp</code></span></h2><p>在 x86-64 中，和栈密切相关的两个寄存器是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">rsp<br>rbp<br></code></pre></td></tr></tbody></table></figure>
+
+<h3><span id="101-rsp">10.1 <code>rsp</code></span></h3><p><code>rsp</code> 是栈指针寄存器。</p>
+<p>它通常指向当前栈顶。</p>
+<p>当执行 <code>push</code> 时：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">rsp 变小<br>数据写入 rsp 指向的位置<br></code></pre></td></tr></tbody></table></figure>
+
+<p>当执行 <code>pop</code> 时：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">从 rsp 指向的位置取数据<br>rsp 变大<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="102-rbp">10.2 <code>rbp</code></span></h3><p><code>rbp</code> 常被用作栈帧基址。</p>
+<p>在没有优化或保留帧指针的情况下，一个函数常见开头是：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">push rbp<br>mov rbp, rsp<br>sub rsp, 0x20<br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致含义：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">push rbp        保存调用者的 rbp<br>mov rbp, rsp    让 rbp 指向当前函数栈帧基准位置<br>sub rsp, 0x20   为局部变量预留栈空间<br></code></pre></td></tr></tbody></table></figure>
+
+<p>函数结尾可能是：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">leave<br>ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>leave</code> 大致相当于：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov rsp, rbp<br>pop rbp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>然后 <code>ret</code> 返回调用者。</p>
+<hr>
+<h2><span id="11-%E4%B8%80%E4%B8%AA%E5%85%B8%E5%9E%8B%E6%A0%88%E5%B8%A7%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7">11. 一个典型栈帧长什么样</span></h2><p>以没有优化的简单函数为例：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> {<br>    <span class="hljs-type">int</span> y = x + <span class="hljs-number">1</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%d\n"</span>, y);<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>栈帧可能大致像这样：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs text">高地址<br>+--------------------+<br>| 返回地址           |<br>+--------------------+<br>| 调用者保存的 rbp   | &lt;- rbp<br>+--------------------+<br>| 局部变量 y         |<br>+--------------------+<br>| 临时空间           |<br>+--------------------+<br>低地址              &lt;- rsp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>注意：</p>
+<p>这只是教学简化图。</p>
+<p>真实情况会受到：</p>
+<ul>
+<li>编译器</li>
+<li>优化等级</li>
+<li>ABI 调用约定</li>
+<li>栈对齐</li>
+<li>是否开启保护机制</li>
+<li>是否使用 frame pointer</li>
+</ul>
+<p>等因素影响。</p>
+<p>但是你现在需要先掌握：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">栈帧里可能有局部变量、保存的 rbp、返回地址等内容。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="12-%E5%8F%82%E6%95%B0%E6%98%AF%E6%80%8E%E4%B9%88%E4%BC%A0%E9%80%92%E7%9A%84">12. 参数是怎么传递的</span></h2><p>函数调用需要传参数。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">foo(<span class="hljs-number">10</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>参数 <code>10</code> 要传给 <code>foo</code>。</p>
+<p>在 x86-64 Linux，也就是 System V AMD64 ABI 中，前几个整数或指针参数通常通过寄存器传递。</p>
+<p>常见顺序：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">第 1 个参数 -&gt; rdi<br>第 2 个参数 -&gt; rsi<br>第 3 个参数 -&gt; rdx<br>第 4 个参数 -&gt; rcx<br>第 5 个参数 -&gt; r8<br>第 6 个参数 -&gt; r9<br></code></pre></td></tr></tbody></table></figure>
+
+<p>所以：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">foo(<span class="hljs-number">10</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能对应：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov edi, 10<br>call foo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows x64 调用约定不同。</p>
+<p>Windows x64 常见前四个参数：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">第 1 个参数 -&gt; rcx<br>第 2 个参数 -&gt; rdx<br>第 3 个参数 -&gt; r8<br>第 4 个参数 -&gt; r9<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是为什么同一个 C 函数，在 Linux 和 Windows 下反汇编看起来会不同。</p>
+<hr>
+<h2><span id="13-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A%E9%87%8D%E8%A6%81">13. 为什么调用约定重要</span></h2><p>调用约定规定：</p>
+<ul>
+<li>参数放在哪里</li>
+<li>返回值放在哪里</li>
+<li>哪些寄存器由调用者保存</li>
+<li>哪些寄存器由被调用者保存</li>
+<li>栈如何对齐</li>
+<li>函数返回时谁清理栈</li>
+</ul>
+<p>逆向工程中，如果你不知道调用约定，就很难判断：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov edi, 10<br>mov esi, 20<br>call 0x401136<br></code></pre></td></tr></tbody></table></figure>
+
+<p>到底是在调用：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">foo(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>还是其他形式。</p>
+<p>漏洞分析中，调用约定也会影响你判断：</p>
+<ul>
+<li>参数来源</li>
+<li>返回值位置</li>
+<li>栈布局</li>
+<li>崩溃现场</li>
+</ul>
+<hr>
+<h2><span id="14-%E8%BF%94%E5%9B%9E%E5%80%BC%E6%94%BE%E5%9C%A8%E5%93%AA%E9%87%8C">14. 返回值放在哪里</span></h2><p>在 x86-64 中，整数或指针返回值通常放在：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>例如：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> {<br>    <span class="hljs-keyword">return</span> a + b;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>调用：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> result = add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>add</code> 返回后，结果 <code>3</code> 通常会在 <code>rax</code> 中。</p>
+<p>所以你在调试器中经常会看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">call add<br>mov DWORD PTR [rbp-4], eax<br></code></pre></td></tr></tbody></table></figure>
+
+<p>意思大致是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">调用 add<br>把 eax 中的返回值保存到局部变量 result<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="15-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E4%B8%BA%E4%BB%80%E4%B9%88%E5%87%BD%E6%95%B0%E7%BB%93%E6%9D%9F%E5%90%8E%E5%A4%B1%E6%95%88">15. 局部变量为什么函数结束后失效</span></h2><p>看这个例子：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span>* <span class="hljs-title function_">bad</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> x = <span class="hljs-number">123</span>;<br>    <span class="hljs-keyword">return</span> &amp;x;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这个函数返回了局部变量 <code>x</code> 的地址。</p>
+<p>这是错误的。</p>
+<p>因为 <code>x</code> 在 <code>bad</code> 的栈帧中。</p>
+<p>当 <code>bad</code> 返回后，它的栈帧就不再有效。</p>
+<p>也就是说：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">&amp;x 指向的是一块已经不应该继续使用的栈空间<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果后续其他函数调用复用了这块栈空间，原来的值可能被覆盖。</p>
+<p>这类问题属于悬垂指针的一种。</p>
+<p>虽然它不一定每次立刻崩溃，但行为是未定义的。</p>
+<hr>
+<h2><span id="16-%E6%A0%88%E6%BA%A2%E5%87%BA%E7%9A%84%E7%9B%B4%E8%A7%89%E7%90%86%E8%A7%A3">16. 栈溢出的直觉理解</span></h2><p>看这个程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">vuln</span><span class="hljs-params">(<span class="hljs-type">char</span> *input)</span> {<br>    <span class="hljs-type">char</span> buf[<span class="hljs-number">16</span>];<br>    <span class="hljs-built_in">strcpy</span>(buf, input);<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>buf</code> 是一个 16 字节的局部数组，通常位于栈上。</p>
+<p>如果输入超过 16 字节：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>strcpy</code> 不会自动检查 <code>buf</code> 大小，会继续往后写。</p>
+<p>这样就可能覆盖栈上的其他内容。</p>
+<p>栈上可能有：</p>
+<ul>
+<li>其他局部变量</li>
+<li>保存的 rbp</li>
+<li>返回地址</li>
+</ul>
+<p>如果返回地址被覆盖，函数执行 <code>ret</code> 时就可能跳到错误地址。</p>
+<p>这就是经典栈缓冲区溢出的基础。</p>
+<p>本节不要求你写 exploit，只要求你理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">局部数组在栈上<br>越界写可能覆盖栈帧中的关键数据<br>返回地址一旦被破坏，控制流可能异常<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="17-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%8E%B0%E4%BB%A3%E7%B3%BB%E7%BB%9F%E4%B8%8D%E5%AE%B9%E6%98%93%E8%A2%AB%E7%AE%80%E5%8D%95%E6%A0%88%E6%BA%A2%E5%87%BA%E5%88%A9%E7%94%A8">17. 为什么现代系统不容易被简单栈溢出利用</span></h2><p>早期栈溢出比较容易被利用。</p>
+<p>现代系统有很多保护机制，例如：</p>
+<ul>
+<li>Stack Canary</li>
+<li>ASLR</li>
+<li>DEP / NX</li>
+<li>PIE</li>
+<li>RELRO</li>
+<li>CFG</li>
+</ul>
+<p>这些机制会增加利用难度。</p>
+<p>例如：</p>
+<ul>
+<li>Canary 用来检测返回地址附近是否被覆盖</li>
+<li>ASLR 让地址难以预测</li>
+<li>NX 让栈上的数据不能直接执行</li>
+<li>PIE 让程序代码基址随机化</li>
+</ul>
+<p>所以学习栈溢出时，不要只背 payload。</p>
+<p>应该先理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">栈布局 -&gt; 越界写 -&gt; 返回地址 -&gt; 控制流 -&gt; 防护机制<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="18-linux-%E5%AE%9E%E9%AA%8C%E7%94%A8-gdb-%E8%A7%82%E5%AF%9F%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8">18. Linux 实验：用 GDB 观察函数调用</span></h2><p>创建 <code>stack_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">bar</span><span class="hljs-params">(<span class="hljs-type">int</span> z)</span> {<br>    <span class="hljs-type">int</span> w = z + <span class="hljs-number">1</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"w = %d\n"</span>, w);<br>}<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> {<br>    <span class="hljs-type">int</span> y = x + <span class="hljs-number">1</span>;<br>    bar(y);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">10</span>;<br>    foo(a);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 stack_demo.c -o stack_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>-g</code> 表示生成调试信息</li>
+<li><code>-O0</code> 表示关闭优化，方便观察栈帧</li>
+</ul>
+<p>启动 GDB：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gdb ./stack_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在 GDB 中执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break bar<br>run<br>bt<br>info registers<br>x/30gx $rsp<br>x/20gx $rbp-0x40<br></code></pre></td></tr></tbody></table></figure>
+
+<p>重点观察：</p>
+<ul>
+<li><code>bt</code> 输出中的调用链</li>
+<li>当前函数是不是 <code>bar</code></li>
+<li><code>rsp</code> 和 <code>rbp</code> 的值</li>
+<li>栈上有哪些看起来像地址的数据</li>
+<li>是否能找到返回地址</li>
+</ul>
+<hr>
+<h2><span id="19-gdb-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E8%A7%A3%E9%87%8A">19. GDB 常用命令解释</span></h2><h3><span id="191-break">19.1 <code>break</code></span></h3><p>设置断点。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break bar<br></code></pre></td></tr></tbody></table></figure>
+
+<p>表示程序执行到 <code>bar</code> 时暂停。</p>
+<hr>
+<h3><span id="192-run">19.2 <code>run</code></span></h3><p>运行程序。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">run<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="193-bt">19.3 <code>bt</code></span></h3><p>查看调用栈。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">bt<br></code></pre></td></tr></tbody></table></figure>
+
+<p>可能输出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">#0  bar (z=11) at stack_demo.c:4<br>#1  foo (x=10) at stack_demo.c:10<br>#2  main () at stack_demo.c:15<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">main 调用了 foo<br>foo 调用了 bar<br>当前停在 bar<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="194-info-registers">19.4 <code>info registers</code></span></h3><p>查看寄存器。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">info registers<br></code></pre></td></tr></tbody></table></figure>
+
+<p>重点看：</p>
+<ul>
+<li><code>rip</code></li>
+<li><code>rsp</code></li>
+<li><code>rbp</code></li>
+<li><code>rdi</code></li>
+<li><code>rsi</code></li>
+<li><code>rax</code></li>
+</ul>
+<hr>
+<h3><span id="195-x30gx-rsp">19.5 <code>x/30gx $rsp</code></span></h3><p>查看内存。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gdb">x/30gx $rsp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>含义：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">从 rsp 指向的地址开始，以 8 字节十六进制格式，显示 30 个单位<br></code></pre></td></tr></tbody></table></figure>
+
+<p>拆开看：</p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>x</td>
+<td>examine，查看内存</td>
+</tr>
+<tr>
+<td>30</td>
+<td>显示 30 个单位</td>
+</tr>
+<tr>
+<td>g</td>
+<td>giant word，8 字节</td>
+</tr>
+<tr>
+<td>x</td>
+<td>十六进制显示</td>
+</tr>
+<tr>
+<td>$rsp</td>
+<td>从 rsp 寄存器指向的地址开始</td>
+</tr>
+</tbody></table>
+<hr>
+<h2><span id="20-linux-%E5%AE%9E%E9%AA%8C%E8%A7%82%E5%AF%9F%E5%8F%8D%E6%B1%87%E7%BC%96">20. Linux 实验：观察反汇编</span></h2><p>在 GDB 中执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gdb">disassemble main<br>disassemble foo<br>disassemble bar<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到类似：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs asm">push   rbp<br>mov    rbp,rsp<br>sub    rsp,0x10<br>mov    DWORD PTR [rbp-0x4],edi<br>...<br>leave<br>ret<br></code></pre></td></tr></tbody></table></figure>
+
+<p>重点观察：</p>
+<ul>
+<li>函数开头是否有 <code>push rbp</code></li>
+<li>是否有 <code>mov rbp, rsp</code></li>
+<li>是否有 <code>sub rsp, ...</code></li>
+<li>函数结尾是否有 <code>leave</code></li>
+<li>是否有 <code>ret</code></li>
+<li>调用其他函数时是否有 <code>call</code></li>
+</ul>
+<p>如果你看到的汇编和示例不完全一样，不要紧。</p>
+<p>编译器版本、优化选项、系统环境都会影响输出。</p>
+<p>你要抓住核心模式。</p>
+<hr>
+<h2><span id="21-windows-%E5%AF%B9%E7%85%A7x64dbg-%E4%B8%AD%E8%A7%82%E5%AF%9F%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8">21. Windows 对照：x64dbg 中观察函数调用</span></h2><p>在 Windows 下，你可以写类似程序并编译成 exe。</p>
+<p>用 x64dbg 打开后，重点观察：</p>
+<ul>
+<li>CPU 指令窗口</li>
+<li>寄存器窗口</li>
+<li>栈窗口</li>
+<li>调用栈窗口</li>
+</ul>
+<p>Windows x64 下参数传递和 Linux 不同。</p>
+<p>前四个参数通常使用：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">rcx, rdx, r8, r9<br></code></pre></td></tr></tbody></table></figure>
+
+<p>函数调用时，你可以观察：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov ecx, 10<br>call foo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这表示把第一个参数放入 <code>ecx/rcx</code>，然后调用 <code>foo</code>。</p>
+<p>Windows x64 还要求调用者在栈上预留 shadow space。</p>
+<p>入门阶段不需要深入 shadow space，只要知道：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Windows x64 的栈布局和 Linux x64 不完全一样<br>但 call、ret、返回地址、栈帧这些核心概念仍然存在<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="22-%E4%BB%8E%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">22. 从逆向工程角度看本节内容</span></h2><p>逆向工程中，函数调用是最常见结构之一。</p>
+<p>当你在反汇编中看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asm">mov edi, 10<br>call 0x401136<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你应该想到：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">some_function(<span class="hljs-number">10</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>当你看到：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs asm">call puts<br>call printf<br>call CreateFileW<br>call VirtualAlloc<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你应该分析：</p>
+<ul>
+<li>这个函数调用了什么 API？</li>
+<li>参数是什么？</li>
+<li>返回值在哪里？</li>
+<li>调用之后程序如何分支？</li>
+</ul>
+<p>很多逆向任务其实就是恢复函数调用关系：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">谁调用了谁<br>传了什么参数<br>返回值怎么使用<br>关键逻辑在哪个函数中<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="23-%E4%BB%8E%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">23. 从漏洞分析角度看本节内容</span></h2><p>栈漏洞的分析离不开函数调用。</p>
+<p>你需要能判断：</p>
+<ul>
+<li>当前停在哪个函数</li>
+<li>调用链是什么</li>
+<li>哪个局部变量被覆盖</li>
+<li>返回地址在哪里</li>
+<li>崩溃时 <code>rip</code> 是什么</li>
+<li>输入数据是否出现在栈上</li>
+</ul>
+<p>例如 GDB 中看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">Program received signal SIGSEGV<br>RIP: 0x4141414141414141<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>0x41</code> 是字符 <code>A</code>。</p>
+<p>如果 <code>rip</code> 变成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">0x4141414141414141<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这通常说明程序控制流被输入的 <code>A</code> 影响了。</p>
+<p>这就是漏洞分析中非常重要的信号。</p>
+<hr>
+<h2><span id="24-%E4%BB%8E%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%9C%AC%E8%8A%82%E5%86%85%E5%AE%B9">24. 从恶意代码分析角度看本节内容</span></h2><p>恶意代码分析中，函数调用同样重要。</p>
+<p>你可能会关注：</p>
+<ul>
+<li>哪个函数调用了网络 API</li>
+<li>哪个函数解密字符串</li>
+<li>哪个函数创建文件</li>
+<li>哪个函数创建进程</li>
+<li>哪个函数申请可执行内存</li>
+<li>哪个函数启动新线程</li>
+</ul>
+<p>如果你能看懂函数调用关系，就能更快梳理恶意代码行为。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">main<br> -&gt; decrypt_config<br> -&gt; connect_server<br> -&gt; download_payload<br> -&gt; execute_payload<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这样的调用关系，可能比单独看某一行汇编更有价值。</p>
+<hr>
+<h2><span id="25-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">25. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>栈是一种后进先出的结构。</li>
+<li>程序运行时，每个线程通常有自己的栈。</li>
+<li>函数调用时，通常会在栈上创建栈帧。</li>
+<li>栈帧中可能包含局部变量、保存的寄存器、返回地址等信息。</li>
+<li><code>call</code> 大致负责保存返回地址并跳转到被调用函数。</li>
+<li><code>ret</code> 大致负责从栈中取出返回地址并跳回去。</li>
+<li><code>rsp</code> 通常指向栈顶，<code>rbp</code> 常用于定位当前栈帧。</li>
+<li>Linux x64 和 Windows x64 的参数传递约定不同。</li>
+<li>返回值通常会放在 <code>rax</code> 中。</li>
+<li>栈溢出的本质是越界写破坏了栈帧中的其他数据。</li>
+</ol>
+<hr>
+<h2><span id="26-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">26. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1%E8%A7%82%E5%AF%9F%E4%B8%89%E5%B1%82%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8">作业 1：观察三层函数调用</span></h3><p>写程序：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">bar</span><span class="hljs-params">(<span class="hljs-type">int</span> z)</span> {<br>    <span class="hljs-type">int</span> w = z + <span class="hljs-number">1</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"w = %d\n"</span>, w);<br>}<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> {<br>    <span class="hljs-type">int</span> y = x + <span class="hljs-number">1</span>;<br>    bar(y);<br>}<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">10</span>;<br>    foo(a);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc -g -O0 stack_demo.c -o stack_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>GDB：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break bar<br>run<br>bt<br>info registers<br>x/30gx $rsp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 源代码<br>2. bt 输出<br>3. rsp、rbp、rip 的值<br>4. 你认为当前调用链是什么<br>5. 你在栈上看到了哪些像地址的值<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2%E5%8F%8D%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0">作业 2：反汇编函数</span></h3><p>在 GDB 中执行：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gdb">disassemble main<br>disassemble foo<br>disassemble bar<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或在 shell 中执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">objdump -d stack_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>要求找到：</p>
+<ul>
+<li><code>call</code></li>
+<li><code>ret</code></li>
+<li><code>push rbp</code></li>
+<li><code>mov rbp, rsp</code></li>
+<li><code>sub rsp, ...</code></li>
+</ul>
+<p>回答：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. main 中 call foo 的地址是多少？<br>2. foo 中 call bar 的地址是多少？<br>3. bar 函数结尾有没有 ret？<br>4. 函数开头是否建立了栈帧？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3%E7%90%86%E8%A7%A3%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80">作业 3：理解返回地址</span></h3><p>在 GDB 中：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs gdb">break foo<br>run<br>disassemble main<br>si<br>si<br>info registers<br>x/10gx $rsp<br></code></pre></td></tr></tbody></table></figure>
+
+<p>尝试观察：</p>
+<ul>
+<li>执行 <code>call</code> 前后 <code>rip</code> 怎么变</li>
+<li>栈顶是否出现返回地址</li>
+<li><code>foo</code> 返回后程序回到哪里</li>
+</ul>
+<p>提交一段解释：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">call 指令做了什么？ret 指令做了什么？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="27-%E8%87%AA%E6%B5%8B%E9%A2%98">27. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>栈为什么叫后进先出？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>什么是栈帧？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>返回地址的作用是什么？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p><code>call</code> 指令大致做哪两件事？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p><code>ret</code> 指令大致做什么？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p><code>rsp</code> 和 <code>rbp</code> 的区别是什么？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p>Linux x64 前 6 个整数参数通常放在哪些寄存器？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>为什么局部变量的地址不能在函数返回后继续安全使用？</p>
+<h3><span id="%E9%A2%98-9">题 9</span></h3><p>为什么栈缓冲区溢出可能影响程序控制流？</p>
+<hr>
+<h2><span id="28-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">28. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>因为最后压入栈的数据会最先被弹出，就像一摞盘子，最后放上去的通常最先拿下来。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>栈帧是一个函数调用期间在栈上使用的一块工作区域，里面可能保存局部变量、返回地址、保存的寄存器等信息。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>返回地址用于记录被调用函数执行完后，CPU 应该回到调用者的哪个位置继续执行。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p><code>call</code> 大致会把下一条指令地址压入栈作为返回地址，然后跳转到被调用函数执行。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p><code>ret</code> 大致会从栈顶取出返回地址，并跳转到该地址继续执行。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p><code>rsp</code> 通常指向当前栈顶；<code>rbp</code> 常作为当前函数栈帧的基准位置，用于稳定访问局部变量和保存的数据。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p>Linux x64 System V ABI 中，前 6 个整数或指针参数通常依次放在 <code>rdi</code>、<code>rsi</code>、<code>rdx</code>、<code>rcx</code>、<code>r8</code>、<code>r9</code>。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>因为局部变量通常位于当前函数的栈帧中。函数返回后，该栈帧失效，后续函数调用可能复用这块栈空间。</p>
+<h3><span id="%E7%AD%94-9">答 9</span></h3><p>因为局部缓冲区通常在栈上，越界写可能覆盖栈帧中的保存数据，甚至覆盖返回地址。函数执行 <code>ret</code> 时可能跳到被破坏的地址，从而影响控制流。</p>
+<hr>
+<h2><span id="29-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">29. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">x86-64 汇编入门<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会进一步学习：</p>
+<ul>
+<li>常见寄存器</li>
+<li>常见汇编指令</li>
+<li><code>mov</code>、<code>add</code>、<code>sub</code>、<code>cmp</code>、<code>jmp</code>、<code>call</code>、<code>ret</code></li>
+<li>Linux 和 Windows 调用约定对照</li>
+<li>如何用反汇编理解 C 程序</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC03%E8%8A%82-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E5%92%8C%E6%A0%88%E5%B8%A7/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第03节-函数调用和栈帧&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第03节-函数调用和栈帧&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>

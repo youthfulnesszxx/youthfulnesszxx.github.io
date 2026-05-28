@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html 
+	lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 第07节-进程是什么 -  爆米花苞の小窝</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/favicon.jpg"
+			type="image/png"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<!-- hexo injector head_end start -->
+<style>
+/* === 主题色 (color1) 覆盖：侧边栏、文章页、全局 === */
+
+/* 侧边栏头像光晕 */
+.kira-sidebar .kira-avatar { box-shadow: 0 0 2rem var(--theme-bg) !important; }
+/* 侧边栏四个菜单按钮（选中态 + 悬停态） */
+.kira-list-item.true { background: var(--theme-color) !important; box-shadow: 0 2px 12px var(--theme-color) !important; }
+.kira-list-item:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+/* 侧边栏彩色滚动条 */
+.kira-sidebar scrollbar::-webkit-scrollbar-thumb { background: var(--theme-color) !important; }
+/* 侧边栏小部件标题圆点 */
+.kira-sidebar .kira-widget-title::before { background: var(--theme-color) !important; }
+/* 侧边栏导航链接悬停 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list a:hover,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-item a:hover { color: var(--theme-color) !important; }
+/* 侧边栏分类/归档计数 */
+.kira-sidebar .kira-widget-wrap .kira-widget .category-list-count,
+.kira-sidebar .kira-widget-wrap .kira-widget .archive-list-count { background-color: var(--theme-bg3) !important; }
+/* 侧边栏社交链接 */
+.kira-sidebar .kira-social a:hover { color: var(--theme-color) !important; }
+
+/* 文章内容区链接（不影响标题、CodePen、元信息） */
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink) { color: var(--theme-color) !important; }
+article a:not(.headerlink):not(.top-jump):not(.post-meta-item):not(.CodePenLink):hover { border-bottom-color: var(--theme-color) !important; }
+/* 文章详情页元信息：移除链接图标，颜色由 rainbow 控制 */
+.kira-post-meta a::before { content: none !important; }
+.kira-post-meta a { color: inherit !important; }
+/* 文章列表标记（圆点 + 编号字体跟随背景色） */
+article ul li::before { background: var(--theme-color) !important; }
+article ul li::after { background: var(--theme-bg) !important; }
+article > ol > li::before { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 行内代码字体及背景 */
+article code { color: var(--theme-color) !important; background-color: var(--theme-bg) !important; }
+/* 首页封面悬停光晕 */
+.kira-post .kira-post-cover:hover { box-shadow: 0 0 15px rgba(var(--theme-rgb), 0.5) !important; }
+/* 二级标题动态线 */
+article h2::after { background: var(--theme-color) !important; }
+
+/* Rainbow 第 1 色覆盖 */
+.kira-rainbow a:nth-child(7n + 1) { background-color: var(--rainbow-bg1) !important; color: var(--rainbow-fg1) !important; }
+.kira-rainbow a:nth-child(7n + 2) { background-color: var(--rainbow-bg2) !important; color: var(--rainbow-fg2) !important; }
+.kira-rainbow a:nth-child(7n + 3) { background-color: var(--rainbow-bg3) !important; color: var(--rainbow-fg3) !important; }
+.kira-rainbow a:nth-child(7n + 4) { background-color: var(--rainbow-bg4) !important; color: var(--rainbow-fg4) !important; }
+.kira-rainbow a:nth-child(7n + 5) { background-color: var(--rainbow-bg5) !important; color: var(--rainbow-fg5) !important; }
+.kira-rainbow a:nth-child(7n + 6) { background-color: var(--rainbow-bg6) !important; color: var(--rainbow-fg6) !important; }
+.kira-rainbow a:nth-child(7n + 7) { background-color: var(--rainbow-bg7) !important; color: var(--rainbow-fg7) !important; }
+
+/* 色轮按钮 */
+#color-rotate-btn {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+#color-rotate-btn:hover { opacity: 1; }
+</style>
+<link rel="stylesheet" href="/live2d/css/live2d.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="爆米花苞の小窝">
+        <img
+			src="/images/author.jpg"
+			alt="burpow"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/author.jpg" title="burpow">
+			<img
+				src="/images/author.jpg"
+				alt="burpow"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>32</div>
+		<div><span>标签</span>4</div>
+		<div><span>分类</span>0</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/about.html"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/friends.html"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=666666&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/2032766147"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/youthfulnesszxx"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/AI/" style="font-size: 10px;">AI</a> <a href="/tags/python%E8%8F%9C%E9%B8%9F/" style="font-size: 15px;">python菜鸟</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E9%9D%B6%E5%9C%BA/" style="font-size: 10px;">靶场</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">32</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">burpow</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+	<div style="height: 300px;"></div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					
+<link rel="stylesheet" href="/css/kira-image.css">
+
+
+<script src="/js/kira-image.js"></script>
+
+<div class="kira-image">
+    <div class="kira-image-modal">
+        <div class="kira-image-header">
+            <div class="kira-image-counter"></div>
+            <div class="kira-image-title"></div>
+            <div class="kira-image-operation">
+                <div class="kira-image-operation-button" id="kira-image-operation-button-zoom">
+                    <i class="kirafont icon-zoom-in"></i>
+                </div>
+                <div class="kira-image-operation-button" id="kira-image-operation-button-close">
+                    <i class="kirafont icon-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="kira-image-container">
+            <div class="kira-image-prev-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-left"></i>
+                </div>
+            </div>
+            <div class="kira-image-list">
+                <div class="kira-image-prev">
+                    <img />
+                </div>
+                <div class="kira-image-now">
+                    <img />
+                </div>
+                <div class="kira-image-next">
+                    <img />
+                </div>
+            </div>
+            <div class="kira-image-next-button-panel">
+                <div class="kira-image-exchange-button">
+                    <i class="kirafont icon-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	
+<link rel="stylesheet" href="/css/kira-code-copy.css">
+
+	
+<script src="/js/kira-code-copy.js"></script>
+
+
+<div class="kira-post">
+	<article>
+		
+		<div class="kira-post-cover">
+			<img
+				data-src="/images/cover/12.jpg"
+				data-sizes="auto"
+				alt="第07节-进程是什么"
+				class="lazyload kira-post-cover-image disabled-kira-image"
+			/>
+			<h1>第07节-进程是什么</h1>
+		</div>
+		
+		<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
+			<a><i class="kirafont icon-calendar-fill"></i>2026年05月28日</a>
+			<a><i class="kirafont icon-edit-fill"></i>5.8k 字</a>
+			<a><i class="kirafont icon-time-circle-fill"></i>大概 25 分钟</a>
+		</div>
+		<html><head></head><body><h1><span id="%E7%AC%AC-7-%E8%8A%82%E8%BF%9B%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88">第 7 节：进程是什么</span></h1><blockquote>
+<p>所属课程：操作系统自学路线：面向网络安全、逆向工程与漏洞分析<br>所属周次：第 4 周<br>课程主题：进程模型<br>本节目标：理解程序和进程的区别，掌握 PID、父子进程、进程状态、PCB、上下文切换等基本概念，并通过 Linux <code>fork</code> 实验观察进程创建行为。</p>
+</blockquote>
+<hr>
+<h2><span id="1-%E6%9C%AC%E8%8A%82%E8%AF%BE%E4%BD%A0%E8%A6%81%E5%AD%A6%E4%BC%9A%E4%BB%80%E4%B9%88">1. 本节课你要学会什么</span></h2><p>学完这一节，你应该能回答下面几个问题：</p>
+<ol>
+<li>程序和进程有什么区别？</li>
+<li>为什么同一个程序可以运行多个实例？</li>
+<li>PID 是什么？PPID 是什么？</li>
+<li>父进程和子进程是什么关系？</li>
+<li>进程有哪些常见状态？</li>
+<li>PCB 是什么？操作系统为什么需要它？</li>
+<li>上下文切换是什么？为什么有成本？</li>
+<li>Linux 下 <code>fork</code> 做了什么？</li>
+<li>僵尸进程是什么？</li>
+<li>为什么进程模型对恶意代码分析和逆向很重要？</li>
+</ol>
+<p>本节课的主线是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">磁盘上的程序 -&gt; 操作系统加载 -&gt; 创建进程 -&gt; 分配资源 -&gt; 调度执行 -&gt; 状态变化 -&gt; 退出回收<br></code></pre></td></tr></tbody></table></figure>
+
+<p>前面几节你主要从“程序内部”看代码、内存和调试；从这一节开始，你要从“操作系统外部”看程序如何作为进程被管理。</p>
+<hr>
+<h2><span id="2-%E7%A8%8B%E5%BA%8F%E5%92%8C%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB">2. 程序和进程的区别</span></h2><p>这是操作系统中最重要的基础概念之一。</p>
+<h3><span id="21-%E7%A8%8B%E5%BA%8F%E6%98%AF%E4%BB%80%E4%B9%88">2.1 程序是什么</span></h3><p>程序通常指磁盘上的可执行文件。</p>
+<p>例如 Linux 下：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">/bin/ls<br>/usr/bin/python3<br>./hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 下：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">C:\Windows\System32\notepad.exe<br>C:\Windows\System32\cmd.exe<br></code></pre></td></tr></tbody></table></figure>
+
+<p>程序是静态的。</p>
+<p>它放在磁盘上，不运行时只是一个文件。</p>
+<hr>
+<h3><span id="22-%E8%BF%9B%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88">2.2 进程是什么</span></h3><p>进程是正在运行的程序实例。</p>
+<p>当你执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./hello<br></code></pre></td></tr></tbody></table></figure>
+
+<p>操作系统会：</p>
+<ol>
+<li>读取可执行文件</li>
+<li>创建进程结构</li>
+<li>分配虚拟地址空间</li>
+<li>加载代码和数据</li>
+<li>初始化栈、堆、寄存器</li>
+<li>把它交给 CPU 调度执行</li>
+</ol>
+<p>这时它才是一个进程。</p>
+<p>所以可以总结为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">程序 = 磁盘上的静态文件<br>进程 = 程序运行起来后的动态实例<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="3-%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F%E5%8F%AF%E4%BB%A5%E5%AF%B9%E5%BA%94%E5%A4%9A%E4%B8%AA%E8%BF%9B%E7%A8%8B">3. 一个程序可以对应多个进程</span></h2><p>同一个可执行文件可以被运行多次。</p>
+<p>例如你打开三个终端，分别执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sleep</span> 100<br><span class="hljs-built_in">sleep</span> 100<br><span class="hljs-built_in">sleep</span> 100<br></code></pre></td></tr></tbody></table></figure>
+
+<p>它们运行的是同一个程序：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">/usr/bin/sleep<br></code></pre></td></tr></tbody></table></figure>
+
+<p>但操作系统会创建三个不同进程。</p>
+<p>每个进程都有自己的：</p>
+<ul>
+<li>PID</li>
+<li>虚拟地址空间</li>
+<li>寄存器上下文</li>
+<li>栈</li>
+<li>堆</li>
+<li>打开的文件描述符</li>
+<li>当前工作目录</li>
+<li>环境变量</li>
+<li>权限信息</li>
+</ul>
+<p>所以：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">一个程序文件可以对应多个运行中的进程。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 下同理。</p>
+<p>你打开三个记事本：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">notepad.exe 文件只有一个<br>notepad.exe 进程可以有三个<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="4-pid-%E5%92%8C-ppid">4. PID 和 PPID</span></h2><p>操作系统需要区分不同进程。</p>
+<p>所以每个进程都有一个编号，叫：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">PID = Process ID<br></code></pre></td></tr></tbody></table></figure>
+
+<p>父进程 ID 叫：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">PPID = Parent Process ID<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Linux 下可以查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -o pid,ppid,<span class="hljs-built_in">stat</span>,<span class="hljs-built_in">comm</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>示例输出：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text"> PID  PPID STAT COMMAND<br>1234  1200 Ss   bash<br>1300  1234 R+   ps<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这表示：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">ps 的父进程是 bash<br>bash 的 PID 是 1234<br>ps 的 PPID 是 1234<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在进程树中，父子关系非常重要。</p>
+<hr>
+<h2><span id="5-%E7%88%B6%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%AD%90%E8%BF%9B%E7%A8%8B">5. 父进程和子进程</span></h2><p>一个进程可以创建另一个进程。</p>
+<p>创建者叫父进程。</p>
+<p>被创建者叫子进程。</p>
+<p>例如你在 shell 中运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>大致过程是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">bash 进程创建 ls 进程<br>ls 运行并输出目录内容<br>ls 退出<br>bash 继续等待下一条命令<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这里：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">bash 是父进程<br>ls 是子进程<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Linux 下常见进程创建方式是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">fork + exec<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 下常见方式是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateProcess<br></code></pre></td></tr></tbody></table></figure>
+
+<p>下一节会专门对比 Linux 和 Windows 的进程创建机制。</p>
+<hr>
+<h2><span id="6-%E8%BF%9B%E7%A8%8B%E6%A0%91">6. 进程树</span></h2><p>系统中的进程通常形成一棵树。</p>
+<p>Linux 下可以使用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">pstree<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或者：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -ef --forest<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">systemd<br> ├─sshd<br> │   └─bash<br> │       └─vim<br> ├─cron<br> └─NetworkManager<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明：</p>
+<ul>
+<li><code>systemd</code> 是很多进程的祖先</li>
+<li><code>sshd</code> 创建了 shell</li>
+<li>shell 又启动了 <code>vim</code></li>
+</ul>
+<p>Windows 下可以用：</p>
+<ul>
+<li>Process Explorer</li>
+<li>Process Hacker</li>
+<li>Task Manager 的详细信息视图</li>
+</ul>
+<p>Process Explorer 可以清楚看到进程树。</p>
+<p>恶意代码分析时，进程树非常重要。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">word.exe -&gt; powershell.exe -&gt; cmd.exe -&gt; unknown.exe<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这类链条就很可疑。</p>
+<hr>
+<h2><span id="7-%E8%BF%9B%E7%A8%8B%E6%9C%89%E5%93%AA%E4%BA%9B%E8%B5%84%E6%BA%90">7. 进程有哪些资源</span></h2><p>一个进程不是只有代码。</p>
+<p>操作系统会为进程维护一整套资源。</p>
+<p>常见包括：</p>
+<ul>
+<li>PID</li>
+<li>父进程 ID</li>
+<li>用户 ID / 权限</li>
+<li>虚拟地址空间</li>
+<li>代码段</li>
+<li>数据段</li>
+<li>堆</li>
+<li>栈</li>
+<li>寄存器状态</li>
+<li>打开的文件描述符</li>
+<li>当前工作目录</li>
+<li>环境变量</li>
+<li>信号处理方式</li>
+<li>线程列表</li>
+<li>调度信息</li>
+</ul>
+<p>你可以把进程理解成：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">程序代码 + 运行时状态 + 操作系统分配的资源<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是为什么进程比程序复杂得多。</p>
+<hr>
+<h2><span id="8-pcb-%E6%98%AF%E4%BB%80%E4%B9%88">8. PCB 是什么</span></h2><p>PCB 全称是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Process Control Block<br></code></pre></td></tr></tbody></table></figure>
+
+<p>中文常译为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">进程控制块<br></code></pre></td></tr></tbody></table></figure>
+
+<p>PCB 是操作系统内核中用来描述和管理进程的数据结构。</p>
+<p>它保存了进程的关键信息，例如：</p>
+<ul>
+<li>PID</li>
+<li>进程状态</li>
+<li>程序计数器 / 指令位置</li>
+<li>CPU 寄存器</li>
+<li>内存管理信息</li>
+<li>打开的文件</li>
+<li>调度优先级</li>
+<li>父子关系</li>
+<li>权限信息</li>
+<li>资源使用统计</li>
+</ul>
+<p>注意：</p>
+<p>PCB 是操作系统内部概念。</p>
+<p>普通用户程序不能直接随便访问内核中的 PCB。</p>
+<p>但我们可以通过系统工具间接观察进程信息，例如：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps<br>top<br>htop<br>/proc/&lt;pid&gt;/status<br>/proc/&lt;pid&gt;/maps<br>/proc/&lt;pid&gt;/fd<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="9-linux-%E4%B8%AD-pcb-%E5%AF%B9%E5%BA%94%E4%BB%80%E4%B9%88">9. Linux 中 PCB 对应什么</span></h2><p>Linux 内核中，进程和线程的核心描述结构常和：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">task_struct<br></code></pre></td></tr></tbody></table></figure>
+
+<p>相关。</p>
+<p><code>task_struct</code> 中保存了大量进程或线程状态。</p>
+<p>你现在不需要阅读内核源码，只要知道：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">操作系统必须在内核中维护每个进程的状态，否则无法调度、暂停、恢复、回收进程。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>以后学习内核、驱动、Rootkit、内核漏洞时，<code>task_struct</code> 会再次出现。</p>
+<hr>
+<h2><span id="10-%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81">10. 进程状态</span></h2><p>进程在生命周期中会处于不同状态。</p>
+<p>常见状态包括：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">running<br>ready<br>blocked / waiting<br>stopped<br>zombie<br>terminated<br></code></pre></td></tr></tbody></table></figure>
+
+<p>不同教材和系统命名略有差异。</p>
+<hr>
+<h3><span id="101-running%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C">10.1 Running：正在运行</span></h3><p>进程正在 CPU 上执行。</p>
+<p>如果系统只有一个 CPU 核心，同一瞬间真正运行的进程数量有限。</p>
+<p>但因为调度切换很快，我们感觉很多程序在“同时运行”。</p>
+<hr>
+<h3><span id="102-ready%E5%B0%B1%E7%BB%AA">10.2 Ready：就绪</span></h3><p>进程已经准备好运行，但暂时没有拿到 CPU。</p>
+<p>它在等待调度器选择它。</p>
+<hr>
+<h3><span id="103-blocked--waiting%E9%98%BB%E5%A1%9E%E6%88%96%E7%AD%89%E5%BE%85">10.3 Blocked / Waiting：阻塞或等待</span></h3><p>进程暂时不能继续执行，因为它在等待某个事件。</p>
+<p>例如：</p>
+<ul>
+<li>等待用户输入</li>
+<li>等待读文件完成</li>
+<li>等待网络数据</li>
+<li>等待锁</li>
+<li>等待子进程退出</li>
+</ul>
+<p>阻塞进程不会一直占用 CPU。</p>
+<hr>
+<h3><span id="104-stopped%E5%81%9C%E6%AD%A2">10.4 Stopped：停止</span></h3><p>进程被暂停。</p>
+<p>例如：</p>
+<ul>
+<li>被调试器暂停</li>
+<li>收到 <code>SIGSTOP</code></li>
+<li>用户按 <code>Ctrl+Z</code></li>
+</ul>
+<hr>
+<h3><span id="105-zombie%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B">10.5 Zombie：僵尸进程</span></h3><p>僵尸进程是已经结束执行，但父进程还没有读取它退出状态的进程。</p>
+<p>它不再运行，也不占用普通运行资源，但进程表中还保留一条记录。</p>
+<p>为什么要保留？</p>
+<p>因为父进程可能需要知道：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">子进程是正常退出还是异常退出？退出码是多少？<br></code></pre></td></tr></tbody></table></figure>
+
+<p>父进程调用 <code>wait</code> 或 <code>waitpid</code> 后，僵尸进程会被回收。</p>
+<hr>
+<h2><span id="11-linux-ps-%E4%B8%AD%E7%9A%84%E7%8A%B6%E6%80%81%E7%A0%81">11. Linux <code>ps</code> 中的状态码</span></h2><p>Linux 下可以用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -o pid,ppid,<span class="hljs-built_in">stat</span>,<span class="hljs-built_in">comm</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>常见状态码：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>R</td>
+<td>Running 或 Runnable，正在运行或可运行</td>
+</tr>
+<tr>
+<td>S</td>
+<td>Sleeping，可中断睡眠，等待事件</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Uninterruptible sleep，不可中断睡眠，常见于 I/O</td>
+</tr>
+<tr>
+<td>T</td>
+<td>Stopped，停止或被跟踪</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>Zombie，僵尸进程</td>
+</tr>
+<tr>
+<td>I</td>
+<td>Idle，内核空闲线程</td>
+</tr>
+</tbody></table>
+<p>可能还会看到附加符号：</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>s</td>
+<td>会话 leader</td>
+</tr>
+<tr>
+<td>+</td>
+<td>前台进程组</td>
+</tr>
+<tr>
+<td>l</td>
+<td>多线程进程</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>高优先级</td>
+</tr>
+<tr>
+<td>N</td>
+<td>低优先级</td>
+</tr>
+</tbody></table>
+<p>这些状态在观察系统行为时很有用。</p>
+<hr>
+<h2><span id="12-%E4%B8%8A%E4%B8%8B%E6%96%87%E6%98%AF%E4%BB%80%E4%B9%88">12. 上下文是什么</span></h2><p>进程执行时，CPU 中有很多当前状态。</p>
+<p>例如：</p>
+<ul>
+<li><code>rip</code>：当前执行位置</li>
+<li><code>rsp</code>：当前栈顶</li>
+<li>通用寄存器</li>
+<li>标志寄存器</li>
+<li>内存映射信息</li>
+<li>调度相关信息</li>
+</ul>
+<p>这些运行状态统称为上下文。</p>
+<p>可以粗略理解为：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">一个进程暂停后，未来要恢复运行所必须保存的信息。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="13-%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E6%98%AF%E4%BB%80%E4%B9%88">13. 上下文切换是什么</span></h2><p>操作系统需要让多个进程共享 CPU。</p>
+<p>当 CPU 从进程 A 切换到进程 B 时，需要：</p>
+<ol>
+<li>保存进程 A 的上下文</li>
+<li>更新进程 A 的状态</li>
+<li>选择进程 B</li>
+<li>恢复进程 B 的上下文</li>
+<li>让 CPU 从进程 B 上次暂停的位置继续执行</li>
+</ol>
+<p>这叫上下文切换。</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">进程 A -&gt; 保存现场 -&gt; 调度器选择 B -&gt; 恢复现场 -&gt; 进程 B<br></code></pre></td></tr></tbody></table></figure>
+
+<p>上下文切换有成本。</p>
+<p>因为它需要保存和恢复状态，还可能影响 CPU 缓存、TLB 等硬件结构。</p>
+<p>所以线程和进程切换都不是免费的。</p>
+<hr>
+<h2><span id="14-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%80%E4%B8%AA-cpu-%E7%9C%8B%E8%B5%B7%E6%9D%A5%E8%83%BD%E8%BF%90%E8%A1%8C%E5%BE%88%E5%A4%9A%E7%A8%8B%E5%BA%8F">14. 为什么一个 CPU 看起来能运行很多程序</span></h2><p>如果只有一个 CPU 核心，同一瞬间只能真正执行一个执行流。</p>
+<p>但操作系统会快速切换不同进程。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">进程 A 运行 5ms<br>切换到进程 B 运行 5ms<br>切换到进程 C 运行 5ms<br>再切回进程 A<br></code></pre></td></tr></tbody></table></figure>
+
+<p>因为切换速度很快，人感觉它们在同时运行。</p>
+<p>这叫并发。</p>
+<p>如果有多个 CPU 核心，多个进程可以真的同时在不同核心上运行。</p>
+<p>这叫并行。</p>
+<p>区别：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">并发：看起来同时推进<br>并行：物理上同时执行<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="15-linux-%E4%B8%8B%E7%9A%84-fork">15. Linux 下的 <code>fork</code></span></h2><p>Linux 中，创建进程的经典方式是：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">fork()<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>fork</code> 会创建当前进程的一个子进程。</p>
+<p>子进程从 <code>fork</code> 返回的位置继续执行。</p>
+<p>这点非常重要：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">fork 之后，父子进程都会继续执行 fork 后面的代码。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>区别在于返回值不同。</p>
+<hr>
+<h2><span id="16-fork-%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC">16. <code>fork</code> 的返回值</span></h2><p><code>fork</code> 的返回值用于区分父子进程。</p>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小于 0</td>
+<td>创建失败</td>
+</tr>
+<tr>
+<td>等于 0</td>
+<td>当前在子进程中</td>
+</tr>
+<tr>
+<td>大于 0</td>
+<td>当前在父进程中，返回值是子进程 PID</td>
+</tr>
+</tbody></table>
+<p>示例：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">pid_t</span> pid = fork();<br><br><span class="hljs-keyword">if</span> (pid == <span class="hljs-number">0</span>) {<br>    <span class="hljs-comment">// 子进程</span><br>} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pid &gt; <span class="hljs-number">0</span>) {<br>    <span class="hljs-comment">// 父进程</span><br>} <span class="hljs-keyword">else</span> {<br>    <span class="hljs-comment">// fork 失败</span><br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这是 Linux 进程编程最基本的模式。</p>
+<hr>
+<h2><span id="17-%E7%AC%AC%E4%B8%80%E4%B8%AA-fork-%E7%A8%8B%E5%BA%8F">17. 第一个 fork 程序</span></h2><p>创建 <code>fork_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"before fork\n"</span>);<br><br>    fork();<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"after fork pid=%d ppid=%d\n"</span>, getpid(), getppid());<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc fork_demo.c -o fork_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./fork_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">before fork<br>after fork pid=1234 ppid=1200<br>after fork pid=1235 ppid=1234<br></code></pre></td></tr></tbody></table></figure>
+
+<p>为什么 <code>after fork</code> 打印两次？</p>
+<p>因为 <code>fork</code> 之后，有两个进程继续执行后面的代码：</p>
+<ul>
+<li>父进程</li>
+<li>子进程</li>
+</ul>
+<hr>
+<h2><span id="18-fork-%E5%90%8E%E7%88%B6%E5%AD%90%E8%BF%9B%E7%A8%8B%E5%86%85%E5%AD%98%E6%98%AF%E5%90%A6%E4%B8%80%E6%A0%B7">18. fork 后父子进程内存是否一样</span></h2><p>从程序视角看，<code>fork</code> 后子进程像是父进程的一份拷贝。</p>
+<p>它继承了很多东西：</p>
+<ul>
+<li>代码</li>
+<li>数据</li>
+<li>堆</li>
+<li>栈</li>
+<li>打开的文件描述符</li>
+<li>当前工作目录</li>
+<li>环境变量</li>
+</ul>
+<p>但父子进程是两个独立进程。</p>
+<p>它们有不同 PID。</p>
+<p>现代操作系统通常使用 Copy-on-Write。</p>
+<p>也就是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">fork 后先共享物理页面<br>只有当某一方尝试写入时，才真正复制页面<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这样可以提高效率。</p>
+<p>入门阶段先记住：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">fork 后父子进程看起来内存内容一样，但之后各自修改互不影响。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="19-fork-%E5%90%8E%E5%8F%98%E9%87%8F%E5%8F%98%E5%8C%96%E5%AE%9E%E9%AA%8C">19. fork 后变量变化实验</span></h2><p>创建 <code>fork_var_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;sys/wait.h&gt;</span></span><br><br><span class="hljs-type">int</span> global_var = <span class="hljs-number">100</span>;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">int</span> local_var = <span class="hljs-number">200</span>;<br><br>    <span class="hljs-type">pid_t</span> pid = fork();<br><br>    <span class="hljs-keyword">if</span> (pid == <span class="hljs-number">0</span>) {<br>        global_var += <span class="hljs-number">1</span>;<br>        local_var += <span class="hljs-number">1</span>;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"child: global=%d local=%d pid=%d\n"</span>, global_var, local_var, getpid());<br>    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pid &gt; <span class="hljs-number">0</span>) {<br>        wait(<span class="hljs-literal">NULL</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"parent: global=%d local=%d pid=%d\n"</span>, global_var, local_var, getpid());<br>    } <span class="hljs-keyword">else</span> {<br>        perror(<span class="hljs-string">"fork"</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc fork_var_demo.c -o fork_var_demo<br>./fork_var_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">child: global=101 local=201 pid=1235<br>parent: global=100 local=200 pid=1234<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这说明：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">子进程修改变量，不会影响父进程中的变量。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="20-wait-%E6%98%AF%E4%BB%80%E4%B9%88">20. wait 是什么</span></h2><p>父进程通常需要等待子进程结束。</p>
+<p>Linux 中可以用：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">wait(<span class="hljs-literal">NULL</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>或者：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">waitpid(pid, &amp;status, <span class="hljs-number">0</span>);<br></code></pre></td></tr></tbody></table></figure>
+
+<p>作用：</p>
+<ul>
+<li>等待子进程退出</li>
+<li>获取子进程退出状态</li>
+<li>回收子进程资源</li>
+<li>避免僵尸进程</li>
+</ul>
+<p>如果父进程不调用 <code>wait</code>，子进程结束后可能暂时变成僵尸进程。</p>
+<hr>
+<h2><span id="21-%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B%E6%BC%94%E7%A4%BA">21. 僵尸进程演示</span></h2><p>创建 <code>zombie_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-type">pid_t</span> pid = fork();<br><br>    <span class="hljs-keyword">if</span> (pid == <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"child exit, pid=%d\n"</span>, getpid());<br>        <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);<br>    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pid &gt; <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"parent sleep, pid=%d child=%d\n"</span>, getpid(), pid);<br>        sleep(<span class="hljs-number">30</span>);<br>    } <span class="hljs-keyword">else</span> {<br>        perror(<span class="hljs-string">"fork"</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc zombie_demo.c -o zombie_demo<br>./zombie_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>另开终端查看：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -o pid,ppid,<span class="hljs-built_in">stat</span>,<span class="hljs-built_in">comm</span> | grep zombie_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到子进程状态是：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">Z<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这就是僵尸进程。</p>
+<p>注意：</p>
+<p>这个实验是安全的，父进程睡眠结束后僵尸进程会被回收。</p>
+<hr>
+<h2><span id="22-%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88">22. 孤儿进程是什么</span></h2><p>如果父进程先退出，子进程还在运行，这个子进程就变成孤儿进程。</p>
+<p>孤儿进程会被系统中的某个进程接管。</p>
+<p>在很多 Linux 系统上，通常由 <code>systemd</code> 或 init 类进程接管。</p>
+<p>孤儿进程本身不一定是问题。</p>
+<p>但在恶意代码分析中，如果一个进程故意脱离父进程、隐藏运行，就值得关注。</p>
+<hr>
+<h2><span id="23-%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%88%9D%E6%AD%A5%E5%8C%BA%E5%88%AB">23. 进程和线程的初步区别</span></h2><p>本节主要讲进程，后面会专门讲线程。</p>
+<p>先简单区分：</p>
+<table>
+<thead>
+<tr>
+<th>对比</th>
+<th>进程</th>
+<th>线程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>资源拥有</td>
+<td>拥有独立地址空间和资源</td>
+<td>属于进程，和同进程线程共享资源</td>
+</tr>
+<tr>
+<td>隔离性</td>
+<td>较强</td>
+<td>较弱</td>
+</tr>
+<tr>
+<td>创建开销</td>
+<td>较大</td>
+<td>较小</td>
+</tr>
+<tr>
+<td>通信</td>
+<td>进程间通信较复杂</td>
+<td>共享内存更方便</td>
+</tr>
+<tr>
+<td>崩溃影响</td>
+<td>一个进程崩溃通常不直接毁掉另一个进程</td>
+<td>一个线程崩溃可能导致整个进程崩溃</td>
+</tr>
+</tbody></table>
+<p>先记住：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">进程是资源分配的基本单位<br>线程是 CPU 调度执行的重要单位<br></code></pre></td></tr></tbody></table></figure>
+
+<p>不同教材说法可能略有差异，但这个理解对入门很有帮助。</p>
+<hr>
+<h2><span id="24-windows-%E4%B8%AD%E7%9A%84%E8%BF%9B%E7%A8%8B%E5%88%9D%E6%AD%A5">24. Windows 中的进程初步</span></h2><p>Windows 中也有进程和线程。</p>
+<p>创建进程常用：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">CreateProcess<br></code></pre></td></tr></tbody></table></figure>
+
+<p>Windows 进程也有：</p>
+<ul>
+<li>PID</li>
+<li>父进程</li>
+<li>虚拟地址空间</li>
+<li>句柄表</li>
+<li>Token</li>
+<li>线程</li>
+<li>DLL 模块</li>
+<li>环境变量</li>
+</ul>
+<p>可以用 Process Explorer 查看：</p>
+<ul>
+<li>进程树</li>
+<li>PID</li>
+<li>PPID</li>
+<li>命令行</li>
+<li>当前用户</li>
+<li>线程数量</li>
+<li>打开的句柄</li>
+<li>加载的 DLL</li>
+</ul>
+<p>Windows 安全分析中，进程树非常重要。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">explorer.exe -&gt; unknown.exe<br>winword.exe -&gt; powershell.exe<br>chrome.exe -&gt; cmd.exe<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这些父子关系可能体现用户行为，也可能体现攻击链。</p>
+<hr>
+<h2><span id="25-%E8%BF%9B%E7%A8%8B%E8%A1%8C%E4%B8%BA%E5%92%8C%E6%81%B6%E6%84%8F%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90">25. 进程行为和恶意代码分析</span></h2><p>恶意代码经常会创建新进程。</p>
+<p>常见目的包括：</p>
+<ul>
+<li>启动系统工具执行命令</li>
+<li>创建子进程隐藏行为</li>
+<li>注入其他进程</li>
+<li>启动持久化组件</li>
+<li>逃避简单检测</li>
+<li>执行下载的 payload</li>
+</ul>
+<p>常见可疑进程链：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">Office 文档 -&gt; powershell.exe<br>浏览器 -&gt; cmd.exe<br>脚本解释器 -&gt; 可疑 exe<br>压缩包程序 -&gt; 临时目录 exe<br>服务进程 -&gt; 异常子进程<br></code></pre></td></tr></tbody></table></figure>
+
+<p>这不是说这些链条一定恶意，而是需要进一步分析。</p>
+<p>工具：</p>
+<ul>
+<li>Windows Process Explorer</li>
+<li>Windows Process Monitor</li>
+<li>Sysmon</li>
+<li>Linux ps / pstree / auditd</li>
+</ul>
+<hr>
+<h2><span id="26-%E8%BF%9B%E7%A8%8B%E8%A1%8C%E4%B8%BA%E5%92%8C%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B">26. 进程行为和逆向工程</span></h2><p>逆向一个程序时，你不只看代码，还要看它运行后创建了什么进程。</p>
+<p>例如：</p>
+<ul>
+<li>是否调用 <code>fork</code></li>
+<li>是否调用 <code>execve</code></li>
+<li>是否调用 <code>system</code></li>
+<li>是否调用 <code>CreateProcessW</code></li>
+<li>是否启动 shell</li>
+<li>是否把参数传给子进程</li>
+<li>是否等待子进程结束</li>
+</ul>
+<p>如果一个程序表面上什么都不做，但运行后启动了另一个程序，那么真正逻辑可能在子进程中。</p>
+<p>所以动态分析时要观察进程树。</p>
+<hr>
+<h2><span id="27-%E8%BF%9B%E7%A8%8B%E8%A1%8C%E4%B8%BA%E5%92%8C%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90">27. 进程行为和漏洞分析</span></h2><p>进程模型也和漏洞分析有关。</p>
+<p>例如：</p>
+<ul>
+<li>一个网络服务可能为每个连接创建子进程</li>
+<li>一个崩溃只影响当前 worker 进程</li>
+<li>父进程可能负责重启子进程</li>
+<li>子进程权限可能比父进程低</li>
+<li>setuid 程序创建子进程时可能引入风险</li>
+<li>子进程继承文件描述符可能造成信息泄露</li>
+</ul>
+<p>真实漏洞分析中，你经常要搞清楚：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">漏洞发生在哪个进程？<br>这个进程是什么权限？<br>它是谁启动的？<br>它继承了哪些资源？<br>崩溃后是否会自动重启？<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="28-linux-%E5%AE%9E%E9%AA%8C%E8%A7%82%E5%AF%9F%E8%BF%9B%E7%A8%8B%E5%92%8C-pid">28. Linux 实验：观察进程和 PID</span></h2><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -o pid,ppid,<span class="hljs-built_in">stat</span>,<span class="hljs-built_in">comm</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>再执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sleep</span> 100<br></code></pre></td></tr></tbody></table></figure>
+
+<p>另开一个终端：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -o pid,ppid,<span class="hljs-built_in">stat</span>,<span class="hljs-built_in">comm</span> | grep <span class="hljs-built_in">sleep</span><br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li><code>sleep</code> 的 PID 是什么</li>
+<li>它的 PPID 是谁</li>
+<li>它的状态是什么</li>
+</ul>
+<p>也可以用：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">pstree -p<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察进程树。</p>
+<hr>
+<h2><span id="29-linux-%E5%AE%9E%E9%AA%8Cfork-%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B">29. Linux 实验：fork 创建子进程</span></h2><p>创建 <code>fork_demo.c</code>：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"before fork pid=%d\n"</span>, getpid());<br><br>    <span class="hljs-type">pid_t</span> pid = fork();<br><br>    <span class="hljs-keyword">if</span> (pid == <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"child: pid=%d ppid=%d\n"</span>, getpid(), getppid());<br>    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pid &gt; <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"parent: pid=%d child=%d\n"</span>, getpid(), pid);<br>    } <span class="hljs-keyword">else</span> {<br>        perror(<span class="hljs-string">"fork"</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>编译运行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">gcc fork_demo.c -o fork_demo<br>./fork_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li><code>before fork</code> 打印几次？</li>
+<li><code>parent</code> 打印几次？</li>
+<li><code>child</code> 打印几次？</li>
+<li>父进程中 <code>fork</code> 返回值是什么？</li>
+<li>子进程中 <code>fork</code> 返回值是什么？</li>
+</ul>
+<hr>
+<h2><span id="30-linux-%E5%AE%9E%E9%AA%8C%E7%94%A8-strace-%E8%A7%82%E5%AF%9F-fork">30. Linux 实验：用 strace 观察 fork</span></h2><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace ./fork_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你可能看到类似：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">clone(...)<br></code></pre></td></tr></tbody></table></figure>
+
+<p>在现代 Linux 中，<code>fork</code> 底层可能通过 <code>clone</code> 系统调用实现。</p>
+<p>这说明：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">C 库中的 fork 最终需要请求内核创建新执行实体。<br></code></pre></td></tr></tbody></table></figure>
+
+<p>如果输出太多，可以尝试：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">strace -f ./fork_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p><code>-f</code> 表示跟踪子进程。</p>
+<p>观察父子进程输出对应的系统调用。</p>
+<hr>
+<h2><span id="31-windows-%E5%AE%9E%E9%AA%8Cprocess-explorer-%E8%A7%82%E5%AF%9F%E8%BF%9B%E7%A8%8B%E6%A0%91">31. Windows 实验：Process Explorer 观察进程树</span></h2><p>在 Windows 下：</p>
+<ol>
+<li>打开 Process Explorer</li>
+<li>启动 <code>notepad.exe</code></li>
+<li>查看它的 PID</li>
+<li>查看父进程</li>
+<li>查看线程数量</li>
+<li>查看加载的 DLL</li>
+<li>关闭 notepad，观察进程消失</li>
+</ol>
+<p>再打开 <code>cmd.exe</code>，执行：</p>
+<figure class="highlight cmd"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">notepad.exe<br></code></pre></td></tr></tbody></table></figure>
+
+<p>观察：</p>
+<ul>
+<li>notepad 的父进程是否是 cmd</li>
+<li>如果从 Explorer 双击启动，父进程是否不同</li>
+</ul>
+<p>这能帮助你理解：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">同一个程序由不同父进程启动，进程树会不同。<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="32-%E6%9C%AC%E8%8A%82%E9%87%8D%E7%82%B9%E6%80%BB%E7%BB%93">32. 本节重点总结</span></h2><p>你需要记住这些核心结论：</p>
+<ol>
+<li>程序是磁盘上的静态文件，进程是运行中的程序实例。</li>
+<li>同一个程序可以对应多个进程。</li>
+<li>PID 是进程 ID，PPID 是父进程 ID。</li>
+<li>进程之间可以形成父子关系和进程树。</li>
+<li>操作系统通过 PCB 管理进程状态和资源。</li>
+<li>进程常见状态包括运行、就绪、阻塞、停止、僵尸等。</li>
+<li>上下文切换是操作系统保存一个进程状态并恢复另一个进程状态的过程。</li>
+<li>Linux 下 <code>fork</code> 会创建子进程，父子进程从 <code>fork</code> 后继续执行。</li>
+<li><code>fork</code> 在父进程和子进程中返回值不同。</li>
+<li>进程树和进程行为是恶意代码分析、逆向分析和漏洞分析的重要线索。</li>
+</ol>
+<hr>
+<h2><span id="33-%E6%9C%AC%E8%8A%82%E8%AF%BE%E5%90%8E%E4%BD%9C%E4%B8%9A">33. 本节课后作业</span></h2><h3><span id="%E4%BD%9C%E4%B8%9A-1%E8%A7%82%E5%AF%9F%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B">作业 1：观察系统进程</span></h3><p>执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -o pid,ppid,<span class="hljs-built_in">stat</span>,<span class="hljs-built_in">comm</span><br>pstree -p<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 当前 shell 的 PID<br>2. 当前 shell 的 PPID<br>3. 至少 5 个进程及其状态<br>4. 你观察到的一条父子进程关系<br>5. R/S/Z/T 状态分别大致代表什么<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-2fork-%E7%A8%8B%E5%BA%8F%E5%AE%9E%E9%AA%8C">作业 2：fork 程序实验</span></h3><p>写并运行：</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"before fork pid=%d\n"</span>, getpid());<br><br>    <span class="hljs-type">pid_t</span> pid = fork();<br><br>    <span class="hljs-keyword">if</span> (pid == <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"child: pid=%d ppid=%d\n"</span>, getpid(), getppid());<br>    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pid &gt; <span class="hljs-number">0</span>) {<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"parent: pid=%d child=%d\n"</span>, getpid(), pid);<br>    } <span class="hljs-keyword">else</span> {<br>        perror(<span class="hljs-string">"fork"</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    }<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>}<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 源代码<br>2. 运行输出<br>3. 父进程 PID<br>4. 子进程 PID<br>5. fork 在父进程中的返回值<br>6. fork 在子进程中的返回值<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-3fork-%E5%90%8E%E5%8F%98%E9%87%8F%E6%98%AF%E5%90%A6%E5%85%B1%E4%BA%AB">作业 3：fork 后变量是否共享</span></h3><p>运行 <code>fork_var_demo.c</code>。</p>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 子进程修改后的 global/local 值<br>2. 父进程看到的 global/local 值<br>3. 子进程修改变量是否影响父进程<br>4. 你对 Copy-on-Write 的初步理解<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-4%E8%A7%82%E5%AF%9F%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B">作业 4：观察僵尸进程</span></h3><p>运行 <code>zombie_demo.c</code>。</p>
+<p>在父进程 sleep 期间执行：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -o pid,ppid,<span class="hljs-built_in">stat</span>,<span class="hljs-built_in">comm</span> | grep zombie_demo<br></code></pre></td></tr></tbody></table></figure>
+
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 父进程 PID<br>2. 子进程 PID<br>3. 子进程状态是否出现 Z<br>4. 僵尸进程为什么会出现<br>5. wait 为什么能回收子进程<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h3><span id="%E4%BD%9C%E4%B8%9A-5windows-%E8%BF%9B%E7%A8%8B%E6%A0%91%E8%A7%82%E5%AF%9F">作业 5：Windows 进程树观察</span></h3><p>如果你有 Windows 环境：</p>
+<ol>
+<li>用 Process Explorer 打开进程树</li>
+<li>从 cmd 启动 notepad</li>
+<li>从资源管理器双击启动 notepad</li>
+<li>对比父进程</li>
+</ol>
+<p>提交内容：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs text">1. 两种启动方式下 notepad 的父进程<br>2. notepad 的 PID<br>3. notepad 加载的几个 DLL<br>4. 为什么进程树对安全分析有用<br></code></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h2><span id="34-%E8%87%AA%E6%B5%8B%E9%A2%98">34. 自测题</span></h2><h3><span id="%E9%A2%98-1">题 1</span></h3><p>程序和进程有什么区别？</p>
+<h3><span id="%E9%A2%98-2">题 2</span></h3><p>为什么同一个程序可以运行多个进程？</p>
+<h3><span id="%E9%A2%98-3">题 3</span></h3><p>PID 和 PPID 分别是什么？</p>
+<h3><span id="%E9%A2%98-4">题 4</span></h3><p>PCB 的作用是什么？</p>
+<h3><span id="%E9%A2%98-5">题 5</span></h3><p>什么是上下文切换？</p>
+<h3><span id="%E9%A2%98-6">题 6</span></h3><p><code>fork</code> 后为什么父子进程都会继续执行后面的代码？</p>
+<h3><span id="%E9%A2%98-7">题 7</span></h3><p><code>fork</code> 在父进程和子进程中的返回值有什么区别？</p>
+<h3><span id="%E9%A2%98-8">题 8</span></h3><p>什么是僵尸进程？</p>
+<h3><span id="%E9%A2%98-9">题 9</span></h3><p>为什么进程树对恶意代码分析重要？</p>
+<hr>
+<h2><span id="35-%E8%87%AA%E6%B5%8B%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88">35. 自测题参考答案</span></h2><h3><span id="%E7%AD%94-1">答 1</span></h3><p>程序是磁盘上的静态可执行文件；进程是程序被操作系统加载后正在运行的实例，包含代码、内存、寄存器状态、打开文件、权限等运行时资源。</p>
+<h3><span id="%E7%AD%94-2">答 2</span></h3><p>因为可执行文件只是模板。每次运行它，操作系统都可以创建一个新的进程实例，每个实例有自己的 PID、地址空间和运行状态。</p>
+<h3><span id="%E7%AD%94-3">答 3</span></h3><p>PID 是进程 ID，用来唯一标识一个进程；PPID 是父进程 ID，用来表示该进程由哪个父进程创建。</p>
+<h3><span id="%E7%AD%94-4">答 4</span></h3><p>PCB 是操作系统内核用于描述和管理进程的数据结构，保存进程状态、寄存器、内存管理信息、打开文件、调度信息、权限等。</p>
+<h3><span id="%E7%AD%94-5">答 5</span></h3><p>上下文切换是 CPU 从一个进程切换到另一个进程时，操作系统保存当前进程运行状态并恢复另一个进程运行状态的过程。</p>
+<h3><span id="%E7%AD%94-6">答 6</span></h3><p>因为 <code>fork</code> 创建子进程后，子进程从 <code>fork</code> 返回的位置开始继续执行，父进程也继续执行，所以父子进程都会执行 <code>fork</code> 后面的代码。</p>
+<h3><span id="%E7%AD%94-7">答 7</span></h3><p><code>fork</code> 在子进程中返回 0；在父进程中返回子进程的 PID；如果失败返回负数。</p>
+<h3><span id="%E7%AD%94-8">答 8</span></h3><p>僵尸进程是已经结束执行，但父进程还没有读取其退出状态的进程。它保留在进程表中，等待父进程调用 <code>wait</code> 或 <code>waitpid</code> 回收。</p>
+<h3><span id="%E7%AD%94-9">答 9</span></h3><p>因为恶意代码常通过创建子进程、启动系统工具、注入其他进程等方式执行行为。进程树能帮助分析程序的启动链、父子关系和可疑行为路径。</p>
+<hr>
+<h2><span id="36-%E4%B8%8B%E4%B8%80%E8%8A%82%E9%A2%84%E5%91%8A">36. 下一节预告</span></h2><p>下一节课会讲：</p>
+<figure class="highlight text"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">进程创建的 Linux / Windows 对照<br></code></pre></td></tr></tbody></table></figure>
+
+<p>你会学习：</p>
+<ul>
+<li>Linux 的 <code>fork</code>、<code>execve</code>、<code>wait</code></li>
+<li>Windows 的 <code>CreateProcess</code></li>
+<li>为什么 Windows 没有传统 <code>fork</code></li>
+<li>父子进程继承了什么</li>
+<li>恶意代码为什么经常创建子进程</li>
+<li>如何用 <code>strace</code> 和 Process Monitor 观察进程创建</li>
+</ul>
+<!-- hexo injector body_end start -->
+<button id="color-rotate-btn" title="旋转配色"></button>
+<script>
+(function() {
+  // 原始 7 色（来自 _config.kira.yml）
+  var baseColors = [
+    [49, 174, 255],   // 1: 蓝
+    [255, 78, 106],   // 2: 粉红
+    [255, 185, 0],    // 3: 黄
+    [51, 213, 122],   // 4: 绿
+    [0, 219, 255],    // 5: 青
+    [255, 69, 0],     // 6: 红橙
+    [144, 144, 255]   // 7: 紫
+  ];
+  var rotateStep = 30;
+  var currentHue = parseInt(localStorage.getItem('kira-color-hue') || '0', 10);
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+      function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function applyColors() {
+    var root = document.documentElement;
+    for (var i = 0; i < 7; i++) {
+      var hsl = rgbToHsl(baseColors[i][0], baseColors[i][1], baseColors[i][2]);
+      var newH = (hsl[0] + currentHue) % 360;
+      var rgb = hslToRgb(newH, hsl[1], hsl[2]);
+      var fg = 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+      var bg = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.25)';
+      root.style.setProperty('--rainbow-fg' + (i + 1), fg);
+      root.style.setProperty('--rainbow-bg' + (i + 1), bg);
+    }
+
+    // 主题色 (color1) 旋转后同步到全局变量
+    var c1hsl = rgbToHsl(baseColors[0][0], baseColors[0][1], baseColors[0][2]);
+    var c1newH = (c1hsl[0] + currentHue) % 360;
+    var c1rgb = hslToRgb(c1newH, c1hsl[1], c1hsl[2]);
+    root.style.setProperty('--theme-color', 'rgb(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ')');
+    root.style.setProperty('--theme-bg', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.25)');
+    root.style.setProperty('--theme-bg2', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.85)');
+    root.style.setProperty('--theme-bg3', 'rgba(' + c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2] + ',0.1)');
+    root.style.setProperty('--theme-rgb', c1rgb[0] + ',' + c1rgb[1] + ',' + c1rgb[2]);
+  }
+
+  document.getElementById('color-rotate-btn').addEventListener('click', function() {
+    currentHue = (currentHue + rotateStep) % 360;
+    localStorage.setItem('kira-color-hue', currentHue);
+    applyColors();
+  });
+
+  applyColors();
+})();
+</script>
+
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var baseModelJson = null;
+    var textures = [];
+    var currentIndex = 0;
+    var currentBlobUrl = null;
+
+    function cloneModelJson(index) {
+        var json = JSON.parse(JSON.stringify(baseModelJson));
+        var selected = textures[index];
+        json.textures = [selected].concat(textures.filter(function(texture) {
+            return texture !== selected;
+        }));
+        return json;
+    }
+
+    function recreateCanvas() {
+        var oldCanvas = document.getElementById('live2d');
+        if (!oldCanvas || !oldCanvas.parentNode) return;
+        var newCanvas = oldCanvas.cloneNode(false);
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+    }
+
+    function loadCostume(index, initial) {
+        if (!baseModelJson || !textures.length) return;
+
+        if (!initial) {
+            recreateCanvas();
+        }
+
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+        }
+
+        currentIndex = index;
+        currentBlobUrl = URL.createObjectURL(new Blob([
+            JSON.stringify(cloneModelJson(index))
+        ], { type: 'application/json' }));
+
+        loadlive2d('live2d', currentBlobUrl);
+
+        if (!initial && typeof showMessage === 'function') {
+            var name = textures[index].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            baseModelJson = json;
+            textures = json.textures || [];
+            loadCostume(0, true);
+        });
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        loadCostume((currentIndex + 1) % textures.length, false);
+    });
+})();
+</script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script><!-- hexo injector body_end end --></body></html>
+	</article>
+
+	 
+    <div class="kira-post-copyright">
+        <strong>本文作者：</strong>burpow<br>
+        <strong>本文链接：</strong><a href="https://youthfulnesszxx.github.io/2026/05/28/%E7%AC%AC07%E8%8A%82-%E8%BF%9B%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88/" title="https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第07节-进程是什么&#x2F;" target="_blank" rel="noopener">https:&#x2F;&#x2F;youthfulnesszxx.github.io&#x2F;2026&#x2F;05&#x2F;28&#x2F;第07节-进程是什么&#x2F;</a><br>
+        
+            <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+        
+    </div>
+
+  
+	<div class="kira-post-nav">
+		<nav class="post-nav">
+			
+		</nav>
+	</div>
+	
+	<div class="kira-post-meta kira-rainbow">
+		
+		
+			<a class="kirafont icon-tag-fill -none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+		
+	</div>
+	
+	<div class="kira-post-footer">
+		
+
+		
+	</div>
+	
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+	</body>
+</html>
