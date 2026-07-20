@@ -497,90 +497,6 @@ article h2::after { background: var(--theme-color) !important; }
   applyColors();
 })();
 </script>
-
-<div id="landlord">
-    <div class="message" style="opacity:0"></div>
-    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
-    <div class="hide-button">隐藏</div>
-    <div class="costume-button" id="costume-btn">换装</div>
-</div>
-<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-<script>
-    var message_Path = '/live2d/';
-    var home_Path = 'https://youthfulnesszxx.github.io';
-</script>
-<script src="/live2d/js/live2d.js"></script>
-<script src="/live2d/js/message.js"></script>
-<script>
-    // 换装按钮跟随 #landlord 悬停显示/隐藏
-    $(".costume-button").fadeOut(0);
-    $("#landlord").hover(
-        function() { $(".costume-button").fadeIn(600); },
-        function() { $(".costume-button").fadeOut(600); }
-    );
-</script>
-<script>
-(function() {
-    var modelJsonPath = '/live2d/model/tia/model.json';
-    var baseModelJson = null;
-    var textures = [];
-    var currentIndex = 0;
-    var currentBlobUrl = null;
-
-    function cloneModelJson(index) {
-        var json = JSON.parse(JSON.stringify(baseModelJson));
-        var selected = textures[index];
-        json.textures = [selected].concat(textures.filter(function(texture) {
-            return texture !== selected;
-        }));
-        return json;
-    }
-
-    function recreateCanvas() {
-        var oldCanvas = document.getElementById('live2d');
-        if (!oldCanvas || !oldCanvas.parentNode) return;
-        var newCanvas = oldCanvas.cloneNode(false);
-        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
-    }
-
-    function loadCostume(index, initial) {
-        if (!baseModelJson || !textures.length) return;
-
-        if (!initial) {
-            recreateCanvas();
-        }
-
-        if (currentBlobUrl) {
-            URL.revokeObjectURL(currentBlobUrl);
-        }
-
-        currentIndex = index;
-        currentBlobUrl = URL.createObjectURL(new Blob([
-            JSON.stringify(cloneModelJson(index))
-        ], { type: 'application/json' }));
-
-        loadlive2d('live2d', currentBlobUrl);
-
-        if (!initial && typeof showMessage === 'function') {
-            var name = textures[index].replace('textures/', '').replace('.png', '');
-            showMessage('换装成功：' + name, 3000);
-        }
-    }
-
-    fetch(modelJsonPath)
-        .then(function(response) { return response.json(); })
-        .then(function(json) {
-            baseModelJson = json;
-            textures = json.textures || [];
-            loadCostume(0, true);
-        });
-
-    document.getElementById('costume-btn').addEventListener('click', function() {
-        if (!textures.length) return;
-        loadCostume((currentIndex + 1) % textures.length, false);
-    });
-})();
-</script>
 <script>
   (function() {
     var originalTitle = document.title;
@@ -620,7 +536,108 @@ article h2::after { background: var(--theme-color) !important; }
       }
     });
   })();
-  </script><!-- hexo injector body_end end --></body></html>
+  </script>
+<div id="landlord">
+    <div class="message" style="opacity:0"></div>
+    <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+    <div class="hide-button">隐藏</div>
+    <div class="costume-button" id="costume-btn">换装</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script>
+    var message_Path = '/live2d/';
+    var home_Path = 'https://youthfulnesszxx.github.io';
+</script>
+<script src="/live2d/js/live2d.js"></script>
+<script src="/live2d/js/message.js"></script>
+<script>
+    // 换装按钮跟随 #landlord 悬停显示/隐藏
+    $(".costume-button").fadeOut(0);
+    $("#landlord").hover(
+        function() { $(".costume-button").fadeIn(600); },
+        function() { $(".costume-button").fadeOut(600); }
+    );
+</script>
+<script>
+(function() {
+    var modelJsonPath = '/live2d/model/tia/model.json';
+    var textures = [];
+    var currentIndex = 0;
+    var selectedIndex = -1;
+
+    // 首屏始终从真实的 model.json 加载。运行库会以该 URL 推导 moc、纹理和动作文件目录。
+    loadlive2d('live2d', modelJsonPath);
+
+    function isModelJsonUrl(url) {
+        try {
+            return new URL(url, window.location.href).pathname === modelJsonPath;
+        } catch (error) {
+            return url === modelJsonPath;
+        }
+    }
+
+    // Live2D 运行库通过 XMLHttpRequest 读取 model.json。仅在换装重载时，
+    // 在它读取响应前把 textures[0] 替换为选中的服装；请求 URL 保持不变，
+    // 因而其余相对资源路径仍能被正确解析。
+    var nativeOpen = XMLHttpRequest.prototype.open;
+    var nativeSend = XMLHttpRequest.prototype.send;
+    var nativeResponse = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, 'response');
+
+    XMLHttpRequest.prototype.open = function(method, url) {
+        this._live2dModelJson = isModelJsonUrl(url);
+        return nativeOpen.apply(this, arguments);
+    };
+
+    XMLHttpRequest.prototype.send = function() {
+        if (this._live2dModelJson && selectedIndex >= 0 && nativeResponse) {
+            var xhr = this;
+            var originalResponse = nativeResponse.get;
+            Object.defineProperty(xhr, 'response', {
+                configurable: true,
+                get: function() {
+                    var response = originalResponse.call(xhr);
+                    if (!response || xhr._live2dCostumeResponse) return response;
+
+                    try {
+                        var source = new TextDecoder('utf-8').decode(response);
+                        var json = JSON.parse(source);
+                        var selected = textures[selectedIndex];
+                        json.textures = [selected].concat(json.textures.filter(function(texture) {
+                            return texture !== selected;
+                        }));
+                        xhr._live2dCostumeResponse = new TextEncoder().encode(JSON.stringify(json)).buffer;
+                        return xhr._live2dCostumeResponse;
+                    } catch (error) {
+                        return response;
+                    }
+                }
+            });
+        }
+        return nativeSend.apply(this, arguments);
+    };
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            textures = json.textures || [];
+        })
+        .catch(function() {});
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+
+        currentIndex = (currentIndex + 1) % textures.length;
+        selectedIndex = currentIndex;
+        loadlive2d('live2d', modelJsonPath);
+
+        if (typeof showMessage === 'function') {
+            var name = textures[currentIndex].replace('textures/', '').replace('.png', '');
+            showMessage('换装成功：' + name, 3000);
+        }
+    });
+})();
+</script>
+<!-- hexo injector body_end end --></body></html>
 	</article>
 
 	 

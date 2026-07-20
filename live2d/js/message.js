@@ -136,11 +136,35 @@ initTips();
 
 window.setInterval(showHitokoto, 30000);
 
+const apis = [
+  {
+    name: "poetry",
+    url: "https://poetry.palemoky.com/api/poems/random?lang=zh-Hans",
+    headers: { accept: "application/json" },
+    parse: (r) => {
+      const d = r.data;
+      const line = d.content[Math.floor(Math.random() * d.content.length)];
+      return `${line} —— ${d.title} · ${d.author.name}`;
+    },
+  },
+  {
+    name: "hitokoto",
+    url: "https://v1.hitokoto.cn/",
+    parse: (r) => r.hitokoto,
+  },
+];
+
 function showHitokoto() {
-  $.getJSON("https://v1.hitokoto.cn/", function (result) {
-    //看板娘吟诵消息来源，来自一言api
-    showMessage(result.hitokoto, 5000);
-  });
+  const api = apis[Math.floor(Math.random() * apis.length)];
+
+  fetch(api.url, api.headers ? { headers: api.headers } : {})
+    .then((res) => res.json())
+    .then((data) => showMessage(api.parse(data), 5000))
+    .catch(() => {
+      fetch("https://v1.hitokoto.cn/")
+        .then((r) => r.json())
+        .then((r) => showMessage(r.hitokoto, 5000));
+    });
 }
 
 function showMessage(text, timeout) {
