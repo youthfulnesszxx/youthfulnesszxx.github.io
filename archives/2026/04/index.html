@@ -560,6 +560,11 @@ article h2::after { background: var(--theme-color) !important; }
     <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
     <div class="hide-button">隐藏</div>
     <div class="costume-button" id="costume-btn">换装</div>
+    <form class="costume-selector" id="costume-selector">
+        <label for="costume-number">服装</label>
+        <input id="costume-number" type="number" min="1" step="1" inputmode="numeric" aria-label="选择服装编号">
+        <span id="costume-total"></span>
+    </form>
 </div>
 <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script>
@@ -570,21 +575,27 @@ article h2::after { background: var(--theme-color) !important; }
 <script src="/live2d/js/message.js"></script>
 <script>
     // 换装按钮跟随 #landlord 悬停显示/隐藏
-    $(".costume-button").fadeOut(0);
+    $(".costume-button, .costume-selector").fadeOut(0);
     $("#landlord").hover(
-        function() { $(".costume-button").fadeIn(600); },
-        function() { $(".costume-button").fadeOut(600); }
+        function() { $(".costume-button, .costume-selector").fadeIn(600); },
+        function() { $(".costume-button, .costume-selector").fadeOut(600); }
     );
 </script>
 <script>
 (function() {
     var modelJsonPath = '/live2d/model/tia/model.json';
     var textures = [];
-    var currentIndex = 0;
-    var selectedIndex = -1;
+    var storageKey = 'live2d-tia-costume-index';
+    var storedIndex = parseInt(localStorage.getItem(storageKey), 10);
+    var currentIndex = Number.isInteger(storedIndex) && storedIndex >= 0 ? storedIndex : 0;
+    var selectedIndex = currentIndex;
 
-    // 首屏始终从真实的 model.json 加载。运行库会以该 URL 推导 moc、纹理和动作文件目录。
-    loadlive2d('live2d', modelJsonPath);
+    function applySelectedCostume(json) {
+        if (selectedIndex < 0 || selectedIndex >= json.textures.length) return json;
+
+        json.textures = [json.textures[selectedIndex]];
+        return json;
+    }
 
     function isModelJsonUrl(url) {
         try {
@@ -594,9 +605,8 @@ article h2::after { background: var(--theme-color) !important; }
         }
     }
 
-    // Live2D 运行库通过 XMLHttpRequest 读取 model.json。仅在换装重载时，
-    // 在它读取响应前把 textures[0] 替换为选中的服装；请求 URL 保持不变，
-    // 因而其余相对资源路径仍能被正确解析。
+    // 运行库通过 XMLHttpRequest 读取 model.json。每次仅返回当前服装纹理，
+    // 避免重新加载完整 textures 列表；请求 URL 保持不变，其他相对资源仍可正确解析。
     var nativeOpen = XMLHttpRequest.prototype.open;
     var nativeSend = XMLHttpRequest.prototype.send;
     var nativeResponse = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, 'response');
@@ -619,10 +629,7 @@ article h2::after { background: var(--theme-color) !important; }
                     try {
                         var source = new TextDecoder('utf-8').decode(response);
                         var json = JSON.parse(source);
-                        var selected = textures[selectedIndex];
-                        json.textures = [selected].concat(json.textures.filter(function(texture) {
-                            return texture !== selected;
-                        }));
+                        json = applySelectedCostume(json);
                         xhr._live2dCostumeResponse = new TextEncoder().encode(JSON.stringify(json)).buffer;
                         return xhr._live2dCostumeResponse;
                     } catch (error) {
@@ -634,24 +641,72 @@ article h2::after { background: var(--theme-color) !important; }
         return nativeSend.apply(this, arguments);
     };
 
-    fetch(modelJsonPath)
-        .then(function(response) { return response.json(); })
-        .then(function(json) {
-            textures = json.textures || [];
-        })
-        .catch(function() {});
+    // 首屏仍使用真实 model.json；若保存过选择，拦截器会先调整其 textures 顺序。
+    loadlive2d('live2d', modelJsonPath);
 
-    document.getElementById('costume-btn').addEventListener('click', function() {
+    var selector = document.getElementById('costume-selector');
+    var numberInput = document.getElementById('costume-number');
+    var totalLabel = document.getElementById('costume-total');
+
+    function syncCostumeInput() {
+        if (!textures.length) return;
+        numberInput.max = textures.length;
+        numberInput.value = currentIndex + 1;
+        totalLabel.textContent = '/ ' + textures.length;
+    }
+
+    function selectCostume(number) {
         if (!textures.length) return;
 
-        currentIndex = (currentIndex + 1) % textures.length;
-        selectedIndex = currentIndex;
+        var parsed = Number(number);
+        if (!Number.isFinite(parsed) || !Number.isInteger(parsed)) {
+            syncCostumeInput();
+            return;
+        }
+
+        var normalized = Math.min(Math.max(parsed, 1), textures.length);
+        var nextIndex = normalized - 1;
+        syncCostumeInput();
+        numberInput.value = normalized;
+
+        if (nextIndex === currentIndex && selectedIndex === nextIndex) return;
+
+        currentIndex = nextIndex;
+        selectedIndex = nextIndex;
+        localStorage.setItem(storageKey, String(selectedIndex));
         loadlive2d('live2d', modelJsonPath);
 
         if (typeof showMessage === 'function') {
             var name = textures[currentIndex].replace('textures/', '').replace('.png', '');
             showMessage('换装成功：' + name, 3000);
         }
+    }
+
+    fetch(modelJsonPath)
+        .then(function(response) { return response.json(); })
+        .then(function(json) {
+            textures = json.textures || [];
+            if (currentIndex >= textures.length) {
+                currentIndex = 0;
+                selectedIndex = -1;
+                localStorage.removeItem(storageKey);
+            }
+            syncCostumeInput();
+        })
+        .catch(function() {});
+
+    document.getElementById('costume-btn').addEventListener('click', function() {
+        if (!textures.length) return;
+        selectCostume((currentIndex + 1) % textures.length + 1);
+    });
+
+    selector.addEventListener('submit', function(event) {
+        event.preventDefault();
+        selectCostume(numberInput.value);
+    });
+
+    numberInput.addEventListener('change', function() {
+        selectCostume(numberInput.value);
     });
 })();
 </script>

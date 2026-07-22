@@ -89,6 +89,39 @@
     background: #f4f6f8;
 }
 
+.costume-selector {
+    position: absolute;
+    top: 10px;
+    left: 65px;
+    display: none;
+    height: 20px;
+    padding: 0 6px;
+    border: 1px solid rgba(255,137,255,.4);
+    border-radius: 12px;
+    background: rgba(255,137,255,.2);
+    box-shadow: 0 3px 15px 2px rgba(255,137,255,.4);
+    color: #333;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+.costume-selector input {
+    width: 30px;
+    height: 18px;
+    margin: 0 2px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    outline: none;
+}
+
+.costume-selector input:focus {
+    background: #f4f6f8;
+}
+
 @media (max-width: 860px) {
     #landlord {
         display: none;
