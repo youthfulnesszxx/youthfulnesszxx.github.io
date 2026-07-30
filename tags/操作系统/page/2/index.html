@@ -378,43 +378,6 @@ article h2::after { background: var(--theme-color) !important; }
         <div class="kira-hr"></div>
     
         <div class="kira-post">
-            <a href="/2026/05/28/%E7%AC%AC07%E8%8A%82-%E8%BF%9B%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88/">
-                
-                <div
-                    class="kira-post-cover mdui-ripple"
-                    style="padding-bottom: '56.25%'"
-                >
-                    <img
-                        data-src="/images/cover/12.jpg"
-                        data-sizes="auto"
-                        alt="第07节-进程是什么"
-                        class="lazyload kira-post-cover-image"
-                    />
-                    <h1>第07节-进程是什么</h1>
-                </div>
-                
-            </a>
-
-            <div class="kira-post-meta kira-rainbow">
-                <a>
-                    <i class="kirafont icon-calendar-fill"></i>
-                    2026年05月28日
-                </a>
-                <a>
-                    <i class="kirafont icon-edit-fill"></i>
-                    5.8k 字
-                </a>
-                <a>
-                    <i class="kirafont icon-time-circle-fill"></i>大概
-                    25 分钟
-                </a>
-            </div>
-    
-            
-        </div>
-        <div class="kira-hr"></div>
-    
-        <div class="kira-post">
             <a href="/2026/05/28/%E7%AC%AC06%E8%8A%82-%E4%BB%8E%E9%80%86%E5%90%91%E8%A7%86%E8%A7%92%E7%9C%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/">
                 
                 <div
@@ -440,6 +403,43 @@ article h2::after { background: var(--theme-color) !important; }
                 <a>
                     <i class="kirafont icon-edit-fill"></i>
                     6k 字
+                </a>
+                <a>
+                    <i class="kirafont icon-time-circle-fill"></i>大概
+                    25 分钟
+                </a>
+            </div>
+    
+            
+        </div>
+        <div class="kira-hr"></div>
+    
+        <div class="kira-post">
+            <a href="/2026/05/28/%E7%AC%AC07%E8%8A%82-%E8%BF%9B%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88/">
+                
+                <div
+                    class="kira-post-cover mdui-ripple"
+                    style="padding-bottom: '56.25%'"
+                >
+                    <img
+                        data-src="/images/cover/12.jpg"
+                        data-sizes="auto"
+                        alt="第07节-进程是什么"
+                        class="lazyload kira-post-cover-image"
+                    />
+                    <h1>第07节-进程是什么</h1>
+                </div>
+                
+            </a>
+
+            <div class="kira-post-meta kira-rainbow">
+                <a>
+                    <i class="kirafont icon-calendar-fill"></i>
+                    2026年05月28日
+                </a>
+                <a>
+                    <i class="kirafont icon-edit-fill"></i>
+                    5.8k 字
                 </a>
                 <a>
                     <i class="kirafont icon-time-circle-fill"></i>大概
@@ -556,7 +556,46 @@ article h2::after { background: var(--theme-color) !important; }
   applyColors();
 })();
 </script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
 
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script>
 <div id="landlord">
     <div class="message" style="opacity:0"></div>
     <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
@@ -712,44 +751,5 @@ article h2::after { background: var(--theme-color) !important; }
     });
 })();
 </script>
-<script>
-  (function() {
-    var originalTitle = document.title;
-    var messages = [
-      '你去哪了？快回来~ (｡•́︿•̀｡)',
-      '别走嘛，再看看吧 (✿◡‿◡)',
-      '想我了吗？ (づ｡◕‿‿◕｡)づ',
-      '主人去哪里了？这里好黑呀... (qwq)',
-      '你不在，我的代码都要枯萎了... (._.)',
-      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
-      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
-      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
-      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
-      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
-      '这里长草了...你还不回来除草吗？ (_)'
-    ];
-    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
-
-    var returnMsgs = [
-      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
-      '你终于回来了！(｡♥‿♥｡)',
-      '想死你啦！快来玩~ (★ ω ★)',
-      '回来啦？我一直在等你哦 (*/ω＼*)',
-      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
-      '系统提示：您的看板娘已重新连接！',
-      '你不在的时候，网页都变慢了，不信你试试？',
-    ];
-
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        document.title = randomMsg;
-      } else {
-        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
-        setTimeout(function() {
-          document.title = originalTitle;
-        }, 5000);
-      }
-    });
-  })();
-  </script><!-- hexo injector body_end end --></body>
+<!-- hexo injector body_end end --></body>
 </html>

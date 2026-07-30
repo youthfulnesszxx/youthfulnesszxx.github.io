@@ -515,7 +515,46 @@ article h2::after { background: var(--theme-color) !important; }
   applyColors();
 })();
 </script>
+<script>
+  (function() {
+    var originalTitle = document.title;
+    var messages = [
+      '你去哪了？快回来~ (｡•́︿•̀｡)',
+      '别走嘛，再看看吧 (✿◡‿◡)',
+      '想我了吗？ (づ｡◕‿‿◕｡)づ',
+      '主人去哪里了？这里好黑呀... (qwq)',
+      '你不在，我的代码都要枯萎了... (._.)',
+      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
+      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
+      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
+      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
+      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
+      '这里长草了...你还不回来除草吗？ (_)'
+    ];
+    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
 
+    var returnMsgs = [
+      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
+      '你终于回来了！(｡♥‿♥｡)',
+      '想死你啦！快来玩~ (★ ω ★)',
+      '回来啦？我一直在等你哦 (*/ω＼*)',
+      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
+      '系统提示：您的看板娘已重新连接！',
+      '你不在的时候，网页都变慢了，不信你试试？',
+    ];
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        document.title = randomMsg;
+      } else {
+        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
+        setTimeout(function() {
+          document.title = originalTitle;
+        }, 5000);
+      }
+    });
+  })();
+  </script>
 <div id="landlord">
     <div class="message" style="opacity:0"></div>
     <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
@@ -671,44 +710,5 @@ article h2::after { background: var(--theme-color) !important; }
     });
 })();
 </script>
-<script>
-  (function() {
-    var originalTitle = document.title;
-    var messages = [
-      '你去哪了？快回来~ (｡•́︿•̀｡)',
-      '别走嘛，再看看吧 (✿◡‿◡)',
-      '想我了吗？ (づ｡◕‿‿◕｡)づ',
-      '主人去哪里了？这里好黑呀... (qwq)',
-      '你不在，我的代码都要枯萎了... (._.)',
-      '喂！你是不是偷偷去看别的网站了？ (눈_눈)',
-      '小心我顺着网线爬过去！ (╯°Д°)╯︵ ┻━┻',
-      '这里有一只落单的看板娘，快来领走！ (・ω・)ノ',
-      'Σ(っ °Д °;)っ 网站要崩溃啦，快回来！',
-      '你不在的时候，我都在偷偷学习JS呢！ (•̀ᴗ•́)و✧',
-      '这里长草了...你还不回来除草吗？ (_)'
-    ];
-    var randomMsg = messages[Math.floor(Math.random() * messages.length)];
-
-    var returnMsgs = [
-      '刚才有没有想我呀？(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧',
-      '你终于回来了！(｡♥‿♥｡)',
-      '想死你啦！快来玩~ (★ ω ★)',
-      '回来啦？我一直在等你哦 (*/ω＼*)',
-      '嘿嘿，我就知道你会回来的 (≧∇≦)ﾉ',
-      '系统提示：您的看板娘已重新连接！',
-      '你不在的时候，网页都变慢了，不信你试试？',
-    ];
-
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        document.title = randomMsg;
-      } else {
-        document.title = returnMsgs[Math.floor(Math.random() * returnMsgs.length)];
-        setTimeout(function() {
-          document.title = originalTitle;
-        }, 5000);
-      }
-    });
-  })();
-  </script><!-- hexo injector body_end end --></body>
+<!-- hexo injector body_end end --></body>
 </html>
